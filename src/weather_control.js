@@ -17,18 +17,19 @@ var cube = new THREE.Mesh(geometry, material);
 scene.add(cube);
 */
 
-
 // Länge & Breite 
 var houseSize = 10;
-var house = createHouse(houseSize);
+var houseMaterial = new THREE.MeshPhongMaterial({ambient: 0x050505, color: 0x724b33, specular: 0x555555, shininess: 30});
+var house = _createHouseBody(houseSize, houseMaterial);
 scene.add(house);
 
 // erzeuge Hausdach
 var roofHeight = 5;
-var roof = createRoof(houseSize, roofHeight);
+var roofMaterial = new THREE.MeshPhongMaterial({ambient: 0x050505, color: 0xc62411, specular: 0x555555, shininess: 30});
+var roof = _createRoof(houseSize, roofHeight, roofMaterial);
 roof.position.set(0, 7.5, 0);
-scene.add(roof);    
-    
+scene.add(roof);   
+  
 // Licht
 var light = new THREE.DirectionalLight(0xffffff);
 light.position.set(1, 2, 3);
