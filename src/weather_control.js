@@ -28,6 +28,7 @@ var range = groundSize/2;
 var houseSize = 10, roofHeight = 5;
 for(var i = 0; i < numHouses; i++){
 
+    // Hausposition
     var x = getRandomInt(0,range)-range/2;
     var z = getRandomInt(0,range)-range/2;
 
