@@ -1,6 +1,6 @@
 
 var scene = new THREE.Scene();
-scene.background = new THREE.Color(0xcccccc);
+scene.background = new THREE.Color(0x10e52c);
 
 var camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 1, 1000);
 camera.position.set(20, 20, 15);
@@ -9,13 +9,6 @@ camera.lookAt(new THREE.Vector3(0,0,0));
 var renderer = new THREE.WebGLRenderer();
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
-
-/*
-var geometry = new THREE.BoxGeometry(1, 1, 1);
-var material = new THREE.MeshBasicMaterial({color: 0x00ff00});
-var cube = new THREE.Mesh(geometry, material);
-scene.add(cube);
-*/
 
 // Haus gleicher Länge, Breite, Höhe
 var houseSize = 10;
