@@ -3,7 +3,7 @@ var scene = new THREE.Scene();
 scene.background = new THREE.Color(0xcccccc);
 
 var camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 1, 1000);
-camera.position.set(50, 50, 50);
+camera.position.set(20, 20, 15);
 camera.lookAt(new THREE.Vector3(0,0,0));
 
 var renderer = new THREE.WebGLRenderer();
@@ -29,7 +29,12 @@ var roof = createRoof(houseSize, roofHeight);
 roof.position.set(0, 7.5, 0);
 scene.add(roof);    
     
-
+// Licht
+var light = new THREE.DirectionalLight(0xffffff);
+light.position.set(1, 2, 3);
+light.target = house;
+scene.add(light);
+    
 
 renderer.render(scene, camera);
 
