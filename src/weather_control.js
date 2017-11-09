@@ -17,16 +17,16 @@ var cube = new THREE.Mesh(geometry, material);
 scene.add(cube);
 */
 
-// Länge & Breite 
+// Haus gleicher Länge, Breite, Höhe
 var houseSize = 10;
 var houseMaterial = new THREE.MeshPhongMaterial({ambient: 0x050505, color: 0x724b33, specular: 0x555555, shininess: 30});
-var house = _createHouseBody(houseSize, houseMaterial);
+var house = createHouseBody(houseSize, houseMaterial);
 scene.add(house);
 
 // erzeuge Hausdach
 var roofHeight = 5;
 var roofMaterial = new THREE.MeshPhongMaterial({ambient: 0x050505, color: 0xc62411, specular: 0x555555, shininess: 30});
-var roof = _createRoof(houseSize, roofHeight, roofMaterial);
+var roof = createRoof(houseSize, roofHeight, roofMaterial);
 roof.position.set(0, 7.5, 0);
 scene.add(roof);   
   
