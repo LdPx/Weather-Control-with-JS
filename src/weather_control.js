@@ -49,8 +49,8 @@ for(var i = 0; i < numHouses; i++){
     scene.add(roof);   
 }
       
-// Licht
-var light = new THREE.DirectionalLight(0xffffff);
+// Licht: Farbe, Intensität
+var light = new THREE.DirectionalLight(0xffffff, 1);
 light.position.set(20, 40, 100);
 
 light.castShadow = true;            // default false
