@@ -56,9 +56,10 @@ light.position.set(20, 40, 100);
 light.castShadow = true;            // default false
 
 //Set up shadow properties for the light
-light.shadow.mapSize.set(512, 512); //default
-light.shadow.camera.near = 0.5;    // default
-light.shadow.camera.far = 1000;     // default
+light.shadow.mapSize.set(512, 512); // TODO was ist das?
+// Frustum der Schattenkamera
+light.shadow.camera.near = 0.5;    
+light.shadow.camera.far = 1000;     
 light.shadow.camera.right = 100;
 light.shadow.camera.left = -100;
 light.shadow.camera.top	= 100;
