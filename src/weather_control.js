@@ -50,34 +50,34 @@ for(var i = 0; i < numHouses; i++){
 }
       
 // Licht: Farbe, Intensität
-var light = new THREE.DirectionalLight(0xffffff, 1);
-light.position.set(20, 40, 100);
+var dirLight = new THREE.DirectionalLight(0xffffff, 1);
+dirLight.position.set(20, 40, 100);
 
-light.castShadow = true;            // default false
+dirLight.castShadow = true;            // default false
 
 // Schattenauflösung (muss 2er-Potenz sein; größer => genauer & rechenaufwändiger)
-light.shadow.mapSize.set(512, 512);
+dirLight.shadow.mapSize.set(512, 512);
 // Frustum der Schattenkamera 
-light.shadow.camera.near = 0.5;    
-light.shadow.camera.far = 1000;     
-light.shadow.camera.right = 100;
-light.shadow.camera.left = -100;
-light.shadow.camera.top	= 100;
-light.shadow.camera.bottom = -100;
-scene.add(light);
+dirLight.shadow.camera.near = 0.5;    
+dirLight.shadow.camera.far = 1000;     
+dirLight.shadow.camera.right = 100;
+dirLight.shadow.camera.left = -100;
+dirLight.shadow.camera.top	= 100;
+dirLight.shadow.camera.bottom = -100;
+scene.add(dirLight);
+
 
 // visualisiere direktionale Lichtquelle
-scene.add(new THREE.DirectionalLightHelper(light, 5));
+scene.add(new THREE.DirectionalLightHelper(dirLight, 5));
 // visualisiere Schatten der direktionalen Lichtquelle
-scene.add(new THREE.CameraHelper(light.shadow.camera));
+scene.add(new THREE.CameraHelper(dirLight.shadow.camera));
 // visualisiere x-,y-,z-Achse
 scene.add(new THREE.AxisHelper(1000));
 
-/*
-var light = new THREE.HemisphereLight(0xffffbb, 0x080820, 2);
-light.position.set(0, 10, 10);
-scene.add( light );
-*/
+// TODO bringt's das?
+var hemLight = new THREE.HemisphereLight(0xffffbb, 0x080820, 1);
+scene.add(hemLight);
+
 renderer.render(scene, camera);
 
 
