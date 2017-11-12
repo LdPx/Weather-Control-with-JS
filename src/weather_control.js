@@ -55,9 +55,9 @@ light.position.set(20, 40, 100);
 
 light.castShadow = true;            // default false
 
-//Set up shadow properties for the light
-light.shadow.mapSize.set(512, 512); // TODO was ist das?
-// Frustum der Schattenkamera
+// Schattenauflösung (muss 2er-Potenz sein; größer => genauer & rechenaufwändiger)
+light.shadow.mapSize.set(512, 512);
+// Frustum der Schattenkamera 
 light.shadow.camera.near = 0.5;    
 light.shadow.camera.far = 1000;     
 light.shadow.camera.right = 100;
@@ -67,12 +67,11 @@ light.shadow.camera.bottom = -100;
 scene.add(light);
 
 // visualisiere direktionale Lichtquelle
-var helper = new THREE.DirectionalLightHelper(light, 5);
-scene.add(helper);
-
-var helper = new THREE.CameraHelper(light.shadow.camera);
-console.log('shadow camera position: ' + JSON.stringify(light.shadow.camera.position));
-scene.add(helper);
+scene.add(new THREE.DirectionalLightHelper(light, 5));
+// visualisiere Schatten der direktionalen Lichtquelle
+scene.add(new THREE.CameraHelper(light.shadow.camera));
+// visualisiere x-,y-,z-Achse
+scene.add(new THREE.AxisHelper(1000));
 
 /*
 var light = new THREE.HemisphereLight(0xffffbb, 0x080820, 2);
