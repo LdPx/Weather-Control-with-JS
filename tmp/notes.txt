@@ -1,0 +1,51 @@
+
+Lufttemperatur
+	Thermistoren
+	Thermoelemente
+	RTD - Widerstandsthermometer
+
+relative Luftfeuchtigkeit
+
+Lichtsensor
+	UV
+	Infrarot
+	sichtbares Licht
+
+Regen-/Niederschlagssensoren
+
+Windgeschwindigkeit/-richtung
+	Windfahnen
+	Anemometer
+
+
+
+
+CO2 Sensor ?
+
+Ceilometer ?  Wolkenhöhe, vertikale Sichtweite
+
+Luftdruck ? (Barometrische Sensoren)
+
+Schneesensoren ?
+
+Eis-/Hagelsensoren ?
+
+
+
+
+https://makezine.com/2015/11/20/build-your-own-arduino-weather-station/
+
+http://www.instructables.com/id/Web-Connected-Weather-Station/
+
+https://www.instructables.com/howto/Automatic+Weather+Station/
+
+https://www.build-electronic-circuits.com/diy-weather-station/
+
+
+https://eckstein-shop.de/Microduino-WiFi-Weather-Station-Reads-Displays-Surrounding-Environment
+
+
+http://www.ikeahackers.net/2016/08/simple-weather-station-housed-ikea-borrby-lantern.html
+
+http://www.wetter.com ?
+
