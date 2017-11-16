@@ -1,0 +1,72 @@
+
+Lufttemperatur
+	Thermistoren
+	Thermoelemente
+	RTD - Widerstandsthermometer
+
+relative Luftfeuchtigkeit
+
+Lichtsensor
+	UV
+	Infrarot
+	sichtbares Licht
+
+Regen-/Niederschlagssensoren
+
+Windgeschwindigkeit/-richtung
+	Windfahnen
+	Anemometer
+
+
+https://www.seeedstudio.com/Grove-Temperature%26Humidity-Sensor-%28SHT31%29-p-2655.html
+https://www.seeedstudio.com/Grove-Sunlight-Sensor-p-2530.html
+https://www.seeedstudio.com/Grove-Air-quality-sensor-v1.3-p-2439.html
+
+
+
+https://www.amazon.com/Davis-Instruments-Anemometer-Vantage-Pro2/dp/B004GK9MFO
+http://cactus.io/hookups/weather/anemometer/davis/hookup-arduino-to-davis-anemometer
+
+Regen/Niederschlag?
+https://www.amazon.de/Regensensor-SODIAL-Regenwasser-Modul-Erkennung-Wie-gezeigt/dp/B01D9JCK6K/ref=sr_1_1?ie=UTF8&qid=1510695105&sr=8-1&keywords=Regensensor&dpID=51vww7Cfx2L&preST=_SY300_QL70_&dpSrc=srch
+https://www.amazon.de/1-30L-Wasserdurchflusssensor-Transparente-Durchflussmesser-Wasserkontrolle/dp/B00NGFOLUG/ref=sr_1_3?ie=UTF8&qid=1510695359&sr=8-3&keywords=durchflussmesser&dpID=41JkJKLMv2L&preST=_SX342_QL70_&dpSrc=srch
+https://pi.gate.ac.uk/posts/2014/01/25/raingauge/
+
+DIY?
+https://www.mysensors.org/build/rain
+https://www.amazon.co.uk/Replacement-Speed-Sensor-Weather-Station/dp/B00FQGV98U/ref=pd_lpo_vtph_107_bs_lp_tr_t_1/262-0714060-5439507?_encoding=UTF8&psc=1&refRID=2K0KF3Q4F0D7GBPF0ZP2
+https://www.amazon.co.uk/Replacement-Direction-Sensor-Weather-Statoions/dp/B00FQGV8RM/ref=pd_bxgy_107_img_2?_encoding=UTF8&psc=1&refRID=S7WQSS50C7A7AAK4HFA9
+
+
+
+http://www.wetter.com ?
+
+
+
+CO2 Sensor ?
+
+Ceilometer ?  Wolkenhöhe, vertikale Sichtweite
+
+Luftdruck ? (Barometrische Sensoren)
+
+Schneesensoren ?
+
+Eis-/Hagelsensoren ?
+
+
+
+
+https://makezine.com/2015/11/20/build-your-own-arduino-weather-station/
+
+http://www.instructables.com/id/Web-Connected-Weather-Station/
+
+https://www.instructables.com/howto/Automatic+Weather+Station/
+
+https://www.build-electronic-circuits.com/diy-weather-station/
+
+
+https://eckstein-shop.de/Microduino-WiFi-Weather-Station-Reads-Displays-Surrounding-Environment
+
+
+http://www.ikeahackers.net/2016/08/simple-weather-station-housed-ikea-borrby-lantern.html
+
