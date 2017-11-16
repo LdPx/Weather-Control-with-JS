@@ -26,8 +26,8 @@ function createRainEngine(numRaindrops, spawnCenter, spawnRadius){
 */
         // Geschwindigkeit
         velocity: {
-            value: new THREE.Vector3(0, -25, 0),
-            spread: new THREE.Vector3(10, 7.5, 10)
+            value: new THREE.Vector3(0,-100,0),
+            spread: new THREE.Vector3(10,7.5,10)
         },
 
         color: {

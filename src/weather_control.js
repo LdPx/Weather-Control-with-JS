@@ -83,7 +83,7 @@ scene.add(hemLight);
 
 var numRaindrops = 10000;
 var spawnCenter = new THREE.Vector3(0,100,0);
-var spawnRadius = new THREE.Vector3(100,0,100);
+var spawnRadius = new THREE.Vector3(200,0,200);
 var rainParticleGroup = createRainEngine(numRaindrops, spawnCenter, spawnRadius);
 console.log('created rain engine, ' + numRaindrops + ' particles');
 scene.add(rainParticleGroup.mesh);
