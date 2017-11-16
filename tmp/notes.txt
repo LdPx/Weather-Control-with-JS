@@ -20,6 +20,7 @@ Windgeschwindigkeit/-richtung
 
 https://www.seeedstudio.com/Grove-Temperature%26Humidity-Sensor-%28SHT31%29-p-2655.html
 https://www.seeedstudio.com/Grove-Sunlight-Sensor-p-2530.html
+https://www.seeedstudio.com/Grove-Barometer-Sensor-%28BMP280%29-p-2652.html
 https://www.seeedstudio.com/Grove-Air-quality-sensor-v1.3-p-2439.html
 
 
