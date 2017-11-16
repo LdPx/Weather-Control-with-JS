@@ -4,6 +4,7 @@ function getRandomInt(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
+
 var scene = new THREE.Scene();
 scene.background = new THREE.Color(0x2271f9);
 
@@ -78,7 +79,11 @@ scene.add(new THREE.AxisHelper(1000));
 var hemLight = new THREE.HemisphereLight(0xffffbb, 0x080820, 1);
 scene.add(hemLight);
 
-renderer.render(scene, camera);
+
+animate();
 
 
-
+function animate(){
+    requestAnimationFrame(animate);
+    renderer.render(scene, camera);
+}
