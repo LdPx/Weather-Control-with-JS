@@ -93,12 +93,12 @@ animate();
 function animate() {
     requestAnimationFrame( animate );
     var deltaTime = clock.getDelta();
-    render();
+    render(deltaTime);
 }
 
 function render(deltaTime){
     rainParticleGroup.tick(deltaTime);
-    renderer.render(scene,camera );
+    renderer.render(scene,camera);
 }
 
 
