@@ -4,6 +4,9 @@ function getRandomInt(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
+// globale Uhr (nötig für Animationen)
+var clock = new THREE.Clock();
+
 var scene = new THREE.Scene();
 scene.background = new THREE.Color(0x2271f9);
 
@@ -78,7 +81,26 @@ scene.add(new THREE.AxisHelper(1000));
 var hemLight = new THREE.HemisphereLight(0xffffbb, 0x080820, 1);
 scene.add(hemLight);
 
-renderer.render(scene, camera);
+var numRaindrops = 10000;
+var spawnCenter = new THREE.Vector3(0,100,0);
+var spawnRadius = new THREE.Vector3(200,0,200);
+var rainParticleGroup = createRainEngine(numRaindrops, spawnCenter, spawnRadius);
+console.log('created rain engine, ' + numRaindrops + ' particles');
+scene.add(rainParticleGroup.mesh);
+
+animate();
+
+function animate() {
+    requestAnimationFrame( animate );
+    var deltaTime = clock.getDelta();
+    render();
+}
+
+function render(deltaTime){
+    rainParticleGroup.tick(deltaTime);
+    renderer.render(scene,camera );
+}
+
 
 
 
