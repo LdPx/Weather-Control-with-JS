@@ -81,7 +81,6 @@ scene.add(new THREE.AxisHelper(1000));
 var hemLight = new THREE.HemisphereLight(0xffffbb, 0x080820, 1);
 scene.add(hemLight);
 
-// TODO spawnRadius hart kodieren, da für Windänderung o.Ä. uninteressant?
 var numRaindrops = 10000;
 var rainParticleGroup = createRainEngine(numRaindrops);
 console.log('created rain engine, ' + numRaindrops + ' particles');
