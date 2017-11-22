@@ -1,6 +1,5 @@
 
-// TODO konfigurierbarer machen?
-function createRainEngine(numRaindrops, spawnCenter, spawnRadius){
+function createRainEngine(numRaindrops){
     particleGroup = new SPE.Group({
         texture: {
             value: new THREE.TextureLoader().load('./textures/raindrop.png')
@@ -14,8 +13,8 @@ function createRainEngine(numRaindrops, spawnCenter, spawnRadius){
         },
         
         position: {
-            value: spawnCenter,
-            spread: spawnRadius
+            value: new THREE.Vector3(0,100,0),
+            spread: new THREE.Vector3(200,0,200)
         },
 /*
         // Beschleunigung (brauchen wir wohl net)
