@@ -81,12 +81,21 @@ scene.add(new THREE.AxisHelper(1000));
 var hemLight = new THREE.HemisphereLight(0xffffbb, 0x080820, 1);
 scene.add(hemLight);
 
+// TODO spawnRadius hart kodieren, da für Windänderung o.Ä. uninteressant?
 var numRaindrops = 10000;
 var spawnCenter = new THREE.Vector3(0,100,0);
 var spawnRadius = new THREE.Vector3(200,0,200);
 var rainParticleGroup = createRainEngine(numRaindrops, spawnCenter, spawnRadius);
 console.log('created rain engine, ' + numRaindrops + ' particles');
 scene.add(rainParticleGroup.mesh);
+
+// TODO fog oder ergänzen => sieht vllt alles besser aus?
+var numClouds = 50;
+var cloudSpawnCenter = new THREE.Vector3(0, 70, -50);
+var windDirection = new THREE.Vector3(0, 0, 30);
+var cloudParticleGroup = createCloudEngine(numClouds, cloudSpawnCenter, windDirection);
+console.log('created cloud engine, ' + numClouds + ' particles');
+scene.add(cloudParticleGroup.mesh);
 
 animate();
 
@@ -97,7 +106,8 @@ function animate() {
 }
 
 function render(deltaTime){
-    rainParticleGroup.tick(deltaTime);
+    //rainParticleGroup.tick(deltaTime);
+    cloudParticleGroup.tick(deltaTime);
     renderer.render(scene,camera);
 }
 
