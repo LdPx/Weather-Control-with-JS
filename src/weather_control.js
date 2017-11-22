@@ -91,6 +91,9 @@ var numClouds = 50;
 var cloudSpawnCenter = new THREE.Vector3(0, 70, -50);
 var windDirection = new THREE.Vector3(0, 0, 30);
 var cloudParticleGroup = createCloudEngine(numClouds, cloudSpawnCenter, windDirection);
+// Aktualisierung des 'velocity'-Attributes: z.B.
+// windDirection.z += 1;
+// cloudParticleGroup.emitters[0].velocity.value = windDirection;
 console.log('created cloud engine, ' + numClouds + ' particles');
 scene.add(cloudParticleGroup.mesh);
 
