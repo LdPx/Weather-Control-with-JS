@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Weather</title>
+  <script src='https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>
+  <script>
+    
+    var weather = {
+      // location
+      lon:-1,
+	  lat:-1,
+	  cityName:"",
+	  //id
+	  country:"",
+	  
+	  // general
+	  wId:-1,
+	  wMain:"",
+	  wDescription:"",
+	  sunriseUnix:-1,
+	  //sunriseDate
+	  sunsetUnix:-1,
+	  //sunsetDate
+	  TimeOfData:-1,
+	  
+	  // weather
+      temp:-99,
+	  pressure:-1,
+	  pressureSeaLevel:-1,
+	  pressureGroundLevel:-1,
+	  humidity:-1,
+	  windSpeed:-1,
+	  windDirectionDegree:-1,
+	  //windDirectionLetter
+      cloudPercent:-1,
+      rain3h:-1,
+      snow3h:-1
+    };
+
+    function gettingJSON(){
+      //document.write("jquery loaded");
+      $.getJSON('http://api.openweathermap.org/data/2.5/weather?lat=51.2&lon=6.47&units=metric&APPID=43a26c85c29d39f47dc194dda192eb3a',function(json){
+        document.write('current temperature: ' + JSON.stringify(json.main.temp) + 'C°');
+        //document.write(JSON.stringify(json));
+		
+        weather.lon = json.coord.lon;
+	    weather.lat = json.coord.lat;
+	    weather.cityName = json.name;
+	    weather.country = json.sys.country;
+		
+        weather.wId = json.weather.id;
+        weather.wMain = json.weather.main;
+        weather.wDescription = json.weather.description;
+        weather.sunriseUnix = json.sys.sunrise;
+        //weather.sunriseDate = json.
+        weather.sunsetUnix = json.sys.sunset;
+        //weather.sunsetDate = json.
+        weather.TimeOfData = json.dt;
+	    
+		weather.temp = json.main.temp;
+		weather.pressure = json.main.pressure;
+		weather.pressureSeaLevel = json.main.sea_level;
+		weather.pressureGroundLevel = json.main.grnd_level;
+		weather.humidity = json.main.humidity;
+		weather.windSpeed = json.wind.speed;
+		weather.windDirectionDegree = json.wind.deg;
+		//weather.windDirectionLetter = json.
+		weather.cloudPercent = json.clouds.all;
+        if(json.hasOwnProperty('rain')){
+		  weather.rain3h = json.rain["3h"];	// Who is making this stuff up!?
+        } else {
+		  weather.rain3h = 0;
+		}
+        if(json.hasOwnProperty('snow')){
+		  weather.snow3h = json.snow["3h"];
+        } else {
+		  weather.snow3h = 0;
+		}
+		
+		//document.write(weather);
+      });
+    }
+	
+	
+  </script>
+</head>
+
+<body>
+  <button id = 'getIt' onclick = 'gettingJSON()'>Get Weather-Data as JSON</button>
+</body>
+
+</html>
