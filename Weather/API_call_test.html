@@ -19,9 +19,9 @@
 			wMain:"",
 			wDescription:"",
 			sunriseUnix:-1,
-			sunriseDate: undefined,
+			sunriseDate: undefined,	//.getHours();	//.getMinutes();	//.getSeconds();
 			sunsetUnix:-1,
-			sunsetDate: undefined,
+			sunsetDate: undefined,	//.getHours();	//.getMinutes();	//.getSeconds();
 			TimeOfData:-1,
 			
 			// weather
@@ -54,7 +54,6 @@
 				weather.wDescription = json.weather.description;
 				weather.sunriseUnix = json.sys.sunrise;
 				weather.sunriseDate = new Date(weather.sunriseUnix*1000);
-				//.getHours();	//.getMinutes();	//.getSeconds();
 				weather.sunsetUnix = json.sys.sunset;
 				weather.sunsetDate = new Date(weather.sunsetUnix*1000);
 				weather.TimeOfData = json.dt;
