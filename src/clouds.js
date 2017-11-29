@@ -6,7 +6,8 @@ function createCloudEngine(numClouds, spawnCenter, velocity) {
         },
         // TODO prüfen ob nötig/sinnvoll
         blending: THREE.NormalBlending,
-        fog: true
+        fog: true,
+        transparent: true
     });
 
     var emitter = new SPE.Emitter({

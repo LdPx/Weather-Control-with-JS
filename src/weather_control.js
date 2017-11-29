@@ -54,7 +54,7 @@ for(var i = 0; i < numHouses; i++){
       
 // Licht: Farbe, Intensität
 var dirLight = new THREE.DirectionalLight(0xffffff, 1);
-dirLight.position.set(20, 40, 100);
+dirLight.position.set(20, 100, 100);
 
 dirLight.castShadow = true;            // default false
 
