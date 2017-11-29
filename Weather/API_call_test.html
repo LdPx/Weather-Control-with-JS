@@ -33,6 +33,14 @@
 			windSpeed:-1,
 			windDirectionDegree:-1,
 			//windDirectionLetter
+			thunder: false,
+			drizzle: false,
+			rain: false,
+			snow: false,
+			fog: false, // ???
+			// clouds ???
+			// hail ???
+			
 			cloudPercent:-1,
 			rain3h:-1,
 			snow3h:-1
@@ -77,7 +85,12 @@
 				} else {
 					weather.snow3h = 0;
 				}
-				
+				/* TODO - all codes
+				if(json.weather.hasOwnProperty('id')){
+					if (700 > json.weather.id >= 600
+						weather.snow = true
+				}
+				*/
 				document.write(weather.sunriseDate);
 				
 				//document.write(weather);
