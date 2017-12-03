@@ -1,0 +1,22 @@
+
+accuracy/resolution ?
+
+https://openweathermap.org/api
+https://openweathermap.org/current
+
+http://www.wetter.com/deutschland/moenchengladbach/hardterbroich/DE0006567035.html
+http://www.wetter.com/apps_und_mehr/website/api/
+
+https://developer.accuweather.com
+https://www.accuweather.com/en/de/monchengladbach/41065/current-weather/129881_pc
+
+https://www.meteoblue.com/de/wetter/vorhersage/aktuell/mönchengladbach_deutschland_2869894
+https://content.meteoblue.com/en/products/service-access/meteoblue-weather-api/non-commercial-use
+
+http://www.wetter-api.de
+http://www.wetter-api.de/wetter-ihr-api-key-35759.xml
+
+https://developer.yahoo.com/weather/
+https://www.phpgangsta.de/mit-wetterdaten-arbeiten-yahoo-weather-api
+
+https://www.wunderground.com/weather/api/d/pricing.html?MR=1
