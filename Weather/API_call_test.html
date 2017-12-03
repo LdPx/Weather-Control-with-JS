@@ -3,7 +3,7 @@
 
 <head>
 	<title>Weather</title>
-	<script src='https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>
+	<script src='https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js'></script>
 	<script>
 		
 		var weather = {
@@ -43,13 +43,29 @@
 			
 			cloudPercent:-1,
 			rain3h:-1,
-			snow3h:-1
+			snow3h:-1,
+			
+			toString : function() {
+				return 'Stadt: ' + this.cityName + '<br>' +
+					   'Beschreibung: ' + this.wDescription + ' (ID: ' + this.wId + ')' + '<br>' +
+					   'Temperatur: ' + this.temp + '<br>' +
+					   'Windgeschwindigkeit: ' + this.windSpeed + 'km/h, Richtung: ' + this.windDirectionDegree + '°<br>' +
+					   'Wolken: ' + this.cloudPercent + '%<br>' +
+					   'Niederschalg (letzte 3h): ' + this.rain3h + '<br>' +
+					   'Schnee (letzte 3h): ' + this.snow3h + '<br>' +
+					   'Luftfeuchtigkeit: ' + this.humidity;
+			}
 		};
-
+		
+		// TODO: make obj
+		//		 init obj
+		//		 rep. call?
+		//		 setter func/but
+		
 		function gettingJSON(){
 			//document.write("jquery loaded");
 			$.getJSON('http://api.openweathermap.org/data/2.5/weather?lat=51.2&lon=6.47&units=metric&APPID=43a26c85c29d39f47dc194dda192eb3a',function(json){
-				document.write('current temperature: ' + JSON.stringify(json.main.temp) + 'C°');
+				document.getElementById('JSONwrite').innerHTML += ('current temperature: ' + JSON.stringify(json.main.temp) + 'C°');
 				//document.write(JSON.stringify(json));
 				
 				weather.lon = json.coord.lon;
@@ -91,18 +107,25 @@
 						weather.snow = true
 				}
 				*/
-				document.write(weather.sunriseDate);
+				document.getElementById('JSONwrite').innerHTML += '<br>' + weather.sunriseDate + '<br>';
 				
 				//document.write(weather);
 			});
 		}
 		
+		function testVarFromJSON(){
+			document.getElementById('varTestWrite').innerHTML = weather.toString();
+		}
 		
 	</script>
 </head>
 
 <body>
 	<button id = 'getIt' onclick = 'gettingJSON()'>Get Weather-Data as JSON</button>
+	<div id='JSONwrite'>   </div>
+	<br><br>
+	<button id = 'varTest' onclick = 'testVarFromJSON()'>v Test</button>
+	<div id='varTestWrite'>   </div>
 </body>
 
 </html>
