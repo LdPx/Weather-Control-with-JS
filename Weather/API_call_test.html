@@ -58,9 +58,10 @@
 		};
 		
 		// TODO: make obj
-		//		 init obj
-		//		 rep. call?
-		//		 setter func/but
+		//		init obj
+		//		rep. call?
+		//		setter func/but
+		//		t/f checkboxes
 		
 		function gettingJSON(){
 			//document.write("jquery loaded");
@@ -117,15 +118,151 @@
 			document.getElementById('varTestWrite').innerHTML = weather.toString();
 		}
 		
+		function setWO(){
+			/*if (document.getElementById("wlon").value==null || document.getElementById("wlon").value=="" || isEmpty(document.getElementById("wlon").value)) {
+				weather.lon = document.getElementById("wlon").value;
+			}
+			if (document.getElementById("wlat").value==null || document.getElementById("wlat").value=="" || isEmpty(document.getElementById("wlat").value)) {
+				weather.lat = document.getElementById("wlat").value;
+			}
+			if (document.getElementById("wcit").value==null || document.getElementById("wcit").value=="" || isEmpty(document.getElementById("wcit").value)) {
+				weather.cityName = document.getElementById("wcit").value;
+			}
+			if (document.getElementById("wcou").value==null || document.getElementById("wcou").value=="" || isEmpty(document.getElementById("wcou").value)) {
+				weather.country = document.getElementById("wcou").value;
+			}
+			*/
+			
+			if (document.getElementById("wId").value==null || document.getElementById("wId").value=="" || isEmpty(document.getElementById("wId").value)) {} else {
+				weather.wId = document.getElementById("wId").value;
+			}
+			if (document.getElementById("wMain").value==null || document.getElementById("wMain").value=="" || isEmpty(document.getElementById("wMain").value)) {} else {
+				weather.wMain = document.getElementById("wMain").value;
+			}
+			if (document.getElementById("wDesc").value==null || document.getElementById("wDesc").value=="" || isEmpty(document.getElementById("wDesc").value)) {} else {
+				weather.wDescription = document.getElementById("wDesc").value;
+			}
+			/*if (document.getElementById("wSRU").value==null || document.getElementById("wSRU").value=="" || isEmpty(document.getElementById("wSRU").value)) {} else {
+				weather.sunriseUnix = document.getElementById("wSRU").value;
+			}
+			if (document.getElementById("wSRD").value==null || document.getElementById("wSRD").value=="" || isEmpty(document.getElementById("wSRD").value)) {} else {
+				weather.sunriseDate = document.getElementById("wSRD").value;
+			}
+			if (document.getElementById("wSSU").value==null || document.getElementById("wSSU").value=="" || isEmpty(document.getElementById("wSSU").value)) {} else {
+				weather.sunsetUnix = document.getElementById("wSSU").value;
+			}
+			if (document.getElementById("wSSD").value==null || document.getElementById("wSSD").value=="" || isEmpty(document.getElementById("wSSD").value)) {} else {
+				weather.sunsetDate = document.getElementById("wSSD").value;
+			}
+			if (document.getElementById("wTOD").value==null || document.getElementById("wTOD").value=="" || isEmpty(document.getElementById("wTOD").value)) {} else {
+				weather.TimeOfData = document.getElementById("wTOD").value;
+			}
+			*/
+			
+			if (document.getElementById("wTemp").value==null || document.getElementById("wTemp").value=="" || isEmpty(document.getElementById("wcou").value)) {
+				weather.temp = document.getElementById("wTemp").value;
+			}
+			if (document.getElementById("wPa").value==null || document.getElementById("wPa").value=="" || isEmpty(document.getElementById("wPa").value)) {
+				weather.pressure = document.getElementById("wPa").value;
+			}
+			/*if (document.getElementById("wPaSL").value==null || document.getElementById("wPaSL").value=="" || isEmpty(document.getElementById("wPaSL").value)) {
+				weather.pressureSeaLevel = document.getElementById("wPaSL").value;
+			}
+			if (document.getElementById("wPaGL").value==null || document.getElementById("wPaGL").value=="" || isEmpty(document.getElementById("wPaGL").value)) {
+				weather.pressureGroundLevel = document.getElementById("wPaGL").value;
+			}
+			*/
+			if (document.getElementById("wHum").value==null || document.getElementById("wHum").value=="" || isEmpty(document.getElementById("wHum").value)) {
+				weather.humidity = document.getElementById("wHum").value;
+			}
+			if (document.getElementById("wWS").value==null || document.getElementById("wWS").value=="" || isEmpty(document.getElementById("wWS").value)) {
+				weather.windSpeed = document.getElementById("wWS").value;
+			}
+			if (document.getElementById("wWDD").value==null || document.getElementById("wWDD").value=="" || isEmpty(document.getElementById("wWDD").value)) {
+				weather.windDirectionDegree = document.getElementById("wWDD").value;
+			}
+			if (document.getElementById("wthunder").value==null || document.getElementById("wthunder").value=="" || isEmpty(document.getElementById("wthunder").value)) {
+				weather.thunder = document.getElementById("wthunder").value;
+			}
+			if (document.getElementById("wdrizzle").value==null || document.getElementById("wdrizzle").value=="" || isEmpty(document.getElementById("wdrizzle").value)) {
+				weather.drizzle = document.getElementById("wdrizzle").value;
+			}
+			if (document.getElementById("wrain").value==null || document.getElementById("wrain").value=="" || isEmpty(document.getElementById("wrain").value)) {
+				weather.rain = document.getElementById("wrain").value;
+			}
+			if (document.getElementById("wsnow").value==null || document.getElementById("wsnow").value=="" || isEmpty(document.getElementById("wsnow").value)) {
+				weather.snow = document.getElementById("wsnow").value;
+			}
+			if (document.getElementById("wfog").value==null || document.getElementById("wfog").value=="" || isEmpty(document.getElementById("wfog").value)) {
+				weather.fog = document.getElementById("wfog").value;
+			}
+			
+			
+			if (document.getElementById("wCP").value==null || document.getElementById("wCP").value=="" || isEmpty(document.getElementById("wCP").value)) {
+				weather.cloudPercent = document.getElementById("wCP").value;
+			}
+			if (document.getElementById("wR3h").value==null || document.getElementById("wR3h").value=="" || isEmpty(document.getElementById("wR3h").value)) {
+				weather.rain3h = document.getElementById("wR3h").value;
+			}
+			if (document.getElementById("wS3h").value==null || document.getElementById("wS3h").value=="" || isEmpty(document.getElementById("wS3h").value)) {
+				weather.snow3h = document.getElementById("wS3h").value;
+			}
+		}
+		
+		function isEmpty(str){
+			return !str.replace(/^\s+/g, '').length; // true if empty
+		}
+		
 	</script>
 </head>
 
 <body>
-	<button id = 'getIt' onclick = 'gettingJSON()'>Get Weather-Data as JSON</button>
-	<div id='JSONwrite'>   </div>
+	<form id="setForm" action="/">
+		<!--longitude: <input type="text" id="wlon" name="wlon" value=""><br>
+		latitude: <input type="text" id="wlat" name="wlat" value=""><br>
+		cityName: <input type="text" id="wcit" name="wcit" value=""><br>
+		country: <input type="text" id="wcou" name="wcou" value=""><br>
+		-->
+		
+		weather ID: <input type="text" id="wId" name="wId" value=""><br>
+		Main: <input type="text" id="wMain" name="wMain" value=""><br>
+		Description: <input type="text" id="wDesc" name="wDesc" value=""><br>
+		<!--sunriseUnix: <input type="text" id="wSRU" name="wSRU" value=""><br>
+		sunriseDate: <input type="text" id="wSRD" name="wSRD" value=""><br>
+		sunsetUnix: <input type="text" id="wSSU" name="wSSU" value=""><br>
+		sunsetDate: <input type="text" id="wSSD" name="wSSD" value=""><br>
+		TimeOfData: <input type="text" id="wTOD" name="wTOD" value=""><br>
+		-->
+		
+		temperature: <input type="number" id="wTemp" name="wTemp" value=""><br>				<!--HTML5!?-->
+		pressure: <input type="number" id="wPa" name="wPa" value=""><br>
+		<!--pressureSeaLevel: <input type="number" id="wPaSL" name="wPaSL" value=""><br>
+		pressureGroundLevel: <input type="number" id="wPaGL" name="wPaGL" value=""><br>
+		-->
+		humidity: <input type="number" id="wHum" name="wHum" value=""><br>
+		windSpeed: <input type="number" id="wWS" name="wWS" value=""><br>
+		windDirectionDegree: <input type="number" id="wWDD" name="wWDD" value=""><br>
+		thunder: <input type="number" id="wthunder" name="wthunder" value=""><br>
+		drizzle: <input type="number" id="wdrizzle" name="wdrizzle" value=""><br>
+		rain: <input type="number" id="wrain" name="wrain" value=""><br>
+		snow: <input type="number" id="wsnow" name="wsnow" value=""><br>
+		fog: <input type="number" id="wfog" name="wfog" value=""><br>
+			
+		cloudPercent: <input type="number" id="wCP" name="wCP" value=""><br>
+		rain3h: <input type="number" id="wR3h" name="wR3h" value=""><br>
+		snow3h: <input type="number" id="wS3h" name="wS3h" value=""><br>
+	</form>
+	<button id = 'setWO' onclick = 'setWO()'>Set</button>
+	
 	<br><br>
+	
+	<button id = 'getIt' onclick = 'gettingJSON()'>Get Weather-Data as JSON</button>
+	<div id='JSONwrite'></div>
+	
+	<br><br>
+	
 	<button id = 'varTest' onclick = 'testVarFromJSON()'>v Test</button>
-	<div id='varTestWrite'>   </div>
+	<div id='varTestWrite'></div>
 </body>
 
 </html>
