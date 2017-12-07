@@ -1,12 +1,18 @@
 
-/*
-function spawnLightning(){
-    lightningModel = createLightning(new THREE.Vector3(0,10,0), new THREE.Vector3(0,-20,0), 3);
+var lightningData = null;
+
+function spawnLightning(y, spawnRange, numKinks, lineWidth){
+    var x = getRandomInt(-spawnRange, spawnRange);
+    var z = getRandomInt(-spawnRange, spawnRange);
+    var lightningStart = new THREE.Vector3(x,y,z);
+    var lightningDir = new THREE.Vector3(x,0,z).sub(lightningStart);
+    var lightningModel = createLightning(lightningStart, lightningDir, numKinks);
     extendLightningPaths(lightningModel);
-    lightningGraphics = renderLightning(lightningModel, 0.3);
-    lightningGraphics.meshes.forEach((mesh) => {scene.add(mesh);});
+    var lightningData = renderLightning(lightningModel, lineWidth);
+    lightningData.meshes.forEach((mesh) => {scene.add(mesh);});
+    return lightningData;
 }
-*/
+
 
 // globale Uhr (nötig für Animationen)
 var clock = new THREE.Clock();
@@ -103,7 +109,7 @@ scene.add(cloudParticleGroup.mesh);
 animate();
 
 function animate() {
-    requestAnimationFrame( animate );
+    requestAnimationFrame(animate);
     var deltaTime = clock.getDelta();
     render(deltaTime);
 }
@@ -111,6 +117,9 @@ function animate() {
 function render(deltaTime){
     //rainParticleGroup.tick(deltaTime);
     cloudParticleGroup.tick(deltaTime);
+    if(!lightningData){
+        lightningData = spawnLightning(70, houseSpawnRange, 3, 0.3);
+    }
     renderer.render(scene,camera);
 }
 

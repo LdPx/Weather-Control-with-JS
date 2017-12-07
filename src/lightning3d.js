@@ -94,7 +94,7 @@ function renderPath(path, lineWidth, materials){
             depthTest: false,
             transparent: true,
             useAlphaMap: 1,
-            alphaMap: new THREE.TextureLoader().load('./img/res2.png'),
+            alphaMap: new THREE.TextureLoader().load('./textures/lightning.png'),
             //repeat: new THREE.Vector2(1,1),
             //blending: THREE.AdditiveBlending,
             opacity: 1,
