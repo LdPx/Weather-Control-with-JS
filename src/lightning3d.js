@@ -62,13 +62,14 @@ function extendLightningPaths(branch, parentPath){
 
 // erzeugt für jeden Zweig ein 3js-Mesh
 // die meshes werden NICHT hierarchisch gespeichert
+// die materials je lineWidth werden ebenfalls als einfaches Array zurückgegeben
 function renderLightning(rootBranch, parentLineWidth){
     var materials = {};
     var meshes = [];
     renderLightningBranch(rootBranch, parentLineWidth, materials, meshes);
     return {
         meshes: meshes,
-        materials: materials
+        materials: Object.values(materials)
     };
 }   
 

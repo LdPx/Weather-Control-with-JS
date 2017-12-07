@@ -129,6 +129,7 @@ function lightningFadeOut(deltaTime){
     if(lightningData === null){
         lightningData = spawnLightning(lightningConfig);
         lightningTimeElapsed = 0;
+        console.log("spawned lightning");
     }
     else if(lightningTimeElapsed >= lightningConfig.fadeOutDelay){
         lightningData = lightningTimeElapsed = null;
@@ -137,14 +138,12 @@ function lightningFadeOut(deltaTime){
         lightningTimeElapsed += deltaTime;
         var opacityDiff = deltaTime/lightningConfig.fadeOutDelay;
         var materials = lightningData.materials;
-        for(lineWidth in materials){
-            materials[lineWidth].uniforms.opacity.value -= opacityDiff;
-        }
+        materials.forEach((material) => { material.uniforms.opacity.value -= opacityDiff; });           
     }
 }
 
 function render(deltaTime){
-    rainParticleGroup.tick(deltaTime);
+    //rainParticleGroup.tick(deltaTime);
     cloudParticleGroup.tick(deltaTime);
     lightningFadeOut(deltaTime);
     renderer.render(scene,camera);
