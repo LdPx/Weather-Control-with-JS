@@ -14,6 +14,14 @@ function spawnLightning(conf){
     return lightningData;
 }
 
+function removeLightning(lightningData){
+    lightningData.meshes.forEach(function(mesh){
+        scene.remove(mesh);
+        mesh.geometry.dispose();
+    });
+    lightningData.materials.forEach((material) => { material.dispose(); });
+}
+
 
 // globale Uhr (nötig für Animationen)
 var clock = new THREE.Clock();
@@ -129,9 +137,9 @@ function lightningFadeOut(deltaTime){
     if(lightningData === null){
         lightningData = spawnLightning(lightningConfig);
         lightningTimeElapsed = 0;
-        console.log("spawned lightning");
     }
     else if(lightningTimeElapsed >= lightningConfig.fadeOutDelay){
+        removeLightning(lightningData);
         lightningData = lightningTimeElapsed = null;
     }
     else {
