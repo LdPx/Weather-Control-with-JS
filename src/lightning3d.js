@@ -104,29 +104,6 @@ function renderPath(path, lineWidth, materials){
     return new THREE.Mesh(line.geometry, materials[lineWidth]); 
 }
 
-
-THREE.Vector3.prototype.setLength = function(len){
-    var oldlen = this.length();
-    return this.multiplyScalar(len/oldlen);
-}
-
-
-const CONST = {
-    zerovec: new THREE.Vector3(0,0,0),
-    e1: new THREE.Vector3(1,0,0),
-    e2: new THREE.Vector3(0,1,0),
-    e3: new THREE.Vector3(0,0,1),
-};
-
-function newArray(length) {
-    return [...new Array(length)];
-}
-
-// liefert Zufallszahl zwischen [-abs,abs[
-function randomOfAbs(abs){
-    return Math.random()*2*abs-abs;
-}
-
 // rotiert vec um die Achse axis um den Winkel angle
 function rotateVectorAroundAxis(vec, axis, angle){
     var u = axis.clone().normalize();
@@ -158,3 +135,4 @@ function randomLengthPerpendicularVector(vec, randomRange){
     var res = rotateVectorAroundAxis(perpVec, vec, angle);
     return res.setLength(randomLength);
 }
+

@@ -1,9 +1,4 @@
 
-// liefert gleichverteilte Ganzzahl zwischen min (inkl.) und max (exkl.)
-function getRandomInt(min, max) {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-}
-
 // globale Uhr (nötig für Animationen)
 var clock = new THREE.Clock();
 
@@ -20,6 +15,7 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
 // Boden
+// TODO "Stadtmodell"-Erzeugung nach house.js schieben, nur Meshes zurückgeben
 var groundSize = 200;
 var geometry = new THREE.PlaneGeometry(groundSize,groundSize);
 var material = new THREE.MeshStandardMaterial({color: 0x10e52c, side: THREE.DoubleSide});
