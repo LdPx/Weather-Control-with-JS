@@ -1,4 +1,13 @@
 
+/*
+function spawnLightning(){
+    lightningModel = createLightning(new THREE.Vector3(0,10,0), new THREE.Vector3(0,-20,0), 3);
+    extendLightningPaths(lightningModel);
+    lightningGraphics = renderLightning(lightningModel, 0.3);
+    lightningGraphics.meshes.forEach((mesh) => {scene.add(mesh);});
+}
+*/
+
 // globale Uhr (nötig für Animationen)
 var clock = new THREE.Clock();
 
@@ -25,17 +34,15 @@ plane.receiveShadow = true;
 scene.add(plane);
 
 var numHouses = 50;
-var range = groundSize/2;
+var houseSpawnRange = groundSize/4;
 var houseSize = 10, roofHeight = 5;
 for(var i = 0; i < numHouses; i++){
-
-    // Hausposition
-    var x = getRandomInt(0,range)-range/2;
-    var z = getRandomInt(0,range)-range/2;
-
+    
     // Haus gleicher Länge, Breite, Höhe
     var houseMaterial = new THREE.MeshPhongMaterial({ambient: 0x050505, color: 0x724b33, specular: 0x555555, shininess: 30});
     var house = createHouseBody(houseSize, houseMaterial);
+    var x = getRandomInt(-houseSpawnRange, houseSpawnRange);
+    var z = getRandomInt(-houseSpawnRange, houseSpawnRange);
     house.position.set(x, houseSize/2, z);
     house.castShadow = house.receiveShadow = true;
     scene.add(house);
