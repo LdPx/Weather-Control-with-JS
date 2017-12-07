@@ -34,7 +34,8 @@
 			windSpeedPercent:0,	// 100% = 80km/h
 			windSpeedPercentFactor:0,	// 1 = 100%
 			windDirectionDegree:-1,
-			//windDirectionLetter
+			windDirectionLetter:'X',
+			windDirection2D: [0,0], // ???
 			thunder: false,
 			drizzle: false,
 			rain: false,
@@ -52,7 +53,7 @@
 				return 'Stadt: ' + this.cityName + '<br>' +
 					   'Beschreibung: ' + this.wDescription + ' (ID: ' + this.wId + ')' + '<br>' +
 					   'Temperatur: ' + this.temp + '<br>' +
-					   'Windgeschwindigkeit: ' + this.windSpeed + 'km/h, Richtung: ' + this.windDirectionDegree + '°, ' + this.windDirectionLetter + '<br>' +
+					   'Windgeschwindigkeit: ' + this.windSpeed + 'km/h, Richtung: ' + this.windDirectionDegree + '°, ' + this.windDirectionLetter + ', 2D: ' + this.windDirection2D + '<br>' +
 					   'Windgeschwindigkeit: ' + this.windSpeedPercent + '%, Faktor: ' + this.windSpeedPercentFactor + '<br>' +
 					   'Wolken: ' + this.cloudPercent + '%<br>' +
 					   'WolkenFaktor: ' + this.cloudPercentFactor + '<br>' +
@@ -95,10 +96,10 @@
 				weather.humidity = json.main.humidity;
 				weather.windSpeed = json.wind.speed;
 				weather.windSpeedPercent = weather.windSpeed/0.8;
-//				weather.windSpeedPercentFactor = weather.windSpeed/80;
-				weather.windSpeedPercentFactor = weather.windSpeedPercent/100;	// Broken accuracy fix :D
+				weather.windSpeedPercentFactor = weather.windSpeed/80;
 				weather.windDirectionDegree = json.wind.deg;
 				weather.windDirectionLetter = getWindDirectionLetter16(weather.windDirectionDegree);
+				weather.windDirection2D = getWindDirection2D(weather.windDirectionDegree);
 				weather.cloudPercent = json.clouds.all;
 				weather.cloudPercentFactor = weather.cloudPercent/100;
 				if(json.hasOwnProperty('rain')){
@@ -128,6 +129,24 @@
 			stepSize = 360/letters.length;
 			pos = Math.floor((degree + (stepSize/2)) / stepSize);
 			return letters[pos % letters.length];
+		}
+		
+		function getWindDirectionLetter8(degree = 0) {
+			letters = ["N", "NO", "O" , "SE", "S", "SW", "W", "NW"];
+			stepSize = 360/letters.length;
+			pos = Math.floor((degree + (stepSize/2)) / stepSize);
+			return letters[pos % letters.length];
+		}
+		
+		Math.radians = function(degrees) {
+			return ((degrees * Math.PI / 180) - Math.PI);
+		};
+		
+		function getWindDirection2D(degree = 0) {
+			rads = Math.radians(degree);
+			vec2D = [Math.cos(rads), Math.sin(rads)];			
+			return vec2D;
+			//return [Math.cos(Math.radians(degree)), Math.sin(Math.radians(degree))]
 		}
 		
 		function testVarFromJSON(){
