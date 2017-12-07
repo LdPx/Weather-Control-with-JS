@@ -39,7 +39,8 @@ function createCloudEngine(numClouds, spawnCenter, velocity) {
         // Farbe, Varianz
         color: {
             value: new THREE.Color(0xffffff),
-            spread: new THREE.Color(0x808080)
+            spread: new THREE.Color(0x404040),
+            randomise: true
         },
         // leichte Drehung der Textur verlaufsweise
         angle: {

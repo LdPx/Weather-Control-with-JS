@@ -1,6 +1,6 @@
 
 var guiData = {
-    goodWeather: 1
+    raininess: 0
 };
 
 // globale Uhr (nötig für Animationen)
@@ -111,7 +111,7 @@ var lightningData = null;
 
 // GUI
 var gui = new dat.GUI();
-gui.add(guiData, "goodWeather", 0, 1, 0.0001).onChange(guiChanged);
+gui.add(guiData, "raininess", 0, 1, 0.0001).onChange(guiChanged);
 // alternativ: onFinishChange -> Callback erst bei Fokusverlust aufgerufen
 guiChanged();
 
@@ -127,8 +127,8 @@ animate();
 // TODO in mehrere Callbacks aufsplitten (Performance) ?
 function guiChanged(){
     console.log('gui changed', guiData);
-    var color = linearMap(0, 1, cloudConfig.worstWeatherColor, cloudConfig.bestWeatherColor, guiData.goodWeather);
-    var newCloudColor = new THREE.Color(color,color,color);
+    var newCloudColorValue = linearMap(0, 1, cloudConfig.bestWeatherColor, cloudConfig.worstWeatherColor, guiData.raininess);
+    var newCloudColor = new THREE.Color().setScalar(newCloudColorValue);
     cloudParticleGroup.emitters[0].color.value = newCloudColor;
     //var minClouds = 50, maxClouds = 200;
 }
@@ -155,7 +155,7 @@ function removeLightning(lightningData){
 
 function lightningFadeOut(deltaTime){
     if(lightningData === null){
-        if(Math.random() <= lightningConfig.maxSpawnRate * guiData.badWeather){
+        if(Math.random() <= lightningConfig.maxSpawnRate * guiData.raininess){
             lightningData = {
                 data: spawnLightning(lightningConfig),
                 timeElapsed: 0
