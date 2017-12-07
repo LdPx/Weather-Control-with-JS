@@ -1,14 +1,15 @@
 
 var lightningData = null;
 
-function spawnLightning(y, spawnRange, numKinks, lineWidth){
-    var x = getRandomInt(-spawnRange, spawnRange);
-    var z = getRandomInt(-spawnRange, spawnRange);
-    var lightningStart = new THREE.Vector3(x,y,z);
+
+function spawnLightning(conf){
+    var x = getRandomInt(-conf.spawnRange, conf.spawnRange);
+    var z = getRandomInt(-conf.spawnRange, conf.spawnRange);
+    var lightningStart = new THREE.Vector3(x,conf.spawnY,z);
     var lightningDir = new THREE.Vector3(x,0,z).sub(lightningStart);
-    var lightningModel = createLightning(lightningStart, lightningDir, numKinks);
+    var lightningModel = createLightning(lightningStart, lightningDir, conf.numKinks);
     extendLightningPaths(lightningModel);
-    var lightningData = renderLightning(lightningModel, lineWidth);
+    var lightningData = renderLightning(lightningModel, conf.lineWidth);
     lightningData.meshes.forEach((mesh) => {scene.add(mesh);});
     return lightningData;
 }
@@ -106,6 +107,13 @@ var cloudParticleGroup = createCloudEngine(numClouds, cloudSpawnCenter, windDire
 console.log('created cloud engine, ' + numClouds + ' particles');
 scene.add(cloudParticleGroup.mesh);
 
+var lightningConfig = {
+    spawnY: cloudSpawnCenter.y,
+    spawnRange: houseSpawnRange,
+    numKinks: 3,
+    lineWidth: 0.3
+};
+
 animate();
 
 function animate() {
@@ -118,7 +126,7 @@ function render(deltaTime){
     //rainParticleGroup.tick(deltaTime);
     cloudParticleGroup.tick(deltaTime);
     if(!lightningData){
-        lightningData = spawnLightning(70, houseSpawnRange, 3, 0.3);
+        lightningData = spawnLightning(lightningConfig);
     }
     renderer.render(scene,camera);
 }
