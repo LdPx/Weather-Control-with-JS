@@ -31,6 +31,8 @@
 			pressureGroundLevel:-1,
 			humidity:-1,
 			windSpeed:-1,
+			windSpeedPercent:0,	// 100% = 80km/h
+			windSpeedPercentFactor:0,	// 1 = 100%
 			windDirectionDegree:-1,
 			//windDirectionLetter
 			thunder: false,
@@ -42,6 +44,7 @@
 			// hail ???
 			
 			cloudPercent:-1,
+			cloudPercentFactor:0,	// 1 = 100%
 			rain3h:-1,
 			snow3h:-1,
 			
@@ -49,8 +52,10 @@
 				return 'Stadt: ' + this.cityName + '<br>' +
 					   'Beschreibung: ' + this.wDescription + ' (ID: ' + this.wId + ')' + '<br>' +
 					   'Temperatur: ' + this.temp + '<br>' +
-					   'Windgeschwindigkeit: ' + this.windSpeed + 'km/h, Richtung: ' + this.windDirectionDegree + '°<br>' +
+					   'Windgeschwindigkeit: ' + this.windSpeed + 'km/h, Richtung: ' + this.windDirectionDegree + '°, ' + this.windDirectionLetter + '<br>' +
+					   'Windgeschwindigkeit: ' + this.windSpeedPercent + '%, Faktor: ' + this.windSpeedPercentFactor + '<br>' +
 					   'Wolken: ' + this.cloudPercent + '%<br>' +
+					   'WolkenFaktor: ' + this.cloudPercentFactor + '<br>' +
 					   'Niederschalg (letzte 3h): ' + this.rain3h + '<br>' +
 					   'Schnee (letzte 3h): ' + this.snow3h + '<br>' +
 					   'Luftfeuchtigkeit: ' + this.humidity;
@@ -89,9 +94,13 @@
 				weather.pressureGroundLevel = json.main.grnd_level;
 				weather.humidity = json.main.humidity;
 				weather.windSpeed = json.wind.speed;
+				weather.windSpeedPercent = weather.windSpeed/0.8;
+//				weather.windSpeedPercentFactor = weather.windSpeed/80;
+				weather.windSpeedPercentFactor = weather.windSpeedPercent/100;	// Broken accuracy fix :D
 				weather.windDirectionDegree = json.wind.deg;
-				//weather.windDirectionLetter = json.
+				weather.windDirectionLetter = getWindDirectionLetter16(weather.windDirectionDegree);
 				weather.cloudPercent = json.clouds.all;
+				weather.cloudPercentFactor = weather.cloudPercent/100;
 				if(json.hasOwnProperty('rain')){
 					weather.rain3h = json.rain["3h"];	// Who is making this stuff up!?
 				} else {
@@ -112,6 +121,13 @@
 				
 				//document.write(weather);
 			});
+		}
+		
+		function getWindDirectionLetter16(degree = 0) {
+			letters = ["N", "NNO", "NO", "ONO", "O", "OSO", "SE", "SSO", "S", "SSW", "SW", "WSW", "W", "WNW", "NW", "NNW"];
+			stepSize = 360/letters.length;
+			pos = Math.floor((degree + (stepSize/2)) / stepSize);
+			return letters[pos % letters.length];
 		}
 		
 		function testVarFromJSON(){
