@@ -132,12 +132,6 @@ window.addEventListener('resize', function(){
 
 animate();
 
-function animate() {
-    requestAnimationFrame(animate);
-    var deltaTime = clock.getDelta();
-    render(deltaTime);
-}
-
 
 function lightningFadeOut(deltaTime){
     if(lightningData === null){
@@ -157,6 +151,12 @@ function lightningFadeOut(deltaTime){
             lightningData = null;
         }
     }
+}
+
+function animate() {
+    requestAnimationFrame(animate);
+    var deltaTime = clock.getDelta();
+    render(deltaTime);
 }
 
 function render(deltaTime){
