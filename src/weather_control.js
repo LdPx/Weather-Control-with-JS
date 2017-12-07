@@ -119,10 +119,16 @@ var lightningConfig = {
     lineWidth: 0.3,
     fadeOutDelay: 3,  // sec
     alphaMap: new THREE.TextureLoader().load('./textures/lightning.png'),
-    spawnRate:  0.001    // Spawnchance je Frame; könnte man auch von deltaTime abhänigig machen
+    spawnRate:  0.005    // Spawnchance je Frame, wenn kein Blitz aktuell vorhanden; könnte man auch von deltaTime abhänigig machen
 };
 
 var lightningData = null;
+
+window.addEventListener('resize', function(){
+    camera.aspect = window.innerWidth/window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+}, false);
 
 animate();
 
@@ -159,6 +165,7 @@ function render(deltaTime){
     lightningFadeOut(deltaTime);
     renderer.render(scene,camera);
 }
+
 
 
 
