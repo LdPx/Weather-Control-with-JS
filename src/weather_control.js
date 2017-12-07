@@ -1,24 +1,7 @@
 
-function spawnLightning(conf){
-    var x = getRandomInt(-conf.spawnRange, conf.spawnRange);
-    var z = getRandomInt(-conf.spawnRange, conf.spawnRange);
-    var lightningStart = new THREE.Vector3(x,conf.spawnY,z);
-    var lightningDir = new THREE.Vector3(x,0,z).sub(lightningStart);
-    var lightningModel = createLightning(lightningStart, lightningDir, conf.numKinks);
-    extendLightningPaths(lightningModel);
-    var lightningData = renderLightning(lightningModel, conf.lineWidth, conf.alphaMap);
-    lightningData.meshes.forEach((mesh) => {scene.add(mesh);});
-    return lightningData;
-}
-
-function removeLightning(lightningData){
-    lightningData.meshes.forEach(function(mesh){
-        scene.remove(mesh);
-        mesh.geometry.dispose();
-    });
-    lightningData.materials.forEach((material) => { material.dispose(); });
-}
-
+var guiData = {
+    badWeather: 0
+};
 
 // globale Uhr (nötig für Animationen)
 var clock = new THREE.Clock();
@@ -34,6 +17,11 @@ var renderer = new THREE.WebGLRenderer();
 renderer.shadowMap.enabled = true;
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
+
+// GUI
+var gui = new dat.GUI();
+gui.add(guiData, "badWeather", 0, 1, 0.0001).onFinishChange(guiChanged);
+// alternativ: onChange -> Callback direkt aufgerufen, nicht erst bei Fokusverlust
 
 // Boden
 // TODO "Stadtmodell"-Erzeugung nach house.js schieben, nur Meshes zurückgeben
@@ -124,6 +112,29 @@ window.addEventListener('resize', function(){
 
 animate();
 
+function guiChanged(x){
+    console.log(x, guiData);
+}
+
+function spawnLightning(conf){
+    var x = getRandomInt(-conf.spawnRange, conf.spawnRange);
+    var z = getRandomInt(-conf.spawnRange, conf.spawnRange);
+    var lightningStart = new THREE.Vector3(x,conf.spawnY,z);
+    var lightningDir = new THREE.Vector3(x,0,z).sub(lightningStart);
+    var lightningModel = createLightning(lightningStart, lightningDir, conf.numKinks);
+    extendLightningPaths(lightningModel);
+    var lightningData = renderLightning(lightningModel, conf.lineWidth, conf.alphaMap);
+    lightningData.meshes.forEach((mesh) => {scene.add(mesh);});
+    return lightningData;
+}
+
+function removeLightning(lightningData){
+    lightningData.meshes.forEach(function(mesh){
+        scene.remove(mesh);
+        mesh.geometry.dispose();
+    });
+    lightningData.materials.forEach((material) => { material.dispose(); });
+}
 
 function lightningFadeOut(deltaTime){
     if(lightningData === null){
