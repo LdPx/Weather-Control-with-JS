@@ -47,24 +47,16 @@ scene.add(plane);
 
 var numHouses = 50;
 var houseSpawnRange = groundSize/4;
-var houseSize = 10, roofHeight = 5;
+var houseSize = 10;
+var bodyMaterial = new THREE.MeshPhongMaterial({ambient: 0x050505, color: 0x724b33, specular: 0x555555, shininess: 30});
+var roofMaterial = new THREE.MeshPhongMaterial({ambient: 0x050505, color: 0xc62411, specular: 0x555555, shininess: 30});
 for(var i = 0; i < numHouses; i++){
-    
-    // Haus gleicher Länge, Breite, Höhe
-    var houseMaterial = new THREE.MeshPhongMaterial({ambient: 0x050505, color: 0x724b33, specular: 0x555555, shininess: 30});
-    var house = createHouseBody(houseSize, houseMaterial);
     var x = getRandomInt(-houseSpawnRange, houseSpawnRange);
     var z = getRandomInt(-houseSpawnRange, houseSpawnRange);
-    house.position.set(x, houseSize/2, z);
-    house.castShadow = house.receiveShadow = true;
-    scene.add(house);
-
-    // erzeuge Hausdach
-    var roofMaterial = new THREE.MeshPhongMaterial({ambient: 0x050505, color: 0xc62411, specular: 0x555555, shininess: 30});
-    var roof = createRoof(houseSize, roofHeight, roofMaterial);
-    roof.position.set(x, houseSize+roofHeight/2, z);
-    roof.castShadow = roof.receiveShadow = true;
-    scene.add(roof);   
+    var pos = new THREE.Vector3(x, houseSize/2, z);
+    var house = createHouse(pos, houseSize, bodyMaterial, roofMaterial);
+    scene.add(house.body);
+    scene.add(house.roof);
 }
       
 // Licht: Farbe, Intensität
