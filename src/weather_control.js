@@ -79,8 +79,12 @@ var rainParticleGroup = createRainEngine(numRaindrops);
 console.log('created rain engine, ' + numRaindrops + ' particles');
 scene.add(rainParticleGroup.mesh);
 
-// TODO cloud-config-Objekt ergänzen
 // TODO fog oder ergänzen => sieht vllt alles besser aus?
+// TODO cloud-config-Objekt ergänzen
+var cloudConfig = {
+    worstWeatherColor: 0.5,
+    bestWeatherColor: 1
+};
 var numClouds = 50;
 var cloudSpawnCenter = new THREE.Vector3(0, 70, -50);
 var windDirection = new THREE.Vector3(0, 0, 30);
@@ -123,9 +127,7 @@ animate();
 // TODO in mehrere Callbacks aufsplitten (Performance) ?
 function guiChanged(){
     console.log('gui changed', guiData);
-    var worstColor = 0.5, bestColor = 1;
-    //var color = (bestColor-worstColor)*guiData.goodWeather+worstColor;
-    var color = linearMap(0, 1, worstColor, bestColor, guiData.goodWeather);
+    var color = linearMap(0, 1, cloudConfig.worstWeatherColor, cloudConfig.bestWeatherColor, guiData.goodWeather);
     var newCloudColor = new THREE.Color(color,color,color);
     cloudParticleGroup.emitters[0].color.value = newCloudColor;
     //var minClouds = 50, maxClouds = 200;
