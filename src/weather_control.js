@@ -1,6 +1,6 @@
 
 var guiData = {
-    badWeather: 0
+    goodWeather: 1
 };
 
 // globale Uhr (nötig für Animationen)
@@ -17,11 +17,6 @@ var renderer = new THREE.WebGLRenderer();
 renderer.shadowMap.enabled = true;
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
-
-// GUI
-var gui = new dat.GUI();
-gui.add(guiData, "badWeather", 0, 1, 0.0001).onFinishChange(guiChanged);
-// alternativ: onChange -> Callback direkt aufgerufen, nicht erst bei Fokusverlust
 
 // Boden
 // TODO "Stadtmodell"-Erzeugung nach house.js schieben, nur Meshes zurückgeben
@@ -73,14 +68,18 @@ scene.add(new THREE.CameraHelper(dirLight.shadow.camera));
 scene.add(new THREE.AxisHelper(1000));
 
 // TODO bringt's das?
-var hemLight = new THREE.HemisphereLight(0xffffbb, 0x080820, 1);
-scene.add(hemLight);
+//var hemLight = new THREE.HemisphereLight(0xffffbb, 0x080820, 1);
+//scene.add(hemLight);
+
+var light = new THREE.AmbientLight(0x404040, 2); // soft white light
+scene.add(light);
 
 var numRaindrops = 10000;
 var rainParticleGroup = createRainEngine(numRaindrops);
 console.log('created rain engine, ' + numRaindrops + ' particles');
 scene.add(rainParticleGroup.mesh);
 
+// TODO cloud-config-Objekt ergänzen
 // TODO fog oder ergänzen => sieht vllt alles besser aus?
 var numClouds = 50;
 var cloudSpawnCenter = new THREE.Vector3(0, 70, -50);
@@ -99,10 +98,18 @@ var lightningConfig = {
     lineWidth: 0.3,
     fadeOutDelay: 3,  // sec
     alphaMap: new THREE.TextureLoader().load('./textures/lightning.png'),
-    spawnRate:  0.005    // Spawnchance je Frame, wenn kein Blitz aktuell vorhanden; könnte man auch von deltaTime abhänigig machen
+    // max. Spawnchance je Frame, wenn kein Blitz aktuell vorhanden; könnte man auch von deltaTime abhg machen
+    // ist 0 bei maximal gutem Wetter und maxSpawnRate bei max. schlechtem Wetter
+    maxSpawnRate:  0.1    
 };
 
 var lightningData = null;
+
+// GUI
+var gui = new dat.GUI();
+gui.add(guiData, "goodWeather", 0, 1, 0.0001).onChange(guiChanged);
+// alternativ: onFinishChange -> Callback erst bei Fokusverlust aufgerufen
+guiChanged();
 
 window.addEventListener('resize', function(){
     camera.aspect = window.innerWidth/window.innerHeight;
@@ -112,8 +119,13 @@ window.addEventListener('resize', function(){
 
 animate();
 
-function guiChanged(x){
-    console.log(x, guiData);
+function guiChanged(){
+    console.log('gui changed', guiData);
+    var worstColor = 0.5, bestColor = 1;
+    var color = (bestColor-worstColor)*guiData.goodWeather+worstColor;
+    console.log(color);
+    var newCloudColor = new THREE.Color(color,color,color);
+    cloudParticleGroup.emitters[0].color.value = newCloudColor;
 }
 
 function spawnLightning(conf){
@@ -138,7 +150,7 @@ function removeLightning(lightningData){
 
 function lightningFadeOut(deltaTime){
     if(lightningData === null){
-        if(Math.random() <= lightningConfig.spawnRate){
+        if(Math.random() <= lightningConfig.maxSpawnRate * guiData.badWeather){
             lightningData = {
                 data: spawnLightning(lightningConfig),
                 timeElapsed: 0

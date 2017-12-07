@@ -38,8 +38,8 @@ function createCloudEngine(numClouds, spawnCenter, velocity) {
         },
         // Farbe, Varianz
         color: {
-            //value: new THREE.Color(1,1,1),
-            //spread: new THREE.Color(0.1, 0.1, 0.1)
+            value: new THREE.Color(0xffffff),
+            spread: new THREE.Color(25,25,25)
         },
         // leichte Drehung der Textur verlaufsweise
         angle: {
