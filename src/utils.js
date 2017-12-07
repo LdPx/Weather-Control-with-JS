@@ -25,6 +25,12 @@ function getRandomInt(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
+// bildet x von Wertebereich [smin,xmax] auf [dmin,dmax] ab
+function linearMap(smin, smax, dmin, dmax, x){
+    var m = (dmax-dmin)/(smax-smin);
+    var n = dmin-m*smin;
+    return m*x+n;
+}
 
 
 

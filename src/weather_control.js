@@ -119,13 +119,16 @@ window.addEventListener('resize', function(){
 
 animate();
 
+
+// TODO in mehrere Callbacks aufsplitten (Performance) ?
 function guiChanged(){
     console.log('gui changed', guiData);
     var worstColor = 0.5, bestColor = 1;
-    var color = (bestColor-worstColor)*guiData.goodWeather+worstColor;
-    console.log(color);
+    //var color = (bestColor-worstColor)*guiData.goodWeather+worstColor;
+    var color = linearMap(0, 1, worstColor, bestColor, guiData.goodWeather);
     var newCloudColor = new THREE.Color(color,color,color);
     cloudParticleGroup.emitters[0].color.value = newCloudColor;
+    //var minClouds = 50, maxClouds = 200;
 }
 
 function spawnLightning(conf){
