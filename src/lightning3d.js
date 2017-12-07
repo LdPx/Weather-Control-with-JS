@@ -63,10 +63,10 @@ function extendLightningPaths(branch, parentPath){
 // erzeugt für jeden Zweig ein 3js-Mesh
 // die meshes werden NICHT hierarchisch gespeichert
 // die materials je lineWidth werden ebenfalls als einfaches Array zurückgegeben
-function renderLightning(rootBranch, parentLineWidth){
+function renderLightning(rootBranch, parentLineWidth, alphaMap){
     var materials = {};
     var meshes = [];
-    renderLightningBranch(rootBranch, parentLineWidth, materials, meshes);
+    renderLightningBranch(rootBranch, parentLineWidth, materials, meshes, alphaMap);
     return {
         meshes: meshes,
         materials: Object.values(materials)
@@ -74,14 +74,14 @@ function renderLightning(rootBranch, parentLineWidth){
 }   
 
 
-function renderLightningBranch(branch, lineWidth, materials, meshes){
-    var mesh = renderPath(branch.path, lineWidth, materials);
+function renderLightningBranch(branch, lineWidth, materials, meshes, alphaMap){
+    var mesh = renderPath(branch.path, lineWidth, materials, alphaMap);
     meshes.push(mesh);
-    branch.childs.forEach((child) => {renderLightningBranch(child, lineWidth/2, materials, meshes);});
+    branch.childs.forEach((child) => {renderLightningBranch(child, lineWidth/2, materials, meshes, alphaMap);});
 }
 
 // erzeugt je Path 1 Mesh mit 1 Geometrie; das Material wird je gleicher lineWidth wiederverwendet
-function renderPath(path, lineWidth, materials){
+function renderPath(path, lineWidth, materials, alphaMap){
     var geometry = new THREE.Geometry();
     geometry.vertices = path;
     var line = new MeshLine();
@@ -95,7 +95,7 @@ function renderPath(path, lineWidth, materials){
             depthTest: false,
             transparent: true,
             useAlphaMap: 1,
-            alphaMap: new THREE.TextureLoader().load('./textures/lightning.png'),
+            alphaMap: alphaMap,
             //repeat: new THREE.Vector2(1,1),
             //blending: THREE.AdditiveBlending,
             opacity: 1,

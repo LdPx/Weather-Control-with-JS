@@ -9,11 +9,10 @@ function spawnLightning(conf){
     var lightningDir = new THREE.Vector3(x,0,z).sub(lightningStart);
     var lightningModel = createLightning(lightningStart, lightningDir, conf.numKinks);
     extendLightningPaths(lightningModel);
-    var lightningData = renderLightning(lightningModel, conf.lineWidth);
+    var lightningData = renderLightning(lightningModel, conf.lineWidth, conf.alphaMap);
     lightningData.meshes.forEach((mesh) => {scene.add(mesh);});
     return lightningData;
 }
-
 
 
 // globale Uhr (nötig für Animationen)
@@ -113,7 +112,8 @@ var lightningConfig = {
     spawnRange: houseSpawnRange,
     numKinks: 3,
     lineWidth: 0.3,
-    fadeOutDelay: 3  // sec
+    fadeOutDelay: 3,  // sec
+    alphaMap: new THREE.TextureLoader().load('./textures/lightning.png')
 };
 
 animate();
