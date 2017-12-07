@@ -1,6 +1,6 @@
 
+var lightningTimeElapsed = null;
 var lightningData = null;
-
 
 function spawnLightning(conf){
     var x = getRandomInt(-conf.spawnRange, conf.spawnRange);
@@ -13,6 +13,7 @@ function spawnLightning(conf){
     lightningData.meshes.forEach((mesh) => {scene.add(mesh);});
     return lightningData;
 }
+
 
 
 // globale Uhr (nötig für Animationen)
@@ -111,7 +112,8 @@ var lightningConfig = {
     spawnY: cloudSpawnCenter.y,
     spawnRange: houseSpawnRange,
     numKinks: 3,
-    lineWidth: 0.3
+    lineWidth: 0.3,
+    fadeOutDelay: 3  // sec
 };
 
 animate();
@@ -122,12 +124,29 @@ function animate() {
     render(deltaTime);
 }
 
-function render(deltaTime){
-    //rainParticleGroup.tick(deltaTime);
-    cloudParticleGroup.tick(deltaTime);
-    if(!lightningData){
+
+function lightningFadeOut(deltaTime){
+    if(lightningData === null){
         lightningData = spawnLightning(lightningConfig);
+        lightningTimeElapsed = 0;
     }
+    else if(lightningTimeElapsed >= lightningConfig.fadeOutDelay){
+        lightningData = lightningTimeElapsed = null;
+    }
+    else {
+        lightningTimeElapsed += deltaTime;
+        var opacityDiff = deltaTime/lightningConfig.fadeOutDelay;
+        var materials = lightningData.materials;
+        for(lineWidth in materials){
+            materials[lineWidth].uniforms.opacity.value -= opacityDiff;
+        }
+    }
+}
+
+function render(deltaTime){
+    rainParticleGroup.tick(deltaTime);
+    cloudParticleGroup.tick(deltaTime);
+    lightningFadeOut(deltaTime);
     renderer.render(scene,camera);
 }
 
