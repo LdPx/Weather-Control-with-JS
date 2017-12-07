@@ -119,9 +119,10 @@ var lightningConfig = {
     lineWidth: 0.3,
     fadeOutDelay: 3,  // sec
     alphaMap: new THREE.TextureLoader().load('./textures/lightning.png'),
-    spawnRate:  0.025    // Spawnchance je Frame; könnte man auch von deltaTime abhänigig machen
+    spawnRate:  0.001    // Spawnchance je Frame; könnte man auch von deltaTime abhänigig machen
 };
-var lightningData = [];
+
+var lightningData = null;
 
 animate();
 
@@ -133,27 +134,23 @@ function animate() {
 
 
 function lightningFadeOut(deltaTime){
-    if(Math.random() <= lightningConfig.spawnRate){
-        lightningData.push({
-            data: spawnLightning(lightningConfig),
-            timeElapsed: 0
-        }); 
-    }
-    if(lightningData.length > 0){
-        var opacityDiff = deltaTime/lightningConfig.fadeOutDelay;
-        lightningData.forEach(function(ld){
-            ld.timeElapsed += deltaTime;
-            ld.data.materials.forEach((material) => { material.uniforms.opacity.value -= opacityDiff; }); 
-        });
-        // entferne den 1. vorhandenen Blitz nach lightningConfig.fadeOutDelay Zeiteinheiten
-        // es kann passieren, dass bei N Blitzen gleichzeitig die Zeit abläuft und diese hier alle auf einmal
-        // gelöscht werden könnten; dies wäre aber a) ineffizienterer und b) komplzierterer Code; die anderen
-        // Blitze werden deshalb einfach beim bächsten animate()-Schritt gelöscht
-        if(lightningData[0].timeElapsed >= lightningConfig.fadeOutDelay){
-            removeLightning(lightningData[0].data);
-            lightningData.shift();
+    if(lightningData === null){
+        if(Math.random() <= lightningConfig.spawnRate){
+            lightningData = {
+                data: spawnLightning(lightningConfig),
+                timeElapsed: 0
+            }; 
         }
-    } 
+    }
+    else {
+        var opacityDiff = deltaTime/lightningConfig.fadeOutDelay;
+        lightningData.timeElapsed += deltaTime;
+        lightningData.data.materials.forEach(mat => { mat.uniforms.opacity.value -= opacityDiff; }); 
+        if(lightningData.timeElapsed >= lightningConfig.fadeOutDelay){
+            removeLightning(lightningData.data);
+            lightningData = null;
+        }
+    }
 }
 
 function render(deltaTime){
