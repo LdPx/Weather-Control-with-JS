@@ -1,7 +1,4 @@
 
-var lightningTimeElapsed = null;
-var lightningData = null;
-
 function spawnLightning(conf){
     var x = getRandomInt(-conf.spawnRange, conf.spawnRange);
     var z = getRandomInt(-conf.spawnRange, conf.spawnRange);
@@ -121,8 +118,10 @@ var lightningConfig = {
     numKinks: 3,
     lineWidth: 0.3,
     fadeOutDelay: 3,  // sec
-    alphaMap: new THREE.TextureLoader().load('./textures/lightning.png')
+    alphaMap: new THREE.TextureLoader().load('./textures/lightning.png'),
+    spawnRate:  0.025    // Spawnchance je Frame; könnte man auch von deltaTime abhänigig machen
 };
+var lightningData = [];
 
 animate();
 
@@ -134,20 +133,27 @@ function animate() {
 
 
 function lightningFadeOut(deltaTime){
-    if(lightningData === null){
-        lightningData = spawnLightning(lightningConfig);
-        lightningTimeElapsed = 0;
+    if(Math.random() <= lightningConfig.spawnRate){
+        lightningData.push({
+            data: spawnLightning(lightningConfig),
+            timeElapsed: 0
+        }); 
     }
-    else if(lightningTimeElapsed >= lightningConfig.fadeOutDelay){
-        removeLightning(lightningData);
-        lightningData = lightningTimeElapsed = null;
-    }
-    else {
-        lightningTimeElapsed += deltaTime;
+    if(lightningData.length > 0){
         var opacityDiff = deltaTime/lightningConfig.fadeOutDelay;
-        var materials = lightningData.materials;
-        materials.forEach((material) => { material.uniforms.opacity.value -= opacityDiff; });           
-    }
+        lightningData.forEach(function(ld){
+            ld.timeElapsed += deltaTime;
+            ld.data.materials.forEach((material) => { material.uniforms.opacity.value -= opacityDiff; }); 
+        });
+        // entferne den 1. vorhandenen Blitz nach lightningConfig.fadeOutDelay Zeiteinheiten
+        // es kann passieren, dass bei N Blitzen gleichzeitig die Zeit abläuft und diese hier alle auf einmal
+        // gelöscht werden könnten; dies wäre aber a) ineffizienterer und b) komplzierterer Code; die anderen
+        // Blitze werden deshalb einfach beim bächsten animate()-Schritt gelöscht
+        if(lightningData[0].timeElapsed >= lightningConfig.fadeOutDelay){
+            removeLightning(lightningData[0].data);
+            lightningData.shift();
+        }
+    } 
 }
 
 function render(deltaTime){
