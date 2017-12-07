@@ -1,0 +1,14 @@
+{
+"coord":{"lon":6.47,"lat":51.2},
+"weather":[{"id":520,"main":"Rain","description":"light intensity shower rain","icon":"09n"}],
+"base":"stations",
+"main":{"temp":4,"pressure":1023,"humidity":86,"temp_min":4,"temp_max":4},
+"visibility":10000,
+"wind":{"speed":7.2,"deg":230},
+"clouds":{"all":75},
+"dt":1511738400,
+"sys":{"type":1,"id":4886,"message":0.0126,"country":"DE","sunrise":1511680225,"sunset":1511710365},
+"id":2869894,
+"name":"Monchengladbach",
+"cod":200
+}
