@@ -1,8 +1,4 @@
 
-var guiData = {
-    raininess: 0
-};
-
 // globale Uhr (nötig für Animationen)
 var clock = new THREE.Clock();
 
@@ -82,17 +78,17 @@ scene.add(rainParticleGroup.mesh);
 // TODO fog oder ergänzen => sieht vllt alles besser aus?
 // TODO cloud-config-Objekt ergänzen
 var cloudConfig = {
-    worstWeatherColor: 0.5,
-    bestWeatherColor: 1
+    maxRaininessColor: 0.5,
+    minRaininessColor: 1,
+    maxNumClouds: 250
 };
-var numClouds = 50;
 var cloudSpawnCenter = new THREE.Vector3(0, 70, -50);
 var windDirection = new THREE.Vector3(0, 0, 30);
-var cloudParticleGroup = createCloudEngine(numClouds, cloudSpawnCenter, windDirection);
+var cloudParticleGroup = createCloudEngine(cloudConfig.maxNumClouds, cloudSpawnCenter, windDirection);
 // Aktualisierung des 'velocity'-Attributes: z.B.
 // windDirection.z += 1;
 // cloudParticleGroup.emitters[0].velocity.value = windDirection;
-console.log('created cloud engine, ' + numClouds + ' particles');
+console.log('created cloud engine, ' + cloudConfig.minNumClouds + ' particles');
 scene.add(cloudParticleGroup.mesh);
 
 var lightningConfig = {
@@ -109,9 +105,15 @@ var lightningConfig = {
 
 var lightningData = null;
 
+var guiData = {
+    raininess: 0,
+    cloudiness: 0.1
+};
+
 // GUI
 var gui = new dat.GUI();
-gui.add(guiData, "raininess", 0, 1, 0.0001).onChange(guiChanged);
+gui.add(guiData, "raininess", 0, 1, 0.01).onChange(guiChanged);
+gui.add(guiData, "cloudiness", 0.1, 1, 0.01).onChange(guiChanged);
 // alternativ: onFinishChange -> Callback erst bei Fokusverlust aufgerufen
 guiChanged();
 
@@ -127,10 +129,10 @@ animate();
 // TODO in mehrere Callbacks aufsplitten (Performance) ?
 function guiChanged(){
     console.log('gui changed', guiData);
-    var newCloudColorValue = linearMap(0, 1, cloudConfig.bestWeatherColor, cloudConfig.worstWeatherColor, guiData.raininess);
+    var newCloudColorValue = linearMap(0, 1, cloudConfig.minRaininessColor, cloudConfig.maxRaininessColor, guiData.raininess);
     var newCloudColor = new THREE.Color().setScalar(newCloudColorValue);
     cloudParticleGroup.emitters[0].color.value = newCloudColor;
-    //var minClouds = 50, maxClouds = 200;
+    cloudParticleGroup.emitters[0].activeMultiplier = guiData.cloudiness;
 }
 
 function spawnLightning(conf){

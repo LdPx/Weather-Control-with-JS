@@ -1,5 +1,5 @@
 
-function createCloudEngine(numClouds, spawnCenter, velocity) {
+function createCloudEngine(maxNumClouds, spawnCenter, velocity) {
     var particleGroup = new SPE.Group({
         texture: {
             value: new THREE.TextureLoader().load('./textures/cloud.png')
@@ -7,11 +7,13 @@ function createCloudEngine(numClouds, spawnCenter, velocity) {
         // TODO prüfen ob nötig/sinnvoll
         blending: THREE.NormalBlending,
         fog: true,
-        transparent: true
+        transparent: true,
+        //alphaTest: true
+        maxParticleCount: maxNumClouds
     });
 
     var emitter = new SPE.Emitter({
-        particleCount: numClouds,
+        particleCount: maxNumClouds,
         maxAge: {
             value: 3,
         },
