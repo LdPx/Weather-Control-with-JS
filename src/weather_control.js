@@ -4,12 +4,16 @@ var clock = new THREE.Clock();
 
 var scene = new THREE.Scene();
 scene.background = new THREE.Color(0x2271f9);
+//scene.fog = new THREE.FogExp2(0xefd1b5, 0.01);
 
 var camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 1, 1000);
 camera.position.set(100, 75, 20);
 camera.lookAt(new THREE.Vector3(0,0,0));
 
 var renderer = new THREE.WebGLRenderer();
+//renderer.physicallyCorrectLights = true;    
+//renderer.gammaInput = true;
+//renderer.gammaOutput = true;
 renderer.shadowMap.enabled = true;
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
@@ -18,7 +22,8 @@ document.body.appendChild(renderer.domElement);
 // TODO "Stadtmodell"-Erzeugung nach house.js schieben, nur Meshes zurückgeben
 var groundSize = 200;
 var geometry = new THREE.PlaneGeometry(groundSize,groundSize);
-var material = new THREE.MeshStandardMaterial({color: 0x10e52c, side: THREE.DoubleSide});
+//var material = new THREE.MeshStandardMaterial({color: 0x10e52c, side: THREE.DoubleSide});
+var material = new THREE.MeshStandardMaterial({ambient: 0x050505, color: 0x10e52c, specular: 0x555555, shininess: 30, side: THREE.DoubleSide});
 var plane = new THREE.Mesh(geometry, material);
 plane.rotation.x = Math.PI/2;
 plane.receiveShadow = true;
@@ -67,8 +72,13 @@ scene.add(new THREE.AxisHelper(1000));
 //var hemLight = new THREE.HemisphereLight(0xffffbb, 0x080820, 1);
 //scene.add(hemLight);
 
-var light = new THREE.AmbientLight(0x404040, 2); // soft white light
-scene.add(light);
+
+var ambientLight = new THREE.AmbientLight(0x404040, 2); // soft white light
+scene.add(ambientLight);
+
+//var lightningFlash = new THREE.PointLight(0xffffff, 0, 0, 2);
+var lightningFlash = new THREE.AmbientLight(0x404040, 0);
+scene.add(lightningFlash);
 
 var numRaindrops = 10000;
 var rainParticleGroup = createRainEngine(numRaindrops);
@@ -93,21 +103,23 @@ scene.add(cloudParticleGroup.mesh);
 
 var lightningConfig = {
     spawnY: cloudSpawnCenter.y,
-    spawnRange: houseSpawnRange,
     numKinks: 3,
+    spawnRange: houseSpawnRange,
     lineWidth: 0.3,
-    fadeOutDelay: 3,  // sec
+    fadeOutDelay: 1,  // sec
     alphaMap: new THREE.TextureLoader().load('./textures/lightning.png'),
-    // max. Spawnchance je Frame, wenn kein Blitz aktuell vorhanden; könnte man auch von deltaTime abhg machen
-    // ist 0 bei maximal gutem Wetter und maxSpawnRate bei max. schlechtem Wetter
-    maxSpawnRate:  0.1    
+    // max. Spawnchance je Frame, wenn kein Blitz aktuell vorhanden (könnte man auch von deltaTime abhg machen)
+    // ist 0 bei min. raininess und maxSpawnRate bei max. raininess
+    maxSpawnRate:  0.1,
+    flashDelay: 1,    // sec
+    flashStartIntensity: 10
 };
 
 var lightningData = null;
 
 var guiData = {
     raininess: 0,
-    cloudiness: 0.1
+    cloudiness: 0.1,
 };
 
 // GUI
@@ -162,12 +174,17 @@ function lightningFadeOut(deltaTime){
                 data: spawnLightning(lightningConfig),
                 timeElapsed: 0
             }; 
+            lightningFlash.intensity = lightningConfig.flashStartIntensity;
         }
     }
     else {
         var opacityDiff = deltaTime/lightningConfig.fadeOutDelay;
         lightningData.timeElapsed += deltaTime;
         lightningData.data.materials.forEach(mat => { mat.uniforms.opacity.value -= opacityDiff; }); 
+        if(lightningData.timeElapsed < lightningConfig.flashDelay){
+            var flashIntensityDiff = lightningConfig.flashStartIntensity*deltaTime/lightningConfig.flashDelay;
+            lightningFlash.intensity -= flashIntensityDiff;
+        }
         if(lightningData.timeElapsed >= lightningConfig.fadeOutDelay){
             removeLightning(lightningData.data);
             lightningData = null;
