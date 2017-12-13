@@ -1,8 +1,6 @@
 
 conf = {
     cloud: {
-        maxRaininessColor: 0.5,
-        minRaininessColor: 1,
         maxNumClouds: 250,
         spawnCenter: new THREE.Vector3(0, 70, -50)
     },
@@ -18,7 +16,11 @@ conf = {
         maxSpawnRate:  0.1,
         flashDelay: 1,    // sec
         flashStartIntensity: 10
-    }
+    },
+    rain: {    
+        maxRaininessColor: 0.5,
+        minRaininessColor: 1,
+    }    
 };
 
 // globale Uhr (nötig für Animationen)
@@ -143,7 +145,7 @@ animate();
 // TODO in mehrere Callbacks aufsplitten (Performance) ?
 function guiChanged(){
     console.log('gui changed', guiData);    
-    var newCloudColorValue = linearMap(0, 1, conf.cloud.minRaininessColor, conf.cloud.maxRaininessColor, guiData.raininess);
+    var newCloudColorValue = linearMap(0, 1, conf.rain.minRaininessColor, conf.rain.maxRaininessColor, guiData.raininess);
     var newCloudColor = new THREE.Color().setScalar(newCloudColorValue);
     cloudParticleGroup.emitters[0].color.value = newCloudColor;
     cloudParticleGroup.emitters[0].activeMultiplier = guiData.cloudiness;
