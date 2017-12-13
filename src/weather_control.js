@@ -21,8 +21,8 @@ conf = {
     },
     rain: {
         maxNumRaindrops: 50000, // feucht!
-        minRaininessColor: new THREE.Color(0x2271f9),
-        maxRaininessColor: new THREE.Color(0x8b8989),
+        minRaininessSkyColor: new THREE.Color(0x2271f9),
+        maxRaininessSkyColor: new THREE.Color(0x8b8989),
     }    
 };
 
@@ -30,7 +30,7 @@ conf = {
 var clock = new THREE.Clock();
 
 var scene = new THREE.Scene();
-scene.background = conf.rain.minRaininessColor;
+scene.background = conf.rain.minRaininessSkyColor;
 //scene.fog = new THREE.FogExp2(0xefd1b5, 0.01);
 
 var camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 1, 1000);
@@ -150,7 +150,7 @@ function guiChanged(){
     var newCloudColor = conf.cloud.minRaininessColor.clone().lerp(conf.cloud.maxRaininessColor, guiData.raininess);
     cloudParticleGroup.emitters[0].color.value = newCloudColor;
     cloudParticleGroup.emitters[0].activeMultiplier = guiData.cloudiness;
-    scene.background = conf.rain.minRaininessColor.clone().lerp(conf.rain.maxRaininessColor, guiData.raininess);
+    scene.background = conf.rain.minRaininessSkyColor.clone().lerp(conf.rain.maxRaininessSkyColor, guiData.raininess);
     rainParticleGroup.emitters[0].activeMultiplier = guiData.raininess;
 }
 
