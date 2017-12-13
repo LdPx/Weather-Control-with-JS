@@ -120,12 +120,14 @@ var lightningData = null;
 var guiData = {
     raininess: 0,
     cloudiness: 0.1,
+    explode: requestWeatherData
 };
 
 // GUI
 var gui = new dat.GUI();
 gui.add(guiData, "raininess", 0, 1, 0.01).onChange(guiChanged);
 gui.add(guiData, "cloudiness", 0.1, 1, 0.01).onChange(guiChanged);
+gui.add(guiData, 'explode');
 // alternativ: onFinishChange -> Callback erst bei Fokusverlust aufgerufen
 guiChanged();
 
@@ -189,6 +191,12 @@ function lightningFadeOut(deltaTime){
             lightningData = null;
         }
     }
+}
+
+function requestWeatherData(){
+    gettingJSON(function(data){
+        console.log('res', data);
+    });
 }
 
 function animate() {

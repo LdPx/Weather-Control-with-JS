@@ -1,4 +1,4 @@
-		
+		/*
 		var weather = {
 			// location
 			lon:-1,
@@ -41,14 +41,16 @@
 			cloudPercentFactor:0,	// 1 = 100%
 			rain3h:-1,
 			snow3h:-1
-		};
+		};*/
 		
-		function gettingJSON(){
+		function gettingJSON(callback){
 			//document.write("jquery loaded");
 			$.getJSON('http://api.openweathermap.org/data/2.5/weather?lat=51.2&lon=6.47&units=metric&APPID=43a26c85c29d39f47dc194dda192eb3a',function(json){
-				document.getElementById('JSONwrite').innerHTML += ('current temperature: ' + JSON.stringify(json.main.temp) + 'C°');
+				//document.getElementById('JSONwrite').innerHTML += ('current temperature: ' + JSON.stringify(json.main.temp) + 'C°');
 				//document.write(JSON.stringify(json));
 				
+                var weather = {};
+                
 				weather.lon = json.coord.lon;
 				weather.lat = json.coord.lat;
 				weather.cityName = json.name;
@@ -72,7 +74,6 @@
 				weather.windSpeedPercent = weather.windSpeed/0.8;
 				weather.windSpeedPercentFactor = weather.windSpeed/80;
 				weather.windDirectionDegree = json.wind.deg;
-				weather.windDirectionLetter = getWindDirectionLetter16(weather.windDirectionDegree);
 				weather.windDirection2D = getWindDirection2D(weather.windDirectionDegree);
 				weather.cloudPercent = json.clouds.all;
 				weather.cloudPercentFactor = weather.cloudPercent/100;
@@ -92,8 +93,10 @@
 						weather.snow = true
 				}
 				*/
-				document.getElementById('JSONwrite').innerHTML += '<br>' + weather.sunriseDate + '<br>';
+				//document.getElementById('JSONwrite').innerHTML += '<br>' + weather.sunriseDate + '<br>';
 				
+                callback(weather);
+                
 				//document.write(weather);
 			});
 		}
