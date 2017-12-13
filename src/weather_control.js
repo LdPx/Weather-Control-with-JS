@@ -194,8 +194,14 @@ function lightningFadeOut(deltaTime){
 }
 
 function requestWeatherData(){
-    gettingJSON(function(data){
-        console.log('res', data);
+    var url = 'http://api.openweathermap.org/data/2.5/weather?units=metric&lat=51.2&lon=6.47&APPID=43a26c85c29d39f47dc194dda192eb3a';
+    $.getJSON(url)
+    .done(function(json){
+        var weather = owpjsonToWeather(json);
+        console.log('loaded weather', weather);
+    })
+    .fail(function(jqXHR, textStatus, errorThrown){
+        alert("weather api call failed\n" + JSON.stringify({url: url, jqXHR: jqXHR, textStatus: textStatus, errorThrown: errorThrown}));
     });
 }
 

@@ -42,63 +42,49 @@
 			rain3h:-1,
 			snow3h:-1
 		};*/
-		
-		function gettingJSON(callback){
-			//document.write("jquery loaded");
-			$.getJSON('http://api.openweathermap.org/data/2.5/weather?lat=51.2&lon=6.47&units=metric&APPID=43a26c85c29d39f47dc194dda192eb3a',function(json){
-				//document.getElementById('JSONwrite').innerHTML += ('current temperature: ' + JSON.stringify(json.main.temp) + 'C°');
-				//document.write(JSON.stringify(json));
+
+        
+		function owpjsonToWeather(json){
 				
-                var weather = {};
-                
-				weather.lon = json.coord.lon;
-				weather.lat = json.coord.lat;
-				weather.cityName = json.name;
-				weather.country = json.sys.country;
-				
-				weather.wId = json.weather.id;
-				weather.wMain = json.weather.main;
-				weather.wDescription = json.weather.description;
-				weather.sunriseUnix = json.sys.sunrise;
-				weather.sunriseDate = new Date(weather.sunriseUnix*1000);
-				weather.sunsetUnix = json.sys.sunset;
-				weather.sunsetDate = new Date(weather.sunsetUnix*1000);
-				weather.TimeOfData = json.dt;
-				
-				weather.temp = json.main.temp;
-				weather.pressure = json.main.pressure;
-				weather.pressureSeaLevel = json.main.sea_level;
-				weather.pressureGroundLevel = json.main.grnd_level;
-				weather.humidity = json.main.humidity;
-				weather.windSpeed = json.wind.speed;
-				weather.windSpeedPercent = weather.windSpeed/0.8;
-				weather.windSpeedPercentFactor = weather.windSpeed/80;
-				weather.windDirectionDegree = json.wind.deg;
-				weather.windDirection2D = getWindDirection2D(weather.windDirectionDegree);
-				weather.cloudPercent = json.clouds.all;
-				weather.cloudPercentFactor = weather.cloudPercent/100;
-				if(json.hasOwnProperty('rain')){
-					weather.rain3h = json.rain["3h"];	// Who is making this stuff up!?
-				} else {
-					weather.rain3h = 0;
-				}
-				if(json.hasOwnProperty('snow')){
-					weather.snow3h = json.snow["3h"];
-				} else {
-					weather.snow3h = 0;
-				}
-				/* TODO - all codes
-				if(json.weather.hasOwnProperty('id')){
-					if (700 > json.weather.id >= 600
-						weather.snow = true
-				}
-				*/
-				//document.getElementById('JSONwrite').innerHTML += '<br>' + weather.sunriseDate + '<br>';
-				
-                callback(weather);
-                
-				//document.write(weather);
-			});
+            var weather = {};
+            
+            weather.lon = json.coord.lon;
+            weather.lat = json.coord.lat;
+            weather.cityName = json.name;
+            weather.country = json.sys.country;
+            
+            weather.wId = json.weather.id;
+            weather.wMain = json.weather.main;
+            weather.wDescription = json.weather.description;
+            weather.sunriseUnix = json.sys.sunrise;
+            weather.sunriseDate = new Date(weather.sunriseUnix*1000);
+            weather.sunsetUnix = json.sys.sunset;
+            weather.sunsetDate = new Date(weather.sunsetUnix*1000);
+            weather.TimeOfData = json.dt;
+            
+            weather.temp = json.main.temp;
+            weather.pressure = json.main.pressure;
+            weather.pressureSeaLevel = json.main.sea_level;
+            weather.pressureGroundLevel = json.main.grnd_level;
+            weather.humidity = json.main.humidity;
+            weather.windSpeed = json.wind.speed;
+            weather.windSpeedPercent = weather.windSpeed/0.8;
+            weather.windSpeedPercentFactor = weather.windSpeed/80;
+            weather.windDirectionDegree = json.wind.deg;
+            weather.windDirection2D = getWindDirection2D(weather.windDirectionDegree);
+            weather.cloudPercent = json.clouds.all;
+            weather.cloudPercentFactor = weather.cloudPercent/100;
+            if(json.hasOwnProperty('rain')){
+                weather.rain3h = json.rain["3h"];	// Who is making this stuff up!?
+            } else {
+                weather.rain3h = 0;
+            }
+            if(json.hasOwnProperty('snow')){
+                weather.snow3h = json.snow["3h"];
+            } else {
+                weather.snow3h = 0;
+            }
+            return weather;
 		}
 		
         // TODO durch THREEJS-gedToRad ersetzen
