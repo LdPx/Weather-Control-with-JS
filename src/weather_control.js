@@ -1,4 +1,26 @@
 
+conf = {
+    cloud: {
+        maxRaininessColor: 0.5,
+        minRaininessColor: 1,
+        maxNumClouds: 250,
+        spawnCenter: new THREE.Vector3(0, 70, -50)
+    },
+    lightning: {
+        spawnY: 70,
+        numKinks: 3,
+        spawnRange: houseSpawnRange,
+        lineWidth: 0.3,
+        fadeOutDelay: 1,  // sec
+        alphaMap: new THREE.TextureLoader().load('./textures/lightning.png'),
+        // max. Spawnchance je Frame, wenn kein Blitz aktuell vorhanden (könnte man auch von deltaTime abhg machen)
+        // ist 0 bei min. raininess und maxSpawnRate bei max. raininess
+        maxSpawnRate:  0.1,
+        flashDelay: 1,    // sec
+        flashStartIntensity: 10
+    }
+};
+
 // globale Uhr (nötig für Animationen)
 var clock = new THREE.Clock();
 
@@ -86,34 +108,13 @@ console.log('created rain engine, ' + numRaindrops + ' particles');
 scene.add(rainParticleGroup.mesh);
 
 // TODO fog oder ergänzen => sieht vllt alles besser aus?
-// TODO cloud-config-Objekt ergänzen
-var cloudConfig = {
-    maxRaininessColor: 0.5,
-    minRaininessColor: 1,
-    maxNumClouds: 250
-};
-var cloudSpawnCenter = new THREE.Vector3(0, 70, -50);
 var windDirection = new THREE.Vector3(0, 0, 30);
-var cloudParticleGroup = createCloudEngine(cloudConfig.maxNumClouds, cloudSpawnCenter, windDirection);
+var cloudParticleGroup = createCloudEngine(conf.cloud.maxNumClouds, conf.cloud.spawnCenter, windDirection);
 // Aktualisierung des 'velocity'-Attributes: z.B.
 // windDirection.z += 1;
 // cloudParticleGroup.emitters[0].velocity.value = windDirection;
-console.log('created cloud engine, ' + cloudConfig.minNumClouds + ' particles');
+console.log('created cloud engine, ' + conf.cloud.minNumClouds + ' particles');
 scene.add(cloudParticleGroup.mesh);
-
-var lightningConfig = {
-    spawnY: cloudSpawnCenter.y,
-    numKinks: 3,
-    spawnRange: houseSpawnRange,
-    lineWidth: 0.3,
-    fadeOutDelay: 1,  // sec
-    alphaMap: new THREE.TextureLoader().load('./textures/lightning.png'),
-    // max. Spawnchance je Frame, wenn kein Blitz aktuell vorhanden (könnte man auch von deltaTime abhg machen)
-    // ist 0 bei min. raininess und maxSpawnRate bei max. raininess
-    maxSpawnRate:  0.1,
-    flashDelay: 1,    // sec
-    flashStartIntensity: 10
-};
 
 var lightningData = null;
 
@@ -142,7 +143,7 @@ animate();
 // TODO in mehrere Callbacks aufsplitten (Performance) ?
 function guiChanged(){
     console.log('gui changed', guiData);    
-    var newCloudColorValue = linearMap(0, 1, cloudConfig.minRaininessColor, cloudConfig.maxRaininessColor, guiData.raininess);
+    var newCloudColorValue = linearMap(0, 1, conf.cloud.minRaininessColor, conf.cloud.maxRaininessColor, guiData.raininess);
     var newCloudColor = new THREE.Color().setScalar(newCloudColorValue);
     cloudParticleGroup.emitters[0].color.value = newCloudColor;
     cloudParticleGroup.emitters[0].activeMultiplier = guiData.cloudiness;
@@ -170,23 +171,23 @@ function removeLightning(lightningData){
 
 function lightningFadeOut(deltaTime){
     if(lightningData === null){
-        if(Math.random() <= lightningConfig.maxSpawnRate * guiData.raininess){
+        if(Math.random() <= conf.lightning.maxSpawnRate * guiData.raininess){
             lightningData = {
-                data: spawnLightning(lightningConfig),
+                data: spawnLightning(conf.lightning),
                 timeElapsed: 0
             }; 
-            lightningFlash.intensity = lightningConfig.flashStartIntensity;
+            lightningFlash.intensity = conf.lightning.flashStartIntensity;
         }
     }
     else {
-        var opacityDiff = deltaTime/lightningConfig.fadeOutDelay;
+        var opacityDiff = deltaTime/conf.lightning.fadeOutDelay;
         lightningData.timeElapsed += deltaTime;
         lightningData.data.materials.forEach(mat => { mat.uniforms.opacity.value -= opacityDiff; }); 
-        if(lightningData.timeElapsed < lightningConfig.flashDelay){
-            var flashIntensityDiff = lightningConfig.flashStartIntensity*deltaTime/lightningConfig.flashDelay;
+        if(lightningData.timeElapsed < conf.lightning.flashDelay){
+            var flashIntensityDiff = conf.lightning.flashStartIntensity*deltaTime/conf.lightning.flashDelay;
             lightningFlash.intensity -= flashIntensityDiff;
         }
-        if(lightningData.timeElapsed >= lightningConfig.fadeOutDelay){
+        if(lightningData.timeElapsed >= conf.lightning.fadeOutDelay){
             removeLightning(lightningData.data);
             lightningData = null;
         }
