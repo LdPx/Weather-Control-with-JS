@@ -3,8 +3,8 @@ conf = {
     cloud: {
         maxNumClouds: 250,
         spawnCenter: new THREE.Vector3(0, 70, -50),
-        minRaininessColor: 1,
-        maxRaininessColor: 0.5,
+        minRaininessColor: new THREE.Color(0xffffff),
+        maxRaininessColor: new THREE.Color(0x7f7f7f),
     },
     lightning: {
         spawnY: 70,
@@ -147,8 +147,7 @@ animate();
 // TODO in mehrere Callbacks aufsplitten (Performance) ?
 function guiChanged(){
     console.log('gui changed', guiData);    
-    var newCloudColorValue = linearMap(0, 1, conf.cloud.minRaininessColor, conf.cloud.maxRaininessColor, guiData.raininess);
-    var newCloudColor = new THREE.Color().setScalar(newCloudColorValue);
+    var newCloudColor = conf.cloud.minRaininessColor.clone().lerp(conf.cloud.maxRaininessColor, guiData.raininess);
     cloudParticleGroup.emitters[0].color.value = newCloudColor;
     cloudParticleGroup.emitters[0].activeMultiplier = guiData.cloudiness;
     scene.background = conf.rain.minRaininessColor.clone().lerp(conf.rain.maxRaininessColor, guiData.raininess);
