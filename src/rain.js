@@ -1,13 +1,14 @@
 
-function createRainEngine(numRaindrops){
-    particleGroup = new SPE.Group({
+function createRainEngine(maxNumRaindrops){
+    var particleGroup = new SPE.Group({
         texture: {
             value: new THREE.TextureLoader().load('./textures/raindrop.png')
-        }
+        },
+        maxParticleCount: maxNumRaindrops
     });
 
     // "spread" bestimmt stets den zufälligen Wertebereich von "value" je Partikel
-    emitter = new SPE.Emitter({
+    var emitter = new SPE.Emitter({
         maxAge: {
             value: 20
         },
@@ -40,7 +41,8 @@ function createRainEngine(numRaindrops){
             value: 2
         },
 
-        particleCount: numRaindrops
+        particleCount: maxNumRaindrops,
+        activeMultiplier: 0 // beginne mit 0 Regentropfen
     });
 
     particleGroup.addEmitter(emitter);

@@ -19,7 +19,8 @@ conf = {
         flashDelay: 1,    // sec
         flashStartIntensity: 10
     },
-    rain: {    
+    rain: {
+        maxNumRaindrops: 10000,
         minRaininessColor: new THREE.Color(0x2271f9),
         maxRaininessColor: new THREE.Color(0x8b8989),
     }    
@@ -151,6 +152,7 @@ function guiChanged(){
     cloudParticleGroup.emitters[0].color.value = newCloudColor;
     cloudParticleGroup.emitters[0].activeMultiplier = guiData.cloudiness;
     scene.background = conf.rain.minRaininessColor.clone().lerp(conf.rain.maxRaininessColor, guiData.raininess);
+    rainParticleGroup.emitters[0].activeMultiplier = guiData.raininess;
 }
 
 function spawnLightning(conf){
@@ -217,7 +219,7 @@ function animate() {
 }
 
 function render(deltaTime){
-    //rainParticleGroup.tick(deltaTime);
+    rainParticleGroup.tick(deltaTime);
     cloudParticleGroup.tick(deltaTime);
     lightningFadeOut(deltaTime);
     renderer.render(scene,camera);
