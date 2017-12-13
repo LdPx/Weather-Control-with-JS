@@ -2,7 +2,9 @@
 conf = {
     cloud: {
         maxNumClouds: 250,
-        spawnCenter: new THREE.Vector3(0, 70, -50)
+        spawnCenter: new THREE.Vector3(0, 70, -50),
+        minRaininessColor: 1,
+        maxRaininessColor: 0.5,
     },
     lightning: {
         spawnY: 70,
@@ -18,8 +20,8 @@ conf = {
         flashStartIntensity: 10
     },
     rain: {    
-        maxRaininessColor: 0.5,
-        minRaininessColor: 1,
+        minRaininessColor: new THREE.Color(0x2271f9),
+        maxRaininessColor: new THREE.Color(0x8b8989),
     }    
 };
 
@@ -27,7 +29,7 @@ conf = {
 var clock = new THREE.Clock();
 
 var scene = new THREE.Scene();
-scene.background = new THREE.Color(0x2271f9);
+scene.background = conf.rain.minRaininessColor;
 //scene.fog = new THREE.FogExp2(0xefd1b5, 0.01);
 
 var camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 1, 1000);
@@ -145,10 +147,11 @@ animate();
 // TODO in mehrere Callbacks aufsplitten (Performance) ?
 function guiChanged(){
     console.log('gui changed', guiData);    
-    var newCloudColorValue = linearMap(0, 1, conf.rain.minRaininessColor, conf.rain.maxRaininessColor, guiData.raininess);
+    var newCloudColorValue = linearMap(0, 1, conf.cloud.minRaininessColor, conf.cloud.maxRaininessColor, guiData.raininess);
     var newCloudColor = new THREE.Color().setScalar(newCloudColorValue);
     cloudParticleGroup.emitters[0].color.value = newCloudColor;
     cloudParticleGroup.emitters[0].activeMultiplier = guiData.cloudiness;
+    scene.background = conf.rain.minRaininessColor.clone().lerp(conf.rain.maxRaininessColor, guiData.raininess);
 }
 
 function spawnLightning(conf){
