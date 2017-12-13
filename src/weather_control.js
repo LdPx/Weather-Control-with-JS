@@ -20,7 +20,7 @@ conf = {
         flashStartIntensity: 10
     },
     rain: {
-        maxNumRaindrops: 10000,
+        maxNumRaindrops: 50000, // feucht!
         minRaininessColor: new THREE.Color(0x2271f9),
         maxRaininessColor: new THREE.Color(0x8b8989),
     }    
@@ -107,9 +107,8 @@ scene.add(ambientLight);
 var lightningFlash = new THREE.AmbientLight(0x404040, 0);
 scene.add(lightningFlash);
 
-var numRaindrops = 10000;
-var rainParticleGroup = createRainEngine(numRaindrops);
-console.log('created rain engine, ' + numRaindrops + ' particles');
+var rainParticleGroup = createRainEngine(conf.rain.maxNumRaindrops);
+console.log('created rain engine, ' + conf.rain.maxNumRaindrops + ' particles');
 scene.add(rainParticleGroup.mesh);
 
 // TODO fog oder ergänzen => sieht vllt alles besser aus?
