@@ -137,10 +137,9 @@ window.addEventListener('resize', function(){
 
 animate();
 
-
 // TODO in mehrere Callbacks aufsplitten (Performance) ?
 function guiChanged(){
-    console.log('gui changed', guiData);
+    console.log('gui changed', guiData);    
     var newCloudColorValue = linearMap(0, 1, cloudConfig.minRaininessColor, cloudConfig.maxRaininessColor, guiData.raininess);
     var newCloudColor = new THREE.Color().setScalar(newCloudColorValue);
     cloudParticleGroup.emitters[0].color.value = newCloudColor;
