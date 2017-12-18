@@ -25,9 +25,9 @@ conf = {
         maxRaininessSkyColor: new THREE.Color(0x8b8989),
     },
     fog: {
-        color: 0xffffff,
+        color: new THREE.Color(0xffffff),
         minDensity: 0,
-        maxDensity: 0.005
+        maxDensity: 0.01
     }
 };
 
