@@ -22,9 +22,9 @@ function createHouse(pos, size, bodyMaterial, roofMaterial){
     body.position.set(pos.x, pos.y, pos.z);
     body.castShadow = body.receiveShadow = true;
     // erzeuge Hausdach
-    var roofHeight = houseSize/2;
-    var roof = createRoof(houseSize, roofHeight, roofMaterial);
-    roof.position.set(pos.x, pos.y+houseSize/2+roofHeight/2, pos.z);
+    var roofHeight = size/2;
+    var roof = createRoof(size, roofHeight, roofMaterial);
+    roof.position.set(pos.x, pos.y+size/2+roofHeight/2, pos.z);
     roof.castShadow = roof.receiveShadow = true;
 
     return {

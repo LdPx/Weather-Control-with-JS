@@ -9,7 +9,6 @@ conf = {
     lightning: {
         spawnY: 70,
         numKinks: 3,
-        spawnRange: houseSpawnRange,
         lineWidth: 0.3,
         fadeOutDelay: 1,  // sec
         alphaMap: new THREE.TextureLoader().load('./textures/lightning.png'),
@@ -28,6 +27,12 @@ conf = {
         color: new THREE.Color(0xffffff),
         minDensity: 0,
         maxDensity: 0.01
+    },
+    model: {
+        groundSize: 200,
+        houseSize: 10,
+        spawnRange: 50, // für Häuser & Blitze: x-,z-Komponente aus [-spawnRange,spawnRange]
+        numHouses: 50
     }
 };
 
@@ -52,8 +57,7 @@ document.body.appendChild(renderer.domElement);
 
 // Boden
 // TODO "Stadtmodell"-Erzeugung nach house.js schieben, nur Meshes zurückgeben
-var groundSize = 200;
-var geometry = new THREE.PlaneGeometry(groundSize,groundSize);
+var geometry = new THREE.PlaneGeometry(conf.model.groundSize,conf.model.groundSize);
 //var material = new THREE.MeshStandardMaterial({color: 0x10e52c, side: THREE.DoubleSide});
 var material = new THREE.MeshStandardMaterial({ambient: 0x050505, color: 0x10e52c, specular: 0x555555, shininess: 30, side: THREE.DoubleSide});
 var plane = new THREE.Mesh(geometry, material);
@@ -61,16 +65,13 @@ plane.rotation.x = Math.PI/2;
 plane.receiveShadow = true;
 scene.add(plane);
 
-var numHouses = 50;
-var houseSpawnRange = groundSize/4;
-var houseSize = 10;
 var bodyMaterial = new THREE.MeshPhongMaterial({ambient: 0x050505, color: 0x724b33, specular: 0x555555, shininess: 30});
 var roofMaterial = new THREE.MeshPhongMaterial({ambient: 0x050505, color: 0xc62411, specular: 0x555555, shininess: 30});
-for(var i = 0; i < numHouses; i++){
-    var x = getRandomInt(-houseSpawnRange, houseSpawnRange);
-    var z = getRandomInt(-houseSpawnRange, houseSpawnRange);
-    var pos = new THREE.Vector3(x, houseSize/2, z);
-    var house = createHouse(pos, houseSize, bodyMaterial, roofMaterial);
+for(var i = 0; i < conf.model.numHouses; i++){
+    var x = getRandomInt(-conf.model.spawnRange, conf.model.spawnRange);
+    var z = getRandomInt(-conf.model.spawnRange, conf.model.spawnRange);
+    var pos = new THREE.Vector3(x, conf.model.houseSize/2, z);
+    var house = createHouse(pos, conf.model.houseSize, bodyMaterial, roofMaterial);
     scene.add(house.body);
     scene.add(house.roof);
 }
@@ -116,7 +117,6 @@ var rainParticleGroup = createRainEngine(conf.rain.maxNumRaindrops);
 console.log('created rain engine, ' + conf.rain.maxNumRaindrops + ' particles');
 scene.add(rainParticleGroup.mesh);
 
-// TODO fog oder ergänzen => sieht vllt alles besser aus?
 var windDirection = new THREE.Vector3(0, 0, 30);
 var cloudParticleGroup = createCloudEngine(conf.cloud.maxNumClouds, conf.cloud.spawnCenter, windDirection);
 // Aktualisierung des 'velocity'-Attributes: z.B.
