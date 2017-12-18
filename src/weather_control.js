@@ -162,14 +162,14 @@ function guiChanged(){
     scene.fog.density = guiData.fog_density;
 }
 
-function spawnLightning(conf){
-    var x = getRandomInt(-conf.spawnRange, conf.spawnRange);
-    var z = getRandomInt(-conf.spawnRange, conf.spawnRange);
-    var lightningStart = new THREE.Vector3(x,conf.spawnY,z);
+function spawnLightning(){
+    var x = getRandomInt(-conf.model.spawnRange, conf.model.spawnRange);
+    var z = getRandomInt(-conf.model.spawnRange, conf.model.spawnRange);
+    var lightningStart = new THREE.Vector3(x,conf.lightning.spawnY,z);
     var lightningDir = new THREE.Vector3(x,0,z).sub(lightningStart);
-    var lightningModel = createLightning(lightningStart, lightningDir, conf.numKinks);
+    var lightningModel = createLightning(lightningStart, lightningDir, conf.lightning.numKinks);
     extendLightningPaths(lightningModel);
-    var lightningData = renderLightning(lightningModel, conf.lineWidth, conf.alphaMap);
+    var lightningData = renderLightning(lightningModel, conf.lightning.lineWidth, conf.lightning.alphaMap);
     lightningData.meshes.forEach((mesh) => {scene.add(mesh);});
     return lightningData;
 }
@@ -186,7 +186,7 @@ function lightningFadeOut(deltaTime){
     if(lightningData === null){
         if(Math.random() <= conf.lightning.maxSpawnRate * guiData.raininess){
             lightningData = {
-                data: spawnLightning(conf.lightning),
+                data: spawnLightning(),
                 timeElapsed: 0
             }; 
             lightningFlash.intensity = conf.lightning.flashStartIntensity;
