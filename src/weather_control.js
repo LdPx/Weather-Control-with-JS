@@ -23,7 +23,12 @@ conf = {
         maxNumRaindrops: 50000, // feucht!
         minRaininessSkyColor: new THREE.Color(0x2271f9),
         maxRaininessSkyColor: new THREE.Color(0x8b8989),
-    }    
+    },
+    fog: {
+        color: 0xffffff,
+        minDensity: 0,
+        maxDensity: 0.005
+    }
 };
 
 // globale Uhr (nötig für Animationen)
@@ -31,7 +36,7 @@ var clock = new THREE.Clock();
 
 var scene = new THREE.Scene();
 scene.background = conf.rain.minRaininessSkyColor;
-//scene.fog = new THREE.FogExp2(0xefd1b5, 0.01);
+scene.fog = new THREE.FogExp2(conf.fog.color, conf.fog.minDensity);
 
 var camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 1, 1000);
 camera.position.set(100, 75, 20);
@@ -125,14 +130,16 @@ var lightningData = null;
 var guiData = {
     raininess: 0,
     cloudiness: 0.1,
-    explode: requestWeatherData
+    fog_density: conf.fog.minDensity,
+    load_weather_data: requestWeatherData
 };
 
 // GUI
 var gui = new dat.GUI();
 gui.add(guiData, "raininess", 0, 1, 0.01).onChange(guiChanged);
 gui.add(guiData, "cloudiness", 0.1, 1, 0.01).onChange(guiChanged);
-gui.add(guiData, 'explode');
+gui.add(guiData, "fog_density", conf.fog.minDensity, conf.fog.maxDensity, 0.0001).onChange(guiChanged);
+gui.add(guiData, "load_weather_data");
 // alternativ: onFinishChange -> Callback erst bei Fokusverlust aufgerufen
 guiChanged();
 
@@ -152,6 +159,7 @@ function guiChanged(){
     cloudParticleGroup.emitters[0].activeMultiplier = guiData.cloudiness;
     scene.background = conf.rain.minRaininessSkyColor.clone().lerp(conf.rain.maxRaininessSkyColor, guiData.raininess);
     rainParticleGroup.emitters[0].activeMultiplier = guiData.raininess;
+    scene.fog.density = guiData.fog_density;
 }
 
 function spawnLightning(conf){
