@@ -4,7 +4,8 @@ function createRainEngine(maxNumRaindrops){
         texture: {
             value: new THREE.TextureLoader().load('./textures/raindrop.png')
         },
-        maxParticleCount: maxNumRaindrops
+        maxParticleCount: maxNumRaindrops,
+        fog: false
     });
 
     // "spread" bestimmt stets den zufälligen Wertebereich von "value" je Partikel

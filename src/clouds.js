@@ -6,7 +6,7 @@ function createCloudEngine(maxNumClouds, spawnCenter, velocity) {
         },
         // TODO prüfen ob nötig/sinnvoll
         blending: THREE.NormalBlending,
-        fog: true,
+        fog: false,
         transparent: true,
         //alphaTest: true
         maxParticleCount: maxNumClouds
