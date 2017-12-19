@@ -2,10 +2,10 @@
 conf = {
     cloud: {
         maxNumClouds: 250,
-        spawnCenter: new THREE.Vector3(0, 70, -50),
         minRaininessColor: new THREE.Color(0xffffff),
         maxRaininessColor: new THREE.Color(0x7f7f7f),
         spawnHeight: 70,
+        startAngle: -Math.PI,
         spreadDistance: 50 // Wolken werden um aktuellen Spawnpunkt zufällig gespawnt, mit Abstand aus [0,spread] 
     },
     lightning: {
@@ -128,7 +128,7 @@ console.log('created rain engine, ' + conf.rain.maxNumRaindrops + ' particles');
 scene.add(rainParticleGroup.mesh);
 
 var windDirection = new THREE.Vector3(0, 0, 30);
-var cloudParticleGroup = createCloudEngine(conf.cloud.maxNumClouds, conf.cloud.spawnCenter, windDirection, conf.cloud.spreadDistance);
+var cloudParticleGroup = createCloudEngine(conf.cloud.maxNumClouds, windDirection, conf.cloud.spreadDistance);
 console.log('created cloud engine, ' + conf.cloud.minNumClouds + ' particles');
 scene.add(cloudParticleGroup.mesh);
 
@@ -138,7 +138,7 @@ var guiData = {
     raininess: 0,
     cloudiness: 0.1,
     fog_density: conf.fog.minDensity,
-    wind_angle: 0,
+    wind_angle: conf.cloud.startAngle,
     load_weather_data: requestWeatherData
 };
 
