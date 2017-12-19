@@ -5,7 +5,7 @@ conf = {
         minRaininessColor: new THREE.Color(0xffffff),
         maxRaininessColor: new THREE.Color(0x7f7f7f),
         spawnHeight: 70,
-        startAngle: -Math.PI,
+        startAngle: Math.PI,    // rad, aus [0,2*PI]
         spreadDistance: 50 // Wolken werden um aktuellen Spawnpunkt zufällig gespawnt, mit Abstand aus [0,spread] 
     },
     lightning: {
@@ -147,10 +147,11 @@ var gui = new dat.GUI();
 gui.add(guiData, "raininess", 0, 1, 0.01).onChange(guiChanged);
 gui.add(guiData, "cloudiness", 0.1, 1, 0.01).onChange(guiChanged);
 gui.add(guiData, "fog_density", conf.fog.minDensity, conf.fog.maxDensity, 0.0001).onChange(guiChanged);
-gui.add(guiData, "wind_angle", 0, 2*Math.PI, 0.01).onChange(guiChanged);
+gui.add(guiData, "wind_angle", 0, 2*Math.PI, 0.01).onChange(onWindAngleChanged);
 gui.add(guiData, "load_weather_data");
 // alternativ: onFinishChange -> Callback erst bei Fokusverlust aufgerufen
 guiChanged();
+onWindAngleChanged(guiData.wind_angle);
 
 window.addEventListener('resize', function(){
     camera.aspect = window.innerWidth/window.innerHeight;
@@ -169,10 +170,13 @@ function guiChanged(){
     scene.background = conf.rain.minRaininessSkyColor.clone().lerp(conf.rain.maxRaininessSkyColor, guiData.raininess);
     rainParticleGroup.emitters[0].activeMultiplier = guiData.raininess;
     scene.fog.density = guiData.fog_density;
+}
+
+function onWindAngleChanged(angle){
     var cloudSpawnDist = conf.model.groundSize/2;
-    var x = cloudSpawnDist*Math.cos(guiData.wind_angle);
+    var x = cloudSpawnDist*Math.cos(angle);
     var y = conf.cloud.spawnHeight;
-    var z = cloudSpawnDist*Math.sin(guiData.wind_angle);
+    var z = cloudSpawnDist*Math.sin(angle);
     cloudParticleGroup.emitters[0].position.value.set(x,y,z);
     cloudSpawnPointViz.position.set(x,y,z);
 }
