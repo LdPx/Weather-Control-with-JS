@@ -8,7 +8,8 @@ conf = {
         spawnHeight: 70,
         startAngle: Math.PI,    // rad, aus [0,2*PI]
         startSpeed: 8,
-        startForce: 0.1,
+        minForce: 0.25,
+        maxForce: 2,
         spreadDistance: 50 // Wolken werden um aktuellen Spawnpunkt zufällig gespawnt, mit Abstand aus [0,spread] 
     },
     lightning: {
@@ -50,8 +51,8 @@ scene.fog = new THREE.FogExp2(conf.fog.color, conf.fog.minDensity);
 
 var camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 1, 1000);
 //camera.position.set(250,100,200);
-//camera.position.set(100, 75, 20);
-camera.position.set(0, 200, 0);
+camera.position.set(100, 75, 20);
+//camera.position.set(0, 200, 0);
 console.log('set camera to', camera.position);
 camera.lookAt(scene.position);
 
@@ -141,7 +142,7 @@ var guiData = {
     cloudiness: 0.1,
     fog_density: conf.fog.minDensity,
     wind_angle: conf.cloud.startAngle,
-    wind_force: conf.cloud.startForce,
+    wind_force: conf.cloud.minForce,
     load_weather_data: requestWeatherData,
 };
 
@@ -152,7 +153,7 @@ gui.add(guiData, "raininess", 0, 1, 0.01).onChange(guiChanged);
 gui.add(guiData, "cloudiness", 0.1, 1, 0.01).onChange(guiChanged);
 gui.add(guiData, "fog_density", conf.fog.minDensity, conf.fog.maxDensity, 0.0001).onChange(guiChanged);
 gui.add(guiData, "wind_angle", 0, 2*Math.PI, 0.01).onChange(onWindAngleChanged);
-gui.add(guiData, "wind_force", conf.cloud.startForce, 10, 0.1).onChange(onWindForceChanged);
+gui.add(guiData, "wind_force", conf.cloud.minForce, conf.cloud.maxForce, 0.1).onChange(onWindForceChanged);
 gui.add(guiData, "load_weather_data");
 guiChanged();
 onWindAngleChanged(guiData.wind_angle);
@@ -176,15 +177,21 @@ function guiChanged(){
     scene.fog.density = guiData.fog_density;
 }
 
+// funktioniert (leider) nur so, nicht mit direkter Änderung im Emitter
+function setMaxAge(emitter, maxAge){
+    for ( var index = 0; index < emitter.particleCount; index++ ) {            
+        var array = emitter.attributes.params.typedArray.array;
+        var i = emitter.attributes.params.typedArray.indexOffset + ( index * emitter.attributes.params.typedArray.componentSize );
+        array[ i + 2 ] = maxAge;
+    }  
+}
 
 function updateWindFromCloudSpawnPos(){
     var windDir = cloudParticleGroup.emitters[0].velocity.value;
     var pos = cloudParticleGroup.emitters[0].position.value;
     windDir.set(pos.x,0,pos.z);
-    console.log(windDir);
     windDir.multiplyScalar(-guiData.wind_force);   // Wind bewegt Wolken stets furch Urprung
-    console.log(windDir);
-    //windDir.set(x,0,z).multiplyScalar(-conf.wind_force);
+    setMaxAge(cloudParticleGroup.emitters[0], 2.0/guiData.wind_force);  // Wolken leben umgekehrt proportional zur Windstärke
 }
 
 
@@ -195,8 +202,6 @@ function onWindAngleChanged(angle){
     var z = cloudSpawnDist*Math.sin(angle);
     cloudParticleGroup.emitters[0].position.value.set(x,y,z);
     cloudSpawnPointViz.position.set(x,y,z);
-    //var windDir = cloudParticleGroup.emitters[0].velocity.value;
-    //windDir.set(x,0,z).multiplyScalar(-conf.wind_force);
     updateWindFromCloudSpawnPos();
 }
 
