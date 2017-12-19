@@ -7,6 +7,7 @@ conf = {
         maxRaininessColor: new THREE.Color(0x7f7f7f),
         spawnHeight: 70,
         startAngle: Math.PI,    // rad, aus [0,2*PI]
+        
         spreadDistance: 50 // Wolken werden um aktuellen Spawnpunkt zufällig gespawnt, mit Abstand aus [0,spread] 
     },
     lightning: {
@@ -128,8 +129,7 @@ var rainParticleGroup = createRainEngine(conf.rain.maxNumRaindrops);
 console.log('created rain engine, ' + conf.rain.maxNumRaindrops + ' particles');
 scene.add(rainParticleGroup.mesh);
 
-var windDirection = new THREE.Vector3(0, 0, 30);
-var cloudParticleGroup = createCloudEngine(conf.cloud.maxNumClouds, windDirection, conf.cloud.spreadDistance);
+var cloudParticleGroup = createCloudEngine(conf.cloud.maxNumClouds, conf.cloud.spreadDistance);
 console.log('created cloud engine, ' + conf.cloud.minNumClouds + ' particles');
 scene.add(cloudParticleGroup.mesh);
 
@@ -180,6 +180,11 @@ function onWindAngleChanged(angle){
     var z = cloudSpawnDist*Math.sin(angle);
     cloudParticleGroup.emitters[0].position.value.set(x,y,z);
     cloudSpawnPointViz.position.set(x,y,z);
+    var windDir = cloudParticleGroup.emitters[0].velocity.value;
+    windDir.set(x,0,z).multiplyScalar(-1);
+    
+    console.log('cloud spawn', cloudSpawnPointViz.position);
+    console.log('wind dir', windDir);
 }
 
 function spawnLightning(){
