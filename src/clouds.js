@@ -1,5 +1,5 @@
 
-function createCloudEngine(maxNumClouds, spawnCenter, velocity) {
+function createCloudEngine(maxNumClouds, spawnCenter, velocity, spreadDistance) {
     var particleGroup = new SPE.Group({
         texture: {
             value: new THREE.TextureLoader().load('./textures/cloud.png')
@@ -19,7 +19,9 @@ function createCloudEngine(maxNumClouds, spawnCenter, velocity) {
         },
         position: {
             value: spawnCenter,
-            spread: new THREE.Vector3(100, 30, 100)
+            spread: new THREE.Vector3().setScalar(spreadDistance),
+            randomise: true,
+            distribution: SPE.distributions.SPHERE
         },
         // Geschwindigkeit
         velocity: {

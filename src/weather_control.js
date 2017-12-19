@@ -5,6 +5,7 @@ conf = {
         spawnCenter: new THREE.Vector3(0, 70, -50),
         minRaininessColor: new THREE.Color(0xffffff),
         maxRaininessColor: new THREE.Color(0x7f7f7f),
+        spreadDistance: 50 // Wolken werden um aktuellen Spawnpunkt zufällig gespawnt, mit Abstand aus [0,spread] 
     },
     lightning: {
         spawnY: 70,
@@ -44,8 +45,10 @@ scene.background = conf.rain.minRaininessSkyColor;
 scene.fog = new THREE.FogExp2(conf.fog.color, conf.fog.minDensity);
 
 var camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 1, 1000);
+//camera.position.set(250,100,200);
 camera.position.set(100, 75, 20);
-camera.lookAt(new THREE.Vector3(0,0,0));
+console.log('set camera to', camera.position);
+camera.lookAt(scene.position);
 
 var renderer = new THREE.WebGLRenderer();
 //renderer.physicallyCorrectLights = true;    
@@ -118,10 +121,7 @@ console.log('created rain engine, ' + conf.rain.maxNumRaindrops + ' particles');
 scene.add(rainParticleGroup.mesh);
 
 var windDirection = new THREE.Vector3(0, 0, 30);
-var cloudParticleGroup = createCloudEngine(conf.cloud.maxNumClouds, conf.cloud.spawnCenter, windDirection);
-// Aktualisierung des 'velocity'-Attributes: z.B.
-// windDirection.z += 1;
-// cloudParticleGroup.emitters[0].velocity.value = windDirection;
+var cloudParticleGroup = createCloudEngine(conf.cloud.maxNumClouds, conf.cloud.spawnCenter, windDirection, conf.cloud.spreadDistance);
 console.log('created cloud engine, ' + conf.cloud.minNumClouds + ' particles');
 scene.add(cloudParticleGroup.mesh);
 
