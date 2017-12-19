@@ -1,5 +1,6 @@
 
 conf = {
+    url: 'http://api.openweathermap.org/data/2.5/weather?units=metric&lat=51.2&lon=6.47&APPID=43a26c85c29d39f47dc194dda192eb3a',
     cloud: {
         maxNumClouds: 250,
         minRaininessColor: new THREE.Color(0xffffff),
@@ -227,7 +228,7 @@ function lightningFadeOut(deltaTime){
 }
 
 function requestWeatherData(){
-    var url = 'http://api.openweathermap.org/data/2.5/weather?units=metric&lat=51.2&lon=6.47&APPID=43a26c85c29d39f47dc194dda192eb3a';
+    var url = conf.url;
     $.getJSON(url)
     .done(function(json){
         var weather = owpjsonToWeather(json);
