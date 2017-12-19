@@ -5,6 +5,7 @@ conf = {
         spawnCenter: new THREE.Vector3(0, 70, -50),
         minRaininessColor: new THREE.Color(0xffffff),
         maxRaininessColor: new THREE.Color(0x7f7f7f),
+        spawnHeight: 70,
         spreadDistance: 50 // Wolken werden um aktuellen Spawnpunkt zufällig gespawnt, mit Abstand aus [0,spread] 
     },
     lightning: {
@@ -104,6 +105,12 @@ scene.add(new THREE.CameraHelper(dirLight.shadow.camera));
 // visualisiere x-,y-,z-Achse
 scene.add(new THREE.AxisHelper(1000));
 
+
+// zur Anzeige des Wolken-Spawnpunktes
+var cloudSpawnPointViz = new THREE.Mesh(new THREE.BoxGeometry(5, 5, 5), new THREE.MeshBasicMaterial( {color: 0x00ff00} ) );
+cloudSpawnPointViz.add(new THREE.AxisHelper(20));
+scene.add(cloudSpawnPointViz);
+
 // TODO bringt's das?
 //var hemLight = new THREE.HemisphereLight(0xffffbb, 0x080820, 1);
 //scene.add(hemLight);
@@ -131,6 +138,7 @@ var guiData = {
     raininess: 0,
     cloudiness: 0.1,
     fog_density: conf.fog.minDensity,
+    wind_angle: 0,
     load_weather_data: requestWeatherData
 };
 
@@ -139,6 +147,7 @@ var gui = new dat.GUI();
 gui.add(guiData, "raininess", 0, 1, 0.01).onChange(guiChanged);
 gui.add(guiData, "cloudiness", 0.1, 1, 0.01).onChange(guiChanged);
 gui.add(guiData, "fog_density", conf.fog.minDensity, conf.fog.maxDensity, 0.0001).onChange(guiChanged);
+gui.add(guiData, "wind_angle", 0, 2*Math.PI, 0.01).onChange(guiChanged);
 gui.add(guiData, "load_weather_data");
 // alternativ: onFinishChange -> Callback erst bei Fokusverlust aufgerufen
 guiChanged();
@@ -160,6 +169,12 @@ function guiChanged(){
     scene.background = conf.rain.minRaininessSkyColor.clone().lerp(conf.rain.maxRaininessSkyColor, guiData.raininess);
     rainParticleGroup.emitters[0].activeMultiplier = guiData.raininess;
     scene.fog.density = guiData.fog_density;
+    var cloudSpawnDist = conf.model.groundSize/2;
+    var x = cloudSpawnDist*Math.cos(guiData.wind_angle);
+    var y = conf.cloud.spawnHeight;
+    var z = cloudSpawnDist*Math.sin(guiData.wind_angle);
+    cloudParticleGroup.emitters[0].position.value.set(x,y,z);
+    cloudSpawnPointViz.position.set(x,y,z);
 }
 
 function spawnLightning(){
