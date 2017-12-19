@@ -15,7 +15,7 @@ function createCloudEngine(maxNumClouds, spreadDistance) {
     var emitter = new SPE.Emitter({
         particleCount: maxNumClouds,
         maxAge: {
-            value: 3,
+            value: null,    // wird später gesetzt
         },
         position: {
             value: new THREE.Vector3(),

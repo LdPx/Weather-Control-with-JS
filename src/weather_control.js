@@ -7,7 +7,8 @@ conf = {
         maxRaininessColor: new THREE.Color(0x7f7f7f),
         spawnHeight: 70,
         startAngle: Math.PI,    // rad, aus [0,2*PI]
-        
+        startSpeed: 8,
+        startForce: 0.1,
         spreadDistance: 50 // Wolken werden um aktuellen Spawnpunkt zufällig gespawnt, mit Abstand aus [0,spread] 
     },
     lightning: {
@@ -49,7 +50,8 @@ scene.fog = new THREE.FogExp2(conf.fog.color, conf.fog.minDensity);
 
 var camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 1, 1000);
 //camera.position.set(250,100,200);
-camera.position.set(100, 75, 20);
+//camera.position.set(100, 75, 20);
+camera.position.set(0, 200, 0);
 console.log('set camera to', camera.position);
 camera.lookAt(scene.position);
 
@@ -85,7 +87,6 @@ for(var i = 0; i < conf.model.numHouses; i++){
 // Licht: Farbe, Intensität
 var dirLight = new THREE.DirectionalLight(0xffffff, 1);
 dirLight.position.set(20, 100, 100);
-
 dirLight.castShadow = true;            // default false
 
 // Schattenauflösung (muss 2er-Potenz sein; größer => genauer & rechenaufwändiger)
@@ -140,8 +141,10 @@ var guiData = {
     cloudiness: 0.1,
     fog_density: conf.fog.minDensity,
     wind_angle: conf.cloud.startAngle,
-    load_weather_data: requestWeatherData
+    wind_force: conf.cloud.startForce,
+    load_weather_data: requestWeatherData,
 };
+
 
 // GUI
 var gui = new dat.GUI();
@@ -149,8 +152,8 @@ gui.add(guiData, "raininess", 0, 1, 0.01).onChange(guiChanged);
 gui.add(guiData, "cloudiness", 0.1, 1, 0.01).onChange(guiChanged);
 gui.add(guiData, "fog_density", conf.fog.minDensity, conf.fog.maxDensity, 0.0001).onChange(guiChanged);
 gui.add(guiData, "wind_angle", 0, 2*Math.PI, 0.01).onChange(onWindAngleChanged);
+gui.add(guiData, "wind_force", conf.cloud.startForce, 10, 0.1).onChange(onWindForceChanged);
 gui.add(guiData, "load_weather_data");
-// alternativ: onFinishChange -> Callback erst bei Fokusverlust aufgerufen
 guiChanged();
 onWindAngleChanged(guiData.wind_angle);
 
@@ -173,6 +176,18 @@ function guiChanged(){
     scene.fog.density = guiData.fog_density;
 }
 
+
+function updateWindFromCloudSpawnPos(){
+    var windDir = cloudParticleGroup.emitters[0].velocity.value;
+    var pos = cloudParticleGroup.emitters[0].position.value;
+    windDir.set(pos.x,0,pos.z);
+    console.log(windDir);
+    windDir.multiplyScalar(-guiData.wind_force);   // Wind bewegt Wolken stets furch Urprung
+    console.log(windDir);
+    //windDir.set(x,0,z).multiplyScalar(-conf.wind_force);
+}
+
+
 function onWindAngleChanged(angle){
     var cloudSpawnDist = conf.model.groundSize/2;
     var x = cloudSpawnDist*Math.cos(angle);
@@ -180,11 +195,13 @@ function onWindAngleChanged(angle){
     var z = cloudSpawnDist*Math.sin(angle);
     cloudParticleGroup.emitters[0].position.value.set(x,y,z);
     cloudSpawnPointViz.position.set(x,y,z);
-    var windDir = cloudParticleGroup.emitters[0].velocity.value;
-    windDir.set(x,0,z).multiplyScalar(-1);
-    
-    console.log('cloud spawn', cloudSpawnPointViz.position);
-    console.log('wind dir', windDir);
+    //var windDir = cloudParticleGroup.emitters[0].velocity.value;
+    //windDir.set(x,0,z).multiplyScalar(-conf.wind_force);
+    updateWindFromCloudSpawnPos();
+}
+
+function onWindForceChanged(force){
+    updateWindFromCloudSpawnPos();
 }
 
 function spawnLightning(){
