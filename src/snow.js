@@ -1,5 +1,5 @@
 
-function createSnowEngine(maxNumSnowflakes, texture){
+function createSnowEngine(maxNumSnowflakes, texture, spawnY){
     var particleGroup = new SPE.Group({
         texture: {
             value: texture
@@ -13,13 +13,14 @@ function createSnowEngine(maxNumSnowflakes, texture){
             value: 2
         },        
         position: {
-            value: new THREE.Vector3(0,100,0),
-            spread: new THREE.Vector3(200,0,200)
+            value: new THREE.Vector3(0,spawnY,0),
+            //spread: new THREE.Vector3(200,0,200)
+            spread: new THREE.Vector3(0,0,0)
         },
         // Geschwindigkeit
         velocity: {
             value: new THREE.Vector3(0,-100,0),
-            spread: new THREE.Vector3(10,7.5,10)
+            spread: new THREE.Vector3(75,75,75)
         },
         color: {
             value: new THREE.Color(0xffffff)

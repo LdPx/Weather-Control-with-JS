@@ -1,5 +1,5 @@
 
-function createRainEngine(maxNumRaindrops){
+function createRainEngine(maxNumRaindrops, spawnY){
     var particleGroup = new SPE.Group({
         texture: {
             value: new THREE.TextureLoader().load('./textures/raindrop.png')
@@ -11,12 +11,12 @@ function createRainEngine(maxNumRaindrops){
     // "spread" bestimmt stets den zufälligen Wertebereich von "value" je Partikel
     var emitter = new SPE.Emitter({
         maxAge: {
-            value: 20
+            value: 2
         },
         
         position: {
-            value: new THREE.Vector3(0,100,0),
-            spread: new THREE.Vector3(200,0,200)
+            value: new THREE.Vector3(0,spawnY,0),
+            spread: new THREE.Vector3(200,200,200)
         },
 /*
         // Beschleunigung (brauchen wir wohl net)

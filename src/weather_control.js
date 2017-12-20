@@ -2,11 +2,11 @@
 // TODO Konfig-Kram wie Texturen ergänzen
 conf = {
     url: 'http://api.openweathermap.org/data/2.5/weather?units=metric&lat=51.2&lon=6.47&APPID=43a26c85c29d39f47dc194dda192eb3a',
+    spawnY: 70, // Spawnhöhe Blitze, Wolken, Regen, Schnee
     cloud: {
         maxNumClouds: 250,
         minRaininessColor: new THREE.Color(0xffffff),
         maxRaininessColor: new THREE.Color(0x7f7f7f),
-        spawnHeight: 70,
         startAngle: Math.PI,    // rad, aus [0,2*PI]
         startSpeed: 8,
         minForce: 0.25,
@@ -14,7 +14,6 @@ conf = {
         spreadDistance: 50 // Wolken werden um aktuellen Spawnpunkt zufällig gespawnt, mit Abstand aus [0,spread] 
     },
     lightning: {
-        spawnY: 70,
         numKinks: 3,
         lineWidth: 0.3,
         fadeOutDelay: 1,  // sec
@@ -56,15 +55,13 @@ scene.fog = new THREE.FogExp2(conf.fog.color, conf.fog.minDensity);
 
 var camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 1, 1000);
 //camera.position.set(250,100,200);
-camera.position.set(100, 75, 20);
+//camera.position.set(100, 75, 20);
+camera.position.set(0, 0, 150);
 //camera.position.set(0, 200, 0);
 console.log('set camera to', camera.position);
 camera.lookAt(scene.position);
 
 var renderer = new THREE.WebGLRenderer();
-//renderer.physicallyCorrectLights = true;    
-//renderer.gammaInput = true;
-//renderer.gammaOutput = true;
 renderer.shadowMap.enabled = true;
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
@@ -128,11 +125,11 @@ scene.add(ambientLight);
 var lightningFlash = new THREE.AmbientLight(0x404040, 0);
 scene.add(lightningFlash);
 
-var rainParticleGroup = createRainEngine(conf.rain.maxNumRaindrops);
+var rainParticleGroup = createRainEngine(conf.rain.maxNumRaindrops, conf.spawnY);
 console.log('created rain engine:', 'group', rainParticleGroup, 'emitter', rainParticleGroup.emitters[0]);
 scene.add(rainParticleGroup.mesh);
 
-var snowParticleGroup = createSnowEngine(conf.snow.maxNumSnowflakes, conf.snow.texture);
+var snowParticleGroup = createSnowEngine(conf.snow.maxNumSnowflakes, conf.snow.texture, conf.spawnY);
 console.log('created snow engine:', 'group', snowParticleGroup, 'emitter', snowParticleGroup.emitters[0]);
 scene.add(snowParticleGroup.mesh);
 
@@ -175,8 +172,7 @@ window.addEventListener('resize', function(){
 animate();
 
 // TODO in mehrere Callbacks aufsplitten (Performance) ?
-function guiChanged(){
-    console.log('gui changed', guiData);    
+function guiChanged(){  
     var newCloudColor = conf.cloud.minRaininessColor.clone().lerp(conf.cloud.maxRaininessColor, guiData.raininess);
     cloudParticleGroup.emitters[0].color.value = newCloudColor;
     cloudParticleGroup.emitters[0].activeMultiplier = guiData.cloudiness;
@@ -190,7 +186,7 @@ function setMaxAge(emitter, maxAge){
     for ( var index = 0; index < emitter.particleCount; index++ ) {            
         var array = emitter.attributes.params.typedArray.array;
         var i = emitter.attributes.params.typedArray.indexOffset + ( index * emitter.attributes.params.typedArray.componentSize );
-        array[ i + 2 ] = maxAge;
+        array[i+2] = maxAge;
     }  
 }
 
@@ -198,7 +194,7 @@ function updateWindFromCloudSpawnPos(){
     var windDir = cloudParticleGroup.emitters[0].velocity.value;
     var pos = cloudParticleGroup.emitters[0].position.value;
     windDir.set(pos.x,0,pos.z);
-    windDir.multiplyScalar(-guiData.wind_force);   // Wind bewegt Wolken stets durch (0,cloud.spawnHeight,0)
+    windDir.multiplyScalar(-guiData.wind_force);   // Wind bewegt Wolken stets durch (0,conf.spawnY,0)
     setMaxAge(cloudParticleGroup.emitters[0], 2.0/guiData.wind_force);  // Wolken leben umgekehrt proportional zur Windstärke
 }
 
@@ -206,7 +202,7 @@ function updateWindFromCloudSpawnPos(){
 function onWindAngleChanged(angle){
     var cloudSpawnDist = conf.model.groundSize/2;
     var x = cloudSpawnDist*Math.cos(angle);
-    var y = conf.cloud.spawnHeight;
+    var y = conf.spawnY;
     var z = cloudSpawnDist*Math.sin(angle);
     cloudParticleGroup.emitters[0].position.value.set(x,y,z);
     cloudSpawnPointViz.position.set(x,y,z);
@@ -224,7 +220,7 @@ function onSnowinessChanged(snowiness){
 function spawnLightning(){
     var x = getRandomInt(-conf.model.spawnRange, conf.model.spawnRange);
     var z = getRandomInt(-conf.model.spawnRange, conf.model.spawnRange);
-    var lightningStart = new THREE.Vector3(x,conf.lightning.spawnY,z);
+    var lightningStart = new THREE.Vector3(x,conf.spawnY,z);
     var lightningDir = new THREE.Vector3(x,0,z).sub(lightningStart);
     var lightningModel = createLightning(lightningStart, lightningDir, conf.lightning.numKinks);
     extendLightningPaths(lightningModel);
