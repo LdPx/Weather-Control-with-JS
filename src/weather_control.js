@@ -5,6 +5,7 @@ conf = {
     spawnY: 70, // Spawnhöhe Blitze, Wolken, Regen, Schnee
     cloud: {
         maxNumClouds: 250,
+        texture: new THREE.TextureLoader().load('./textures/cloud.png'),
         minRaininessColor: new THREE.Color(0xffffff),
         maxRaininessColor: new THREE.Color(0x7f7f7f),
         startAngle: Math.PI,    // rad, aus [0,2*PI]
@@ -26,6 +27,7 @@ conf = {
     },
     rain: {
         maxNumRaindrops: 50000, // feucht!
+        texture: new THREE.TextureLoader().load('./textures/raindrop.png'),
         minRaininessSkyColor: new THREE.Color(0x2271f9),
         maxRaininessSkyColor: new THREE.Color(0x8b8989),
     },
@@ -125,7 +127,7 @@ scene.add(ambientLight);
 var lightningFlash = new THREE.AmbientLight(0x404040, 0);
 scene.add(lightningFlash);
 
-var rainParticleGroup = createRainEngine(conf.rain.maxNumRaindrops, conf.spawnY);
+var rainParticleGroup = createRainEngine(conf.rain.maxNumRaindrops, conf.rain.texture, conf.spawnY);
 console.log('created rain engine:', 'group', rainParticleGroup, 'emitter', rainParticleGroup.emitters[0]);
 scene.add(rainParticleGroup.mesh);
 
@@ -133,7 +135,7 @@ var snowParticleGroup = createSnowEngine(conf.snow.maxNumSnowflakes, conf.snow.t
 console.log('created snow engine:', 'group', snowParticleGroup, 'emitter', snowParticleGroup.emitters[0]);
 scene.add(snowParticleGroup.mesh);
 
-var cloudParticleGroup = createCloudEngine(conf.cloud.maxNumClouds, conf.cloud.spreadDistance);
+var cloudParticleGroup = createCloudEngine(conf.cloud.maxNumClouds, conf.cloud.texture, conf.cloud.spreadDistance);
 console.log('created cloud engine:', 'group', cloudParticleGroup, 'emitter', cloudParticleGroup.emitters[0]);
 scene.add(cloudParticleGroup.mesh);
 

@@ -1,8 +1,8 @@
 
-function createCloudEngine(maxNumClouds, spreadDistance) {
+function createCloudEngine(maxNumClouds, texture, spreadDistance) {
     var particleGroup = new SPE.Group({
         texture: {
-            value: new THREE.TextureLoader().load('./textures/cloud.png')
+            value: texture
         },
         // TODO prüfen ob nötig/sinnvoll
         blending: THREE.NormalBlending,

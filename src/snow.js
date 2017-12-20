@@ -14,8 +14,7 @@ function createSnowEngine(maxNumSnowflakes, texture, spawnY){
         },        
         position: {
             value: new THREE.Vector3(0,spawnY,0),
-            //spread: new THREE.Vector3(200,0,200)
-            spread: new THREE.Vector3(0,0,0)
+            spread: new THREE.Vector3(200,0,200)
         },
         // Geschwindigkeit
         velocity: {

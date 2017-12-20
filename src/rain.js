@@ -1,8 +1,8 @@
 
-function createRainEngine(maxNumRaindrops, spawnY){
+function createRainEngine(maxNumRaindrops, texture, spawnY){
     var particleGroup = new SPE.Group({
         texture: {
-            value: new THREE.TextureLoader().load('./textures/raindrop.png')
+            value: texture
         },
         maxParticleCount: maxNumRaindrops,
         fog: false
