@@ -1,4 +1,5 @@
 
+// TODO Konfig-Kram wie Texturen ergänzen
 conf = {
     url: 'http://api.openweathermap.org/data/2.5/weather?units=metric&lat=51.2&lon=6.47&APPID=43a26c85c29d39f47dc194dda192eb3a',
     cloud: {
@@ -28,6 +29,10 @@ conf = {
         maxNumRaindrops: 50000, // feucht!
         minRaininessSkyColor: new THREE.Color(0x2271f9),
         maxRaininessSkyColor: new THREE.Color(0x8b8989),
+    },
+    snow: {
+        maxNumSnowflakes: 5000,
+        texture: new THREE.TextureLoader().load('./textures/snowflake.png'),
     },
     fog: {
         color: new THREE.Color(0xffffff),
@@ -115,30 +120,31 @@ var cloudSpawnPointViz = new THREE.Mesh(new THREE.BoxGeometry(5, 5, 5), new THRE
 cloudSpawnPointViz.add(new THREE.AxisHelper(20));
 scene.add(cloudSpawnPointViz);
 
-// TODO bringt's das?
-//var hemLight = new THREE.HemisphereLight(0xffffbb, 0x080820, 1);
-//scene.add(hemLight);
 
-
-var ambientLight = new THREE.AmbientLight(0x404040, 2); // soft white light
+var ambientLight = new THREE.AmbientLight(0x404040, 2); 
 scene.add(ambientLight);
 
-//var lightningFlash = new THREE.PointLight(0xffffff, 0, 0, 2);
+// Blitzlicht
 var lightningFlash = new THREE.AmbientLight(0x404040, 0);
 scene.add(lightningFlash);
 
 var rainParticleGroup = createRainEngine(conf.rain.maxNumRaindrops);
-console.log('created rain engine, ' + conf.rain.maxNumRaindrops + ' particles');
+console.log('created rain engine:', 'group', rainParticleGroup, 'emitter', rainParticleGroup.emitters[0]);
 scene.add(rainParticleGroup.mesh);
 
+var snowParticleGroup = createSnowEngine(conf.snow.maxNumSnowflakes, conf.snow.texture);
+console.log('created snow engine:', 'group', snowParticleGroup, 'emitter', snowParticleGroup.emitters[0]);
+scene.add(snowParticleGroup.mesh);
+
 var cloudParticleGroup = createCloudEngine(conf.cloud.maxNumClouds, conf.cloud.spreadDistance);
-console.log('created cloud engine, ' + conf.cloud.minNumClouds + ' particles');
+console.log('created cloud engine:', 'group', cloudParticleGroup, 'emitter', cloudParticleGroup.emitters[0]);
 scene.add(cloudParticleGroup.mesh);
 
 var lightningData = null;
 
 var guiData = {
     raininess: 0,
+    snowiness: 0,
     cloudiness: 0.1,
     fog_density: conf.fog.minDensity,
     wind_angle: conf.cloud.startAngle,
@@ -150,12 +156,14 @@ var guiData = {
 // GUI
 var gui = new dat.GUI();
 gui.add(guiData, "raininess", 0, 1, 0.01).onChange(guiChanged);
+gui.add(guiData, "snowiness", 0, 1, 0.01).onChange(onSnowinessChanged);
 gui.add(guiData, "cloudiness", 0.1, 1, 0.01).onChange(guiChanged);
 gui.add(guiData, "fog_density", conf.fog.minDensity, conf.fog.maxDensity, 0.0001).onChange(guiChanged);
 gui.add(guiData, "wind_angle", 0, 2*Math.PI, 0.01).onChange(onWindAngleChanged);
 gui.add(guiData, "wind_force", conf.cloud.minForce, conf.cloud.maxForce, 0.1).onChange(onWindForceChanged);
 gui.add(guiData, "load_weather_data");
 guiChanged();
+onSnowinessChanged(guiData.snowiness);
 onWindAngleChanged(guiData.wind_angle);
 
 window.addEventListener('resize', function(){
@@ -190,7 +198,7 @@ function updateWindFromCloudSpawnPos(){
     var windDir = cloudParticleGroup.emitters[0].velocity.value;
     var pos = cloudParticleGroup.emitters[0].position.value;
     windDir.set(pos.x,0,pos.z);
-    windDir.multiplyScalar(-guiData.wind_force);   // Wind bewegt Wolken stets furch Urprung
+    windDir.multiplyScalar(-guiData.wind_force);   // Wind bewegt Wolken stets durch (0,cloud.spawnHeight,0)
     setMaxAge(cloudParticleGroup.emitters[0], 2.0/guiData.wind_force);  // Wolken leben umgekehrt proportional zur Windstärke
 }
 
@@ -207,6 +215,10 @@ function onWindAngleChanged(angle){
 
 function onWindForceChanged(force){
     updateWindFromCloudSpawnPos();
+}
+
+function onSnowinessChanged(snowiness){
+    snowParticleGroup.emitters[0].activeMultiplier = snowiness;
 }
 
 function spawnLightning(){
@@ -267,15 +279,16 @@ function requestWeatherData(){
 }
 
 function animate() {
+    var dt = clock.getDelta();
     requestAnimationFrame(animate);
-    var deltaTime = clock.getDelta();
-    render(deltaTime);
+    render(dt);
 }
 
-function render(deltaTime){
-    rainParticleGroup.tick(deltaTime);
-    cloudParticleGroup.tick(deltaTime);
-    lightningFadeOut(deltaTime);
+function render(dt){
+    cloudParticleGroup.tick(dt);
+    rainParticleGroup.tick(dt);
+    snowParticleGroup.tick(dt);
+    lightningFadeOut(dt);
     renderer.render(scene,camera);
 }
 
