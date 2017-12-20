@@ -16,6 +16,7 @@ function createCloudEngine(maxNumClouds, spreadDistance) {
         particleCount: maxNumClouds,
         maxAge: {
             value: null,    // wird später gesetzt
+			spread: null
         },
         position: {
             value: new THREE.Vector3(),
@@ -30,7 +31,7 @@ function createCloudEngine(maxNumClouds, spreadDistance) {
         },
         // leichtes Wackeln
         wiggle: {
-            spread: 25
+            spread: 0
         },
         // Größe, Varianz
         size: {

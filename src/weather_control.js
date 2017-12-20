@@ -2,7 +2,7 @@
 conf = {
     url: 'http://api.openweathermap.org/data/2.5/weather?units=metric&lat=51.2&lon=6.47&APPID=43a26c85c29d39f47dc194dda192eb3a',
     cloud: {
-        maxNumClouds: 250,
+        maxNumClouds: 100,
         minRaininessColor: new THREE.Color(0xffffff),
         maxRaininessColor: new THREE.Color(0x7f7f7f),
         spawnHeight: 70,
@@ -10,7 +10,7 @@ conf = {
         startSpeed: 8,
         minForce: 0.25,
         maxForce: 2,
-        spreadDistance: 50 // Wolken werden um aktuellen Spawnpunkt zufällig gespawnt, mit Abstand aus [0,spread] 
+        spreadDistance: 100 // Wolken werden um aktuellen Spawnpunkt zufällig gespawnt, mit Abstand aus [0,spread] 
     },
     lightning: {
         spawnY: 70,
@@ -51,8 +51,8 @@ scene.fog = new THREE.FogExp2(conf.fog.color, conf.fog.minDensity);
 
 var camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 1, 1000);
 //camera.position.set(250,100,200);
-camera.position.set(100, 75, 20);
-//camera.position.set(0, 200, 0);
+//camera.position.set(100, 75, 20);
+camera.position.set(0, 200, 0);
 console.log('set camera to', camera.position);
 camera.lookAt(scene.position);
 
@@ -192,6 +192,7 @@ function updateWindFromCloudSpawnPos(){
     windDir.set(pos.x,0,pos.z);
     windDir.multiplyScalar(-guiData.wind_force);   // Wind bewegt Wolken stets furch Urprung
     setMaxAge(cloudParticleGroup.emitters[0], 2.0/guiData.wind_force);  // Wolken leben umgekehrt proportional zur Windstärke
+	cloudParticleGroup.emitters[0].maxAge.spread = 1.0/guiData.wind_force;
 }
 
 
@@ -260,6 +261,10 @@ function requestWeatherData(){
     .done(function(json){
         var weather = owpjsonToWeather(json);
         console.log('loaded weather', weather);
+		guiData.cloudiness = weather.cloudPercentFactor;
+		for (var i in gui.__controllers) {
+			gui.__controllers[i].updateDisplay();
+		}
     })
     .fail(function(jqXHR, textStatus, errorThrown){
         alert("weather api call failed\n" + JSON.stringify({url: url, jqXHR: jqXHR, textStatus: textStatus, errorThrown: errorThrown}));
