@@ -19,9 +19,8 @@ conf = {
         lineWidth: 0.3,
         fadeOutDelay: 1,  // sec
         alphaMap: new THREE.TextureLoader().load('./textures/lightning.png'),
-        // max. Spawnchance je Frame, wenn kein Blitz aktuell vorhanden (könnte man auch von deltaTime abhg machen)
-        // ist 0 bei min. raininess und maxSpawnRate bei max. raininess
-        maxSpawnRate:  0.1,
+        // bei maximaler raininiess spawnen durchschnittlich maxExpectedSpawnsPerSeconds Blitze pro Sekunde (abzgl. der Fadeout-Dauer bereits gespawnter Blitze!)
+        maxExpectedSpawnsPerSeconds: 0.25,          
         flashDelay: 1,    // sec
         flashStartIntensity: 10
     },
@@ -239,9 +238,9 @@ function removeLightning(lightningData){
     lightningData.materials.forEach((material) => { material.dispose(); });
 }
 
-function lightningFadeOut(deltaTime){
+function lightningFadeOut(dt){
     if(lightningData === null){
-        if(Math.random() <= conf.lightning.maxSpawnRate * guiData.raininess){
+        if(Math.random() < dt * conf.lightning.maxExpectedSpawnsPerSeconds * guiData.raininess){
             lightningData = {
                 data: spawnLightning(),
                 timeElapsed: 0
@@ -250,11 +249,11 @@ function lightningFadeOut(deltaTime){
         }
     }
     else {
-        var opacityDiff = deltaTime/conf.lightning.fadeOutDelay;
-        lightningData.timeElapsed += deltaTime;
+        var opacityDiff = dt/conf.lightning.fadeOutDelay;
+        lightningData.timeElapsed += dt;
         lightningData.data.materials.forEach(mat => { mat.uniforms.opacity.value -= opacityDiff; }); 
         if(lightningData.timeElapsed < conf.lightning.flashDelay){
-            var flashIntensityDiff = conf.lightning.flashStartIntensity*deltaTime/conf.lightning.flashDelay;
+            var flashIntensityDiff = conf.lightning.flashStartIntensity*dt/conf.lightning.flashDelay;
             lightningFlash.intensity -= flashIntensityDiff;
         }
         if(lightningData.timeElapsed >= conf.lightning.fadeOutDelay){
