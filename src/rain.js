@@ -1,5 +1,13 @@
 
-function createRainEngine(maxNumRaindrops, texture, spawnY){
+function calcMaxAge(positionY, velocityY){
+    //var minPossibleVelocity = velocity.value.y + velocity.spread.y; // beachte: velocity.value.y ist negativ, da Partikel runterfallen
+    //var maxPossibleY = position.value.y + position.spread.y;
+    //return Math.abs(maxPossibleY/minPossibleVelocity);
+    return Math.abs(positionY/velocityY);
+}
+
+
+function createRainEngine(maxNumRaindrops, texture, positionY, positionSpreadY, positionSpreadXZ, velocityY, velocitySpread){
     var particleGroup = new SPE.Group({
         texture: {
             value: texture
@@ -8,47 +16,28 @@ function createRainEngine(maxNumRaindrops, texture, spawnY){
         fog: false
     });
 
-    // "spread" bestimmt stets den zufälligen Wertebereich von "value" je Partikel
     var emitter = new SPE.Emitter({
         maxAge: {
-            value: 2
-        },
-        
+            value: calcMaxAge(positionY, velocityY)
+        },        
         position: {
-            value: new THREE.Vector3(0,spawnY,0),
-            spread: new THREE.Vector3(200,200,200)
+            value: new THREE.Vector3(0,positionY,0),
+            spread: new THREE.Vector3(positionSpreadXZ,positionSpreadY,positionSpreadXZ)
         },
-/*
-        // Beschleunigung (brauchen wir wohl net)
-        acceleration: {
-            value: new THREE.Vector3(0, -10, 0),
-            spread: new THREE.Vector3( 10, 0, 10 )
-        },
-*/
-        // Geschwindigkeit
         velocity: {
-            value: new THREE.Vector3(0,-100,0),
-            spread: new THREE.Vector3(10,7.5,10)
+            value: new THREE.Vector3(0,velocityY,0),
+            spread: velocitySpread
         },
-
         color: {
-            // 1 Farbe oder ein Array mehrerer Farben
-            //value: [new THREE.Color('white'), new THREE.Color('red')]
             value: new THREE.Color(0x034aec)
-            // TODO hier wär auch "spread" möglich _> sinnvoll?
         },
-
         size: {
             value: 2
         },
-
         particleCount: maxNumRaindrops,
         activeMultiplier: 0 // beginne mit 0 Regentropfen
     });
-
     particleGroup.addEmitter(emitter);
-    //scene.add( particleGroup.mesh );
-    //document.querySelector('.numParticles').textContent = 'Total particles: ' + emitter.particleCount;
     return particleGroup;
 }
 

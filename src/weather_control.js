@@ -1,14 +1,14 @@
 
-// TODO Konfig-Kram wie Texturen ergänzen
 conf = {
     url: 'http://api.openweathermap.org/data/2.5/weather?units=metric&lat=51.2&lon=6.47&APPID=43a26c85c29d39f47dc194dda192eb3a',
-    spawnY: 70, // Spawnhöhe Blitze, Wolken, Regen, Schnee
+    spawnY: 70, // Spawnhöhe Blitze, Wolken, Regen, Schnee,
+    positionSpreadY: 50,
     cloud: {
         maxNumClouds: 250,
         texture: new THREE.TextureLoader().load('./textures/cloud.png'),
         minRaininessColor: new THREE.Color(0xffffff),
         maxRaininessColor: new THREE.Color(0x7f7f7f),
-        startAngle: Math.PI,    // rad, aus [0,2*PI]
+        startAngle: Math.PI/2,    // rad, aus [0,2*PI]
         startSpeed: 8,
         minForce: 0.25,
         maxForce: 2,
@@ -25,10 +25,12 @@ conf = {
         flashStartIntensity: 10
     },
     rain: {
-        maxNumRaindrops: 50000, // feucht!
+        maxNumRaindrops: 5000, 
         texture: new THREE.TextureLoader().load('./textures/raindrop.png'),
         minRaininessSkyColor: new THREE.Color(0x2271f9),
         maxRaininessSkyColor: new THREE.Color(0x8b8989),
+        velocityY: -100,
+        velocitySpread: new THREE.Vector3(10,7.5,10)
     },
     snow: {
         maxNumSnowflakes: 5000,
@@ -56,9 +58,10 @@ scene.fog = new THREE.FogExp2(conf.fog.color, conf.fog.minDensity);
 
 var camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 1, 1000);
 //camera.position.set(250,100,200);
-//camera.position.set(100, 75, 20);
-camera.position.set(0, 0, 150);
+camera.position.set(100, 75, 20);
+//camera.position.set(125, 25, 125);
 //camera.position.set(0, 200, 0);
+//camera.position.set(0,0,200);
 console.log('set camera to', camera.position);
 camera.lookAt(scene.position);
 
@@ -126,7 +129,10 @@ scene.add(ambientLight);
 var lightningFlash = new THREE.AmbientLight(0x404040, 0);
 scene.add(lightningFlash);
 
-var rainParticleGroup = createRainEngine(conf.rain.maxNumRaindrops, conf.rain.texture, conf.spawnY);
+//var rainParticleGroup = createRainEngine(conf.rain.maxNumRaindrops, conf.rain.texture, conf.spawnY);
+var rainParticleGroup = createRainEngine(conf.rain.maxNumRaindrops, conf.rain.texture, conf.spawnY, 
+    conf.positionSpreadY, conf.model.groundSize, conf.rain.velocityY, conf.rain.velocitySpread);
+
 console.log('created rain engine:', 'group', rainParticleGroup, 'emitter', rainParticleGroup.emitters[0]);
 scene.add(rainParticleGroup.mesh);
 
