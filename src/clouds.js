@@ -1,5 +1,5 @@
 
-function createCloudEngine(maxNumClouds, texture, spreadDistance) {
+function createCloudEngine(maxNumClouds, texture, positionY, positionSpread) {
     var particleGroup = new SPE.Group({
         texture: {
             value: texture
@@ -13,11 +13,12 @@ function createCloudEngine(maxNumClouds, texture, spreadDistance) {
     var emitter = new SPE.Emitter({
         particleCount: maxNumClouds,
         maxAge: {
-            value: null,    // wird später gesetzt
+            value: 2,    
+			spread: null
         },
         position: {
-            value: new THREE.Vector3(),
-            spread: new THREE.Vector3().setScalar(spreadDistance),
+            value: new THREE.Vector3(0,positionY,0),
+            spread: positionSpread,
             randomise: true,
             distribution: SPE.distributions.SPHERE
         },
@@ -25,10 +26,6 @@ function createCloudEngine(maxNumClouds, texture, spreadDistance) {
         velocity: {
             value: new THREE.Vector3(),
             randomise: true
-        },
-        // leichtes Wackeln
-        wiggle: {
-            spread: 0
         },
         // Größe, Varianz
         size: {
