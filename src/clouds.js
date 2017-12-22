@@ -4,11 +4,9 @@ function createCloudEngine(maxNumClouds, texture, spreadDistance) {
         texture: {
             value: texture
         },
-        // TODO prüfen ob nötig/sinnvoll
         blending: THREE.NormalBlending,
         fog: false,
         transparent: true,
-        //alphaTest: true
         maxParticleCount: maxNumClouds
     });
 
@@ -30,7 +28,7 @@ function createCloudEngine(maxNumClouds, texture, spreadDistance) {
         },
         // leichtes Wackeln
         wiggle: {
-            spread: 25
+            spread: 0
         },
         // Größe, Varianz
         size: {

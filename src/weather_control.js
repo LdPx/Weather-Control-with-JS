@@ -1,18 +1,18 @@
 
 conf = {
     url: 'http://api.openweathermap.org/data/2.5/weather?units=metric&lat=51.2&lon=6.47&APPID=43a26c85c29d39f47dc194dda192eb3a',
-    spawnY: 70, // Spawnhöhe Blitze, Wolken, Regen, Schnee,
-    positionSpreadY: 50,
+    positionY: 70, // Spawnhöhe Blitze, Wolken, Regen, Schnee,
+    positionSpreadY: 50,    // Spawnhöhenvarianz Wolken, Regen, Schnee
     cloud: {
-        maxNumClouds: 250,
+        maxNumClouds: 200,
         texture: new THREE.TextureLoader().load('./textures/cloud.png'),
         minRaininessColor: new THREE.Color(0xffffff),
         maxRaininessColor: new THREE.Color(0x7f7f7f),
-        startAngle: Math.PI/2,    // rad, aus [0,2*PI]
+        startAngle: Math.PI/2,    // aus [0,2*PI]
         startSpeed: 8,
         minForce: 0.25,
         maxForce: 2,
-        spreadDistance: 50 // Wolken werden um aktuellen Spawnpunkt zufällig gespawnt, mit Abstand aus [0,spread] 
+        spreadDistance: 100 // Wolken werden um aktuellen Spawnpunkt zufällig gespawnt, mit Abstand aus [0,spread] 
     },
     lightning: {
         numKinks: 3,
@@ -129,14 +129,14 @@ scene.add(ambientLight);
 var lightningFlash = new THREE.AmbientLight(0x404040, 0);
 scene.add(lightningFlash);
 
-//var rainParticleGroup = createRainEngine(conf.rain.maxNumRaindrops, conf.rain.texture, conf.spawnY);
-var rainParticleGroup = createRainEngine(conf.rain.maxNumRaindrops, conf.rain.texture, conf.spawnY, 
+//var rainParticleGroup = createRainEngine(conf.rain.maxNumRaindrops, conf.rain.texture, conf.positionY);
+var rainParticleGroup = createRainEngine(conf.rain.maxNumRaindrops, conf.rain.texture, conf.positionY, 
     conf.positionSpreadY, conf.model.groundSize, conf.rain.velocityY, conf.rain.velocitySpread);
 
 console.log('created rain engine:', 'group', rainParticleGroup, 'emitter', rainParticleGroup.emitters[0]);
 scene.add(rainParticleGroup.mesh);
 
-var snowParticleGroup = createSnowEngine(conf.snow.maxNumSnowflakes, conf.snow.texture, conf.spawnY);
+var snowParticleGroup = createSnowEngine(conf.snow.maxNumSnowflakes, conf.snow.texture, conf.positionY);
 console.log('created snow engine:', 'group', snowParticleGroup, 'emitter', snowParticleGroup.emitters[0]);
 scene.add(snowParticleGroup.mesh);
 
@@ -149,7 +149,7 @@ var lightningData = null;
 var guiData = {
     raininess: 0,
     snowiness: 0,
-    cloudiness: 0.1,
+    cloudiness: 0,
     fog_density: conf.fog.minDensity,
     wind_angle: conf.cloud.startAngle,
     wind_force: conf.cloud.minForce,
@@ -161,7 +161,7 @@ var guiData = {
 var gui = new dat.GUI();
 gui.add(guiData, "raininess", 0, 1, 0.01).onChange(guiChanged);
 gui.add(guiData, "snowiness", 0, 1, 0.01).onChange(onSnowinessChanged);
-gui.add(guiData, "cloudiness", 0.1, 1, 0.01).onChange(guiChanged);
+gui.add(guiData, "cloudiness", 0, 1, 0.01).onChange(guiChanged);
 gui.add(guiData, "fog_density", conf.fog.minDensity, conf.fog.maxDensity, 0.0001).onChange(guiChanged);
 gui.add(guiData, "wind_angle", 0, 2*Math.PI, 0.01).onChange(onWindAngleChanged);
 gui.add(guiData, "wind_force", conf.cloud.minForce, conf.cloud.maxForce, 0.1).onChange(onWindForceChanged);
@@ -201,7 +201,7 @@ function updateWindFromCloudSpawnPos(){
     var windDir = cloudParticleGroup.emitters[0].velocity.value;
     var pos = cloudParticleGroup.emitters[0].position.value;
     windDir.set(pos.x,0,pos.z);
-    windDir.multiplyScalar(-guiData.wind_force);   // Wind bewegt Wolken stets durch (0,conf.spawnY,0)
+    windDir.multiplyScalar(-guiData.wind_force);   // Wind bewegt Wolken stets durch (0,conf.positionY,0)
     setMaxAge(cloudParticleGroup.emitters[0], 2.0/guiData.wind_force);  // Wolken leben umgekehrt proportional zur Windstärke
 }
 
@@ -209,7 +209,7 @@ function updateWindFromCloudSpawnPos(){
 function onWindAngleChanged(angle){
     var cloudSpawnDist = conf.model.groundSize/2;
     var x = cloudSpawnDist*Math.cos(angle);
-    var y = conf.spawnY;
+    var y = conf.positionY;
     var z = cloudSpawnDist*Math.sin(angle);
     cloudParticleGroup.emitters[0].position.value.set(x,y,z);
     cloudSpawnPointViz.position.set(x,y,z);
@@ -227,7 +227,7 @@ function onSnowinessChanged(snowiness){
 function spawnLightning(){
     var x = getRandomInt(-conf.model.spawnRange, conf.model.spawnRange);
     var z = getRandomInt(-conf.model.spawnRange, conf.model.spawnRange);
-    var lightningStart = new THREE.Vector3(x,conf.spawnY,z);
+    var lightningStart = new THREE.Vector3(x,conf.positionY,z);
     var lightningDir = new THREE.Vector3(x,0,z).sub(lightningStart);
     var lightningModel = createLightning(lightningStart, lightningDir, conf.lightning.numKinks);
     extendLightningPaths(lightningModel);
