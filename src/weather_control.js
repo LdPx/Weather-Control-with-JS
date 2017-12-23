@@ -20,7 +20,7 @@ conf = {
         lineWidth: 0.3,
         fadeOutDelay: 1,  // sec
         alphaMap: new THREE.TextureLoader().load('./textures/lightning.png'),
-        // bei maximaler raininiess spawnen durchschnittlich maxExpectedSpawnsPerSeconds Blitze pro Sekunde (abzgl. der Fadeout-Dauer bereits gespawnter Blitze!)
+        // bei maximalem thunder spawnen durchschnittlich maxExpectedSpawnsPerSeconds Blitze pro Sekunde (abzgl. der Fadeout-Dauer bereits gespawnter Blitze!)
         maxExpectedSpawnsPerSeconds: 0.25,          
         flashDelay: 1,    // sec
         flashStartIntensity: 10
@@ -177,7 +177,7 @@ var gui = new dat.GUI();
 gui.add(guiData, "raininess", 0, 1, 0.01).onChange(guiChanged);
 gui.add(guiData, "snowiness", 0, 1, 0.01).onChange(onSnowinessChanged);
 gui.add(guiData, "cloudiness", 0, 1, 0.01).onChange(guiChanged);
-gui.add(guiData, "thunder", 0, 1, 0.01).onChange(onThunderChanged);
+gui.add(guiData, "thunder", 0, 1, 0.01);
 gui.add(guiData, "fog_density", conf.fog.minDensity, conf.fog.maxDensity, 0.0001).onChange(guiChanged);
 gui.add(guiData, "wind_angle", 0, 2*Math.PI, 0.01).onChange(onWindAngleChanged);
 gui.add(guiData, "wind_force", conf.cloud.minForce, conf.cloud.maxForce, 0.1).onChange(onWindForceChanged);
@@ -203,10 +203,6 @@ function guiChanged(){
     scene.background = conf.rain.minRaininessSkyColor.clone().lerp(conf.rain.maxRaininessSkyColor, guiData.raininess);
     rainParticleGroup.emitters[0].activeMultiplier = guiData.raininess;
     scene.fog.density = guiData.fog_density;
-}
-
-
-function onThunderChanged(){
 }
 
 
