@@ -161,7 +161,7 @@ function lightningFadeOut(dt){
     }
 }
 
-// lädt Wetterdaten asynchron von der konfigurierten URL, fügt diese Daten in guiData ein
+// lädt Wetterdaten asynchron von der konfigurierten URL, fügt benötigte Daten in guiData ein
 function requestWeatherData(){
     var url = conf.url;
     $.getJSON(url)
@@ -195,6 +195,7 @@ function updateCloudDirViz(){
     cloudDirViz.setLength(vel.length());
 }
 
+// Uhr (z.B. nötig für delta time-Berechnung)
 var clock = new THREE.Clock();
 
 var scene = new THREE.Scene();

@@ -1,4 +1,5 @@
 
+// berechnet die Zeit, die ein Partikel der Geschwindigkeit velocityY zum Zurücklegen der Strecke positionY benötigt
 function calcMaxAge(positionY, velocityY){
     //var minPossibleVelocity = velocity.value.y + velocity.spread.y; // beachte: velocity.value.y ist negativ, da Partikel runterfallen
     //var maxPossibleY = position.value.y + position.spread.y;
@@ -7,13 +8,25 @@ function calcMaxAge(positionY, velocityY){
 }
 
 
-function createDropParticleEngine(maxNumRaindrops, texture, positionY, positionSpreadY, positionSpreadXZ, velocityY, velocitySpread, size, color){
+// erzeugt eine Partikelengine für herunterfallende Partikel (Regen, Schnee) und gibt eine SPE.Group zurück
+// eine Partikelengine besteht hier aus einer SPE.Group und einem SPE.Emitter
+// (vgl. https://squarefeet.github.io/ShaderParticleEngine/docs/api/global.html#EmitterOptions , https://github.com/squarefeet/ShaderParticleEngine )
+// die Engine kann dynamisch durch Änderung der Emitterattribute angepasst werden
+// maxNumParticles: emittierte Partikelengine bei activeMultiplier=1
+// texture: Textur jedes Partikels
+// positionY: mittlere Spawnhöhe der Partikel
+// positionSpreadY: Streuung der Spawnhöhe
+// positionSpreadXZ: Streuung von x-,z-Koordinate (dadurch kann z.B. die ganze Grundfläche beregnet werden)
+// velocityY: Fallgeschwindigkeit
+// velocitySpread: Streuung der Geschwindigkeit in x-,y-,z-Richtung
+// size: Partikelsklalierungsfaktor, color: Partikelfarbe
+function createDropParticleEngine(maxNumParticles, texture, positionY, positionSpreadY, positionSpreadXZ, velocityY, velocitySpread, size, color){
     var particleGroup = new SPE.Group({
         texture: {
             value: texture
         },
-        maxParticleCount: maxNumRaindrops,
-        fog: false
+        maxParticleCount: maxNumParticles,
+        fog: false  // Nebel vernebelt Partikel nicht
     });
 
     var emitter = new SPE.Emitter({
@@ -34,7 +47,7 @@ function createDropParticleEngine(maxNumRaindrops, texture, positionY, positionS
         size: {
             value: size
         },
-        particleCount: maxNumRaindrops,
+        particleCount: maxNumParticles,
         activeMultiplier: 0 // beginne mit 0 Partikeln
     });
     particleGroup.addEmitter(emitter);
@@ -42,20 +55,26 @@ function createDropParticleEngine(maxNumRaindrops, texture, positionY, positionS
 }
 
 
-
+// erzeugt eine Partikelengine für Wolkenpartikel, gibt die zug. SPE.Group zurück
+// maxNumClouds: max. gleichzeitigt vorhandene Wolken bei activeMultiplier=1
+// texture: Textur für Partikel
+// positionY: Spawnhöhe
+// positionSpread: Spawnpunktvarianz bzgl. x-,y-,z-Koordinate
+// maxAge: Lebenszeit je Wolkenpartikel (die dynamische Anpassung dieses Parameters ist problematisch)
+// size: Partikelskalierungsfaktor
+// sizeSpread: Streuung der Partikelskalierungsfaktoren je Partikel
 function createCloudEngine(maxNumClouds, texture, positionY, positionSpread, maxAge, size, sizeSpread) {
     var particleGroup = new SPE.Group({
         texture: {
             value: texture
         },
-        blending: THREE.NormalBlending,
+        blending: THREE.NormalBlending, // TODO prüfen, ob man das braucht?
         fog: false,
         transparent: true,
         maxParticleCount: maxNumClouds
     });
 
     var emitter = new SPE.Emitter({
-        particleCount: maxNumClouds,
         maxAge: {
             value: maxAge,    
         },
@@ -63,13 +82,12 @@ function createCloudEngine(maxNumClouds, texture, positionY, positionSpread, max
             value: new THREE.Vector3(0,positionY,0),
             spread: positionSpread,
             randomise: true,
-            distribution: SPE.distributions.SPHERE
+            distribution: SPE.distributions.SPHERE  // kreisförmige zuf. Spawnbereich
         },
         velocity: {
             value: new THREE.Vector3(), // wird nachträglich gesetzt
             randomise: true
         },
-        // Größe, Varianz
         size: {
             value: size,
             spread: sizeSpread
@@ -86,7 +104,9 @@ function createCloudEngine(maxNumClouds, texture, positionY, positionSpread, max
         // leichte Drehung der Textur verlaufsweise
         angle: {
             value: [0, Math.PI * 0.125]
-        }
+        },
+        particleCount: maxNumClouds,
+        activeMultiplier: 0 
     });
     particleGroup.addEmitter(emitter);
     return particleGroup;
