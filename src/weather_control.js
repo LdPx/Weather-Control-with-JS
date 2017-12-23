@@ -13,7 +13,9 @@ conf = {
         minForce: 10,
         maxForce: 200,
         positionSpread: new THREE.Vector3(200,10,200),
-        maxAge: 2   // Lebenszeit jedes Wolkenpartikels; beeinflußt auch Geschwindigkeit (lange Lebenszeit -> niedrige Geschwindigkeit)
+        maxAge: 2,   // Lebenszeit jedes Wolkenpartikels; beeinflußt auch Geschwindigkeit (lange Lebenszeit -> niedrige Geschwindigkeit)
+        size: 75,
+        sizeSpread: 50
     },
     lightning: {
         numKinks: 3,
@@ -125,7 +127,6 @@ scene.add(lightningFlash);
 //var rainParticleGroup = createRainEngine(conf.rain.maxNumRaindrops, conf.rain.texture, conf.positionY);
 var rainParticleGroup = createRainEngine(conf.rain.maxNumRaindrops, conf.rain.texture, conf.positionY, 
     conf.positionSpreadY, conf.model.groundSize, conf.rain.velocityY, conf.rain.velocitySpread);
-
 console.log('created rain engine:', 'group', rainParticleGroup, 'emitter', rainParticleGroup.emitters[0]);
 scene.add(rainParticleGroup.mesh);
 
@@ -133,7 +134,7 @@ var snowParticleGroup = createSnowEngine(conf.snow.maxNumSnowflakes, conf.snow.t
 console.log('created snow engine:', 'group', snowParticleGroup, 'emitter', snowParticleGroup.emitters[0]);
 scene.add(snowParticleGroup.mesh);
 
-var cloudParticleGroup = createCloudEngine(conf.cloud.maxNumClouds, conf.cloud.texture, conf.positionY, conf.cloud.positionSpread, conf.cloud.maxAge);
+var cloudParticleGroup = createCloudEngine(conf.cloud.maxNumClouds, conf.cloud.texture, conf.positionY, conf.cloud.positionSpread, conf.cloud.maxAge, conf.cloud.size, conf.cloud.sizeSpread);
 console.log('created cloud engine:', 'group', cloudParticleGroup, 'emitter', cloudParticleGroup.emitters[0]);
 scene.add(cloudParticleGroup.mesh);
 
