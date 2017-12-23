@@ -164,6 +164,7 @@ var guiData = {
     raininess: 0,
     snowiness: 0,
     cloudiness: 0,
+    thunder: 0,
     fog_density: conf.fog.minDensity,
     wind_angle: conf.cloud.startAngle,
     wind_force: conf.cloud.minForce,
@@ -176,6 +177,7 @@ var gui = new dat.GUI();
 gui.add(guiData, "raininess", 0, 1, 0.01).onChange(guiChanged);
 gui.add(guiData, "snowiness", 0, 1, 0.01).onChange(onSnowinessChanged);
 gui.add(guiData, "cloudiness", 0, 1, 0.01).onChange(guiChanged);
+gui.add(guiData, "thunder", 0, 1, 0.01).onChange(onThunderChanged);
 gui.add(guiData, "fog_density", conf.fog.minDensity, conf.fog.maxDensity, 0.0001).onChange(guiChanged);
 gui.add(guiData, "wind_angle", 0, 2*Math.PI, 0.01).onChange(onWindAngleChanged);
 gui.add(guiData, "wind_force", conf.cloud.minForce, conf.cloud.maxForce, 0.1).onChange(onWindForceChanged);
@@ -201,6 +203,10 @@ function guiChanged(){
     scene.background = conf.rain.minRaininessSkyColor.clone().lerp(conf.rain.maxRaininessSkyColor, guiData.raininess);
     rainParticleGroup.emitters[0].activeMultiplier = guiData.raininess;
     scene.fog.density = guiData.fog_density;
+}
+
+
+function onThunderChanged(){
 }
 
 
@@ -247,7 +253,7 @@ function removeLightning(lightningData){
 
 function lightningFadeOut(dt){
     if(lightningData === null){
-        if(Math.random() < dt * conf.lightning.maxExpectedSpawnsPerSeconds * guiData.raininess){
+        if(Math.random() < dt*conf.lightning.maxExpectedSpawnsPerSeconds*guiData.thunder){
             lightningData = {
                 data: spawnLightning(),
                 timeElapsed: 0
