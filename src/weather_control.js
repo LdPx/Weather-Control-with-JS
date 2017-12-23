@@ -2,7 +2,7 @@
 // TODO thunder
 conf = {
     url: 'http://api.openweathermap.org/data/2.5/weather?units=metric&lat=51.2&lon=6.47&APPID=43a26c85c29d39f47dc194dda192eb3a',
-    positionY: 100, // Spawnhöhe Blitze, Wolken, Regen, Schnee,
+    positionY: 150, // Spawnhöhe Blitze, Wolken, Regen, Schnee,
     positionSpreadY: 50,    // Spawnhöhenvarianz Regen, Schnee
     cloud: {
         maxNumClouds: 250,
@@ -12,7 +12,8 @@ conf = {
         startAngle: Math.PI/2,    // aus [0,2*PI]
         minForce: 10,
         maxForce: 200,
-        positionSpread: new THREE.Vector3(200,10,200)
+        positionSpread: new THREE.Vector3(200,10,200),
+        maxAge: 2   // Lebenszeit jedes Wolkenpartikels; beeinflußt auch Geschwindigkeit (lange Lebenszeit -> niedrige Geschwindigkeit)
     },
     lightning: {
         numKinks: 3,
@@ -57,8 +58,8 @@ scene.background = conf.rain.minRaininessSkyColor;
 scene.fog = new THREE.FogExp2(conf.fog.color, conf.fog.minDensity);
 
 var camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 1, 1000);
-camera.position.set(100, 100, 20);
-//camera.position.set(0, 400, 0);
+camera.position.set(100, 150, 20);
+//camera.position.set(0, 600, 0);
 //camera.position.set(0,0,300);
 console.log('set camera to', camera.position);
 camera.lookAt(scene.position);
@@ -132,7 +133,7 @@ var snowParticleGroup = createSnowEngine(conf.snow.maxNumSnowflakes, conf.snow.t
 console.log('created snow engine:', 'group', snowParticleGroup, 'emitter', snowParticleGroup.emitters[0]);
 scene.add(snowParticleGroup.mesh);
 
-var cloudParticleGroup = createCloudEngine(conf.cloud.maxNumClouds, conf.cloud.texture, conf.positionY, conf.cloud.positionSpread);
+var cloudParticleGroup = createCloudEngine(conf.cloud.maxNumClouds, conf.cloud.texture, conf.positionY, conf.cloud.positionSpread, conf.cloud.maxAge);
 console.log('created cloud engine:', 'group', cloudParticleGroup, 'emitter', cloudParticleGroup.emitters[0]);
 scene.add(cloudParticleGroup.mesh);
 
@@ -142,9 +143,9 @@ var cloudDirViz = newCloudDirViz();
 function newCloudDirViz(){
     var vel = cloudParticleGroup.emitters[0].velocity.value;
     var pos = cloudParticleGroup.emitters[0].position.value;
-    var cc = new THREE.ArrowHelper(vel.clone().normalize(), pos, vel.length());
-    cc.position.set(pos.x,pos.y,pos.z);
-    return cc;
+    var cloudDirViz = new THREE.ArrowHelper(vel.clone().normalize(), pos, vel.length());
+    cloudDirViz.position.set(pos.x,pos.y,pos.z);
+    return cloudDirViz;
 }
 function updateCloudDirViz(){
     var vel = cloudParticleGroup.emitters[0].velocity.value;
@@ -152,7 +153,6 @@ function updateCloudDirViz(){
     cloudDirViz.position.set(pos.x,pos.y,pos.z);
     cloudDirViz.setDirection(vel.clone().normalize());
     cloudDirViz.setLength(vel.length());
-    console.log(cloudDirViz, pos, vel);
 }
 
 scene.add(cloudDirViz);
@@ -182,7 +182,7 @@ gui.add(guiData, "wind_force", conf.cloud.minForce, conf.cloud.maxForce, 0.1).on
 gui.add(guiData, "load_weather_data");
 guiChanged();
 onSnowinessChanged(guiData.snowiness);
-onWindAngleChanged(guiData.wind_angle);
+onWindAngleChanged();
 onWindForceChanged();
 
 window.addEventListener('resize', function(){
@@ -204,37 +204,21 @@ function guiChanged(){
 }
 
 
-//function updateWindFromCloudSpawnPos(){
-function updateWindFromCloudSpawnPos(){
-    //var windDir = cloudParticleGroup.emitters[0].velocity.value;
-    //var pos = cloudParticleGroup.emitters[0].position.value;
-    //windDir.set(pos.x,0,pos.z);
-    //windDir.multiplyScalar(-guiData.wind_force);   // Wind bewegt Wolken stets durch (0,conf.positionY,0)
-    var x = Math.round(guiData.wind_force*Math.cos(guiData.wind_angle));
-    var z = Math.round(guiData.wind_force*Math.sin(guiData.wind_angle));
-    cloudParticleGroup.emitters[0].velocity.value.set(-x, 0, -z);
+function updateWind(angle, windForce){
+    var x = windForce*Math.cos(angle);
+    var z = windForce*Math.sin(angle);
+    cloudParticleGroup.emitters[0].velocity.value.set(-x, 0, -z).multiplyScalar(2.0/conf.cloud.maxAge);
     cloudParticleGroup.emitters[0].position.value.set(x, conf.positionY, z);
-    //cloudDirViz.position.set(x, conf.positionY, z);
     updateCloudDirViz();
-    console.log('pos', cloudParticleGroup.emitters[0].position.value, 'vel', cloudParticleGroup.emitters[0].velocity.value);
 }
 
 
-function onWindAngleChanged(angle){
-    //var cloudSpawnDist = conf.model.groundSize/2;
-    //var x = cloudSpawnDist*Math.cos(angle);
-    //var y = conf.positionY;
-    //var z = cloudSpawnDist*Math.sin(angle);
-    //cloudParticleGroup.emitters[0].position.value.set(x,y,z);
-    //cloudSpawnPointViz.position.set(x,y,z);
-    updateWindFromCloudSpawnPos();
+function onWindAngleChanged(){
+    updateWind(guiData.wind_angle, guiData.wind_force);
 }
 
 function onWindForceChanged(){
-    updateWindFromCloudSpawnPos();
-    //setMaxAge(cloudParticleGroup.emitters[0], 2.0/guiData.wind_force);  // Wolken leben umgekehrt proportional zur Windstärke
-    //cloudParticleGroup.emitters[0].maxAge.value = 2.0/guiData.wind_force;
-    //cloudParticleGroup.emitters[0].maxAge.spread = 1.0/guiData.wind_force;
+    updateWind(guiData.wind_angle, guiData.wind_force);
 }
 
 function onSnowinessChanged(snowiness){

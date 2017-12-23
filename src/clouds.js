@@ -1,5 +1,5 @@
 
-function createCloudEngine(maxNumClouds, texture, positionY, positionSpread) {
+function createCloudEngine(maxNumClouds, texture, positionY, positionSpread, maxAge) {
     var particleGroup = new SPE.Group({
         texture: {
             value: texture
@@ -13,8 +13,7 @@ function createCloudEngine(maxNumClouds, texture, positionY, positionSpread) {
     var emitter = new SPE.Emitter({
         particleCount: maxNumClouds,
         maxAge: {
-            value: 2,    
-			spread: null
+            value: maxAge,    
         },
         position: {
             value: new THREE.Vector3(0,positionY,0),
