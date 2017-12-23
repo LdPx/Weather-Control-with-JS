@@ -53,7 +53,7 @@ conf = {
     model: {
         groundSize: 200,
         houseSize: 10,
-        spawnRange: 50, // für Häuser & Blitze: x-,z-Komponente aus [-spawnRange,spawnRange]
+        positionSpreadXZ: 100, 
         numHouses: 50
     }
 };
@@ -90,8 +90,8 @@ scene.add(plane);
 var bodyMaterial = new THREE.MeshPhongMaterial({ambient: 0x050505, color: 0x724b33, specular: 0x555555, shininess: 30});
 var roofMaterial = new THREE.MeshPhongMaterial({ambient: 0x050505, color: 0xc62411, specular: 0x555555, shininess: 30});
 for(var i = 0; i < conf.model.numHouses; i++){
-    var x = getRandomInt(-conf.model.spawnRange, conf.model.spawnRange);
-    var z = getRandomInt(-conf.model.spawnRange, conf.model.spawnRange);
+    var x = randomOfAbs(conf.model.positionSpreadXZ/2);
+    var z = randomOfAbs(conf.model.positionSpreadXZ/2);
     var pos = new THREE.Vector3(x, conf.model.houseSize/2, z);
     var house = createHouse(pos, conf.model.houseSize, bodyMaterial, roofMaterial);
     scene.add(house.body);
@@ -233,8 +233,8 @@ function onSnowinessChanged(snowiness){
 }
 
 function spawnLightning(){
-    var x = getRandomInt(-conf.model.spawnRange, conf.model.spawnRange);
-    var z = getRandomInt(-conf.model.spawnRange, conf.model.spawnRange);
+    var x = randomOfAbs(conf.model.groundSize/2);
+    var z = randomOfAbs(conf.model.groundSize/2);
     var lightningStart = new THREE.Vector3(x,conf.positionY,z);
     var lightningDir = new THREE.Vector3(x,0,z).sub(lightningStart);
     var lightningModel = createLightning(lightningStart, lightningDir, conf.lightning.numKinks);

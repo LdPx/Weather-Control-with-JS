@@ -35,7 +35,7 @@ function createDropParticleEngine(maxNumRaindrops, texture, positionY, positionS
             value: size
         },
         particleCount: maxNumRaindrops,
-        activeMultiplier: 0 // beginne mit 0 Regentropfen
+        activeMultiplier: 0 // beginne mit 0 Partikeln
     });
     particleGroup.addEmitter(emitter);
     return particleGroup;
