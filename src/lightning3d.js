@@ -25,8 +25,8 @@ function createLightningBranch(start, dir, numKinks){
     path.forEach(function(childStart,i){
         var childDir = randomLengthPerpendicularVector(dir, childDirRange).add(dir);
         childDir.setLength(dir.length()/2);
-        var child = createLightningBranch(childStart, childDir, numKinks-1, path.slice(0,i));
-        if(child !== null){
+        var child = createLightningBranch(childStart, childDir, numKinks-1);
+        if(child !== null){ 
             childs.push(child);
         }
     });
