@@ -7,7 +7,7 @@ function calcMaxAge(positionY, velocityY){
 }
 
 
-function createRainEngine(maxNumRaindrops, texture, positionY, positionSpreadY, positionSpreadXZ, velocityY, velocitySpread){
+function createDropParticleEngine(maxNumRaindrops, texture, positionY, positionSpreadY, positionSpreadXZ, velocityY, velocitySpread, size, color){
     var particleGroup = new SPE.Group({
         texture: {
             value: texture
@@ -29,53 +29,14 @@ function createRainEngine(maxNumRaindrops, texture, positionY, positionSpreadY, 
             spread: velocitySpread
         },
         color: {
-            value: new THREE.Color(0x034aec)
+            value: color
         },
         size: {
-            value: 2
+            value: size
         },
         particleCount: maxNumRaindrops,
         activeMultiplier: 0 // beginne mit 0 Regentropfen
     });
-    particleGroup.addEmitter(emitter);
-    return particleGroup;
-}
-
-
-
-function createSnowEngine(maxNumSnowflakes, texture, positionY, positionSpreadY, positionSpreadXZ, velocityY, velocitySpread){
-    var particleGroup = new SPE.Group({
-        texture: {
-            value: texture
-        },
-        maxParticleCount: maxNumSnowflakes,
-        fog: false
-    });
-
-    var emitter = new SPE.Emitter({
-        maxAge: {
-            value: calcMaxAge(positionY, velocityY)
-        },        
-        position: {
-            value: new THREE.Vector3(0,positionY,0),
-            spread: new THREE.Vector3(positionSpreadXZ,positionSpreadY,positionSpreadXZ)
-        },
-        // Geschwindigkeit
-        velocity: {
-            value: new THREE.Vector3(0,velocityY,0),
-            spread: velocitySpread
-        },
-        color: {
-            value: new THREE.Color(0xffffff)
-        },
-        size: {
-            value: 2
-        },
-
-        particleCount: maxNumSnowflakes,
-        activeMultiplier: 0 // beginne mit 0 Regentropfen
-    });
-
     particleGroup.addEmitter(emitter);
     return particleGroup;
 }

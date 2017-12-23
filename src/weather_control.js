@@ -33,13 +33,17 @@ conf = {
         minRaininessSkyColor: new THREE.Color(0x2271f9),
         maxRaininessSkyColor: new THREE.Color(0x8b8989),
         velocityY: -100,
-        velocitySpread: new THREE.Vector3(10,7.5,10)
+        velocitySpread: new THREE.Vector3(10,7.5,10),
+        size: 2,
+        color: new THREE.Color(0x034aec)
     },
     snow: {
         maxNumSnowflakes: 5000,
         velocityY: -50,
         velocitySpread: new THREE.Vector3(75,25,75),
         texture: new THREE.TextureLoader().load('./textures/snowflake.png'),
+        size: 2,
+        color: new THREE.Color(0xffffff)
     },
     fog: {
         color: new THREE.Color(0xffffff),
@@ -126,12 +130,11 @@ scene.add(ambientLight);
 var lightningFlash = new THREE.AmbientLight(0x404040, 0);
 scene.add(lightningFlash);
 
-var rainParticleGroup = createRainEngine(conf.rain.maxNumRaindrops, conf.rain.texture, conf.positionY, 
-    conf.positionSpreadY, conf.model.groundSize, conf.rain.velocityY, conf.rain.velocitySpread);
+var rainParticleGroup = createDropParticleEngine(conf.rain.maxNumRaindrops, conf.rain.texture, conf.positionY, conf.positionSpreadY, conf.model.groundSize, conf.rain.velocityY, conf.rain.velocitySpread, conf.rain.size, conf.rain.color);
 console.log('created rain engine:', 'group', rainParticleGroup, 'emitter', rainParticleGroup.emitters[0]);
 scene.add(rainParticleGroup.mesh);
 
-var snowParticleGroup = createSnowEngine(conf.snow.maxNumSnowflakes, conf.snow.texture, conf.positionY, conf.positionSpreadY, conf.model.groundSize, conf.snow.velocityY, conf.snow.velocitySpread);
+var snowParticleGroup = createDropParticleEngine(conf.snow.maxNumSnowflakes, conf.snow.texture, conf.positionY, conf.positionSpreadY, conf.model.groundSize, conf.snow.velocityY, conf.snow.velocitySpread, conf.snow.size, conf.snow.color);
 console.log('created snow engine:', 'group', snowParticleGroup, 'emitter', snowParticleGroup.emitters[0]);
 scene.add(snowParticleGroup.mesh);
 
