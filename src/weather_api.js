@@ -1,49 +1,5 @@
-/*
-var weather = {
-    // location
-    lon:-1,
-    lat:-1,
-    cityName:"",
-    //id
-    country:"",
-    
-    // general
-    wId:-1,
-    wMain:"",
-    wDescription:"",
-    sunriseUnix:-1,
-    sunriseDate: undefined,	//.getHours();	//.getMinutes();	//.getSeconds();
-    sunsetUnix:-1,
-    sunsetDate: undefined,	//.getHours();	//.getMinutes();	//.getSeconds();
-    TimeOfData:-1,
-    
-    // weather
-    temp:-99,
-    pressure:-1,
-    pressureSeaLevel:-1,
-    pressureGroundLevel:-1,
-    humidity:-1,
-    windSpeed:-1,
-    windSpeedPercent:0,	// 100% = 80km/h
-    windSpeedPercentFactor:0,	// 1 = 100%
-    windDirectionDegree:-1,
-    windDirectionLetter:'X',
-    windDirection2D: [0,0], // ???
-    thunder: false,
-    drizzle: false,
-    rain: false,
-    snow: false,
-    fog: false, // ???
-    // clouds ???
-    // hail ???
-    
-    cloudPercent:-1,
-    cloudPercentFactor:0,	// 1 = 100%
-    rain3h:-1,
-    snow3h:-1
-};*/
 
-
+// konvertiert das von OWP zurückgegeben JSON-Objekt json in ein für unsere Zwecke einfacheres Objekt 
 function owpjsonToWeather(json){
         
     var weather = {};

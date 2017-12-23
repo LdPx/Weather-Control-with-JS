@@ -32,8 +32,8 @@ conf = {
     rain: {
         maxNumRaindrops: 5000, 
         texture: new THREE.TextureLoader().load('./textures/raindrop2.png'),
-        minRaininessSkyColor: new THREE.Color(0x2271f9),
-        maxRaininessSkyColor: new THREE.Color(0x8b8989),
+        minRaininessSkyColor: new THREE.Color(0x2271f9),    // Himmelsfarbe bei min. raininess
+        maxRaininessSkyColor: new THREE.Color(0x8b8989),    // Himmelsfarbe bei max. raininess
         velocityY: -100,    // Fallgeschwindigkeit der Tropfen
         velocitySpread: new THREE.Vector3(10,7.5,10),   // Fallstreuung der Tropfen
         size: 2,
@@ -116,9 +116,9 @@ function spawnLightning(){
     var z = randomOfAbs(conf.model.groundSize/2);
     var lightningStart = new THREE.Vector3(x,conf.positionY,z); // Blitz startet auf Wolkenhöhe und endet auf dem Boden, je mit gleicher x-,z-Koordinate
     var lightningDir = new THREE.Vector3(x,0,z).sub(lightningStart);
-    var lightningModel = createLightning(lightningStart, lightningDir, conf.lightning.numKinks);
+    var lightningModel = createLightning(lightningStart, lightningDir, conf.lightning.numKinks);    // erzeuge 3D-Punktpfade der Zweige
     extendLightningPaths(lightningModel);   // jeden Blitzzweig-Pfad um seinen Elternzweig-Pfad zur Ästhetik
-    var lightningData = renderLightning(lightningModel, conf.lightning.lineWidth, conf.lightning.alphaMap);
+    var lightningData = renderLightning(lightningModel, conf.lightning.lineWidth, conf.lightning.alphaMap); // erzeuge Meshes mit Materials
     lightningData.meshes.forEach((mesh) => {scene.add(mesh);});
     return lightningData;
 }
@@ -132,24 +132,28 @@ function removeLightning(lightningData){
     lightningData.materials.forEach((material) => { material.dispose(); });
 }
 
+// aktualisiere Blitz-Darstellung
 function lightningFadeOut(dt){
-    if(lightningData === null){
-        if(Math.random() < dt*conf.lightning.maxExpectedSpawnsPerSeconds*guiData.thunder){
+    if(lightningData === null){ // kein Blitz vorhanden?
+        if(Math.random() < dt*conf.lightning.maxExpectedSpawnsPerSeconds*guiData.thunder){  // erzeuge zufällig neuen Blitz (mehr dt vergangen -> höhere Spawnchance, maxExpectedSpawnsPerSeconds höher -> höhere Spawnchance, thunder höher -> höhere Spawnchance)
             lightningData = {
-                data: spawnLightning(),
+                data: spawnLightning(), 
                 timeElapsed: 0
             }; 
             lightningFlash.intensity = conf.lightning.flashStartIntensity;
         }
     }
     else {
+        // lasse Blitz im Verlauf der Zeit transparenter werden (d.h. verringere Opakheit des Blitzes proportional zu dt)
         var opacityDiff = dt/conf.lightning.fadeOutDelay;
         lightningData.timeElapsed += dt;
-        lightningData.data.materials.forEach(mat => { mat.uniforms.opacity.value -= opacityDiff; }); 
+        lightningData.data.materials.forEach(mat => { mat.uniforms.opacity.value -= opacityDiff; });    // verringere bei allen Materials die Opakheit
+        // verringere Intensität des Blitzlichtes, proportional zu dt (bis Blitz länger als flashDelay Zeiteinheiten existent)
         if(lightningData.timeElapsed < conf.lightning.flashDelay){
             var flashIntensityDiff = conf.lightning.flashStartIntensity*dt/conf.lightning.flashDelay;
             lightningFlash.intensity -= flashIntensityDiff;
         }
+        // entferne Blitz, falls insg. mehr als fadeOutDelay Zeiteinheiten existent
         if(lightningData.timeElapsed >= conf.lightning.fadeOutDelay){
             removeLightning(lightningData.data);
             lightningData = null;
@@ -157,11 +161,12 @@ function lightningFadeOut(dt){
     }
 }
 
+// lädt Wetterdaten asynchron von der konfigurierten URL, fügt diese Daten in guiData ein
 function requestWeatherData(){
     var url = conf.url;
     $.getJSON(url)
     .done(function(json){
-        var weather = owpjsonToWeather(json);
+        var weather = owpjsonToWeather(json);   // konvertiere Daten vom OWP-JSON-Darstellung in hier benötigte Darstellung
         console.log('loaded weather', weather);
 		guiData.cloudiness = weather.cloudPercentFactor;
 		for (var i in gui.__controllers) {
@@ -173,6 +178,7 @@ function requestWeatherData(){
     });
 }
 
+// erzeugt Pfeil zur Visualisierung der Windrichtung (Pfeil befindet sich auf Wolkenhöhe)
 function newCloudDirViz(){
     var vel = cloudParticleGroup.emitters[0].velocity.value;
     var pos = cloudParticleGroup.emitters[0].position.value;
@@ -180,6 +186,7 @@ function newCloudDirViz(){
     cloudDirViz.position.set(pos.x,pos.y,pos.z);
     return cloudDirViz;
 }
+// aktualisiert Visualisierung der Windrichtung
 function updateCloudDirViz(){
     var vel = cloudParticleGroup.emitters[0].velocity.value;
     var pos = cloudParticleGroup.emitters[0].position.value;
@@ -191,8 +198,8 @@ function updateCloudDirViz(){
 var clock = new THREE.Clock();
 
 var scene = new THREE.Scene();
-scene.background = conf.rain.minRaininessSkyColor;
-scene.fog = new THREE.FogExp2(conf.fog.color, conf.fog.minDensity);
+scene.background = conf.rain.minRaininessSkyColor;  // Himmelsfarbe
+scene.fog = new THREE.FogExp2(conf.fog.color, conf.fog.minDensity); // Nebel
 
 var camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 1, 1000);
 camera.position.set(conf.cameraPosition.x,conf.cameraPosition.y,conf.cameraPosition.z);
@@ -236,22 +243,25 @@ scene.add(new THREE.CameraHelper(dirLight.shadow.camera));
 // visualisiere x-,y-,z-Achse
 scene.add(new THREE.AxisHelper(1000));
 
-
+// ambientes Licht
 var ambientLight = new THREE.AmbientLight(0x404040, 2); 
 scene.add(ambientLight);
 
-// Blitzlicht
+// Blitzlicht (Startintensität 0)
 var lightningFlash = new THREE.AmbientLight(0x404040, 0);
 scene.add(lightningFlash);
 
+// Regen-Partikelengine
 var rainParticleGroup = createDropParticleEngine(conf.rain.maxNumRaindrops, conf.rain.texture, conf.positionY, conf.positionSpreadY, conf.model.groundSize, conf.rain.velocityY, conf.rain.velocitySpread, conf.rain.size, conf.rain.color);
 console.log('created rain engine:', 'group', rainParticleGroup, 'emitter', rainParticleGroup.emitters[0]);
 scene.add(rainParticleGroup.mesh);
 
+// Schnee-Partikelengine
 var snowParticleGroup = createDropParticleEngine(conf.snow.maxNumSnowflakes, conf.snow.texture, conf.positionY, conf.positionSpreadY, conf.model.groundSize, conf.snow.velocityY, conf.snow.velocitySpread, conf.snow.size, conf.snow.color);
 console.log('created snow engine:', 'group', snowParticleGroup, 'emitter', snowParticleGroup.emitters[0]);
 scene.add(snowParticleGroup.mesh);
 
+// Wolken-Partikelengine
 var cloudParticleGroup = createCloudEngine(conf.cloud.maxNumClouds, conf.cloud.texture, conf.positionY, conf.cloud.positionSpread, conf.cloud.maxAge, conf.cloud.size, conf.cloud.sizeSpread);
 console.log('created cloud engine:', 'group', cloudParticleGroup, 'emitter', cloudParticleGroup.emitters[0]);
 scene.add(cloudParticleGroup.mesh);
@@ -261,8 +271,7 @@ scene.add(cloudParticleGroup.mesh);
 var cloudDirViz = newCloudDirViz();
 scene.add(cloudDirViz);
 
-
-var lightningData = null;
+var lightningData = null;   // Daten des aktuellen Blitzes (Modelldaten, Materials, Lebenszeit)
 
 // GUI
 var gui = new dat.GUI();
@@ -292,10 +301,13 @@ animate();
 
 function animate() {
     var dt = clock.getDelta();
-    requestAnimationFrame(animate);
+    requestAnimationFrame(animate); // animiere nächsten Frame
     render(dt);
 }
 
+// aktualisiere Darstellung
+// dt ist Zeitdifferenz (delta time) zwischen akt. Frame und letztem Frame
+// Aktualisierung der Partikelengines, des Blitzes hängt von dt ab
 function render(dt){
     cloudParticleGroup.tick(dt);
     rainParticleGroup.tick(dt);
