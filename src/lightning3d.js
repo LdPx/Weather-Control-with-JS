@@ -4,14 +4,13 @@
 // von jedem Knick geht ein Kindeszweig aus
 // dies wird rekursiv wiederholt, bis numKinks <= 0 ist
 // jeder Zweig liegt in der Form {path: <Array der 3D-Punkte des Zweiges>, child: <Array der Kindeszweige>} vor
-// dieser Funktion liefert den Hauptzweig
+// diese Funktion liefert den Hauptzweig
 function createLightning(start, dir, numKinks){
     return createLightningBranch(start, dir, numKinks);
 }
 
-// erzeugt & zeichnet Blitz
-// Hauptzweig verläuft von start Richtung dir
-// je Zweig werden numKinks Knicke erzeugt
+// erzeugt Blitzzweig mit numKinks Knicken (d.h. ein Zweig mit 3 Knicken besteht mit Anfang & Ende aus 5 Punkten)
+// Zweig verläuft von start Richtung dir
 // je Knick wird ein Kindeszweig mit dem Knick als Startpunkt und zufälliger Richtung childDir erzeugt
 // numKinks, kinkRange, childAngleRange nehmen im Verlauf der Rekursionstiefe ab
 function createLightningBranch(start, dir, numKinks){
@@ -38,10 +37,10 @@ function createLightningBranch(start, dir, numKinks){
 }
 
 
-// heißt 'Knick' wirklich 'kink'?
+// erzeugt einen Liste von Punkten von Start entlang dir mit numKinks Knicken zwischen Anfang & Ende
+// kinkRange bestimmt die Streuung, wie weit jeder Knick von der Anfang-Ende-Linie entfern sein darf
 function createZigZagPath(start, dir, numKinks, kinkRange){
     var end = start.clone().add(dir);
-    //console.log('start', start, 'end', end, 'dir', dir);
     var kinkOffsets = newArray(numKinks).map((x,i) => (i+1)/(numKinks+1));  // Bruchteile, um die die Knicke bzgl. Start verschoben sind
     var kinks = kinkOffsets.map((off) => start.clone().lerp(end, off)); // verschiebe Start um Bruchteile * dir
     kinks.forEach((kink) => kink.add(randomLengthPerpendicularVector(dir,kinkRange)));   // verschiebe Knicke um Zufallswert senkrecht zu dir
@@ -60,9 +59,9 @@ function extendLightningPaths(branch, parentPath){
 
 
 
-// erzeugt für jeden Zweig ein 3js-Mesh
-// die meshes werden NICHT hierarchisch gespeichert
-// die materials je lineWidth werden ebenfalls als einfaches Array zurückgegeben
+// erzeugt für jeden Zweig ein ThreeJS-Mesh
+// die Meshes werden in Listenform zurückgegeben
+// je verwendeter lineWidth wird ein Material-Instanz erzeugt (nötig zur späteren Anpassung der Transparenz und zum Aufräumen) und zurückgegeben
 function renderLightning(rootBranch, parentLineWidth, alphaMap){
     var materials = {};
     var meshes = [];
@@ -73,7 +72,8 @@ function renderLightning(rootBranch, parentLineWidth, alphaMap){
     };
 }   
 
-
+// erzeugt für den Pfad von branch ein Mesh, rendert danach rekursiv die Kindeszweige von branch
+// das Mash von branch ist lineWidth breit, jeder Kindeszweig ist lineWidth/2 breit
 function renderLightningBranch(branch, lineWidth, materials, meshes, alphaMap){
     var mesh = renderPath(branch.path, lineWidth, materials, alphaMap);
     meshes.push(mesh);

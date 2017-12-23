@@ -22,10 +22,10 @@ conf = {
     },
     lightning: {
         numKinks: 3,    // Anzahl Knicke des Blitz-Hauptzweiges
-        lineWidth: 0.3, // Breite des Hauptzweiges
+        lineWidth: 0.75, // Breite des Hauptzweiges
         fadeOutDelay: 1,  // Zeit, bis Blitz verschwunden (Sekunden)
         alphaMap: new THREE.TextureLoader().load('./textures/lightning.png'),   // Alphamap für Blitz, damit Ränder transparent
-        maxExpectedSpawnsPerSeconds: 0.25, // max. erwartungsgemäße Dauer zwischen dem Verschwinden eines Blitzes und dem Spawn eines neuen Blitzes (d.h. bei maximalem thunder spawnen durchschnittlich maxExpectedSpawnsPerSeconds Blitze pro Sekunde (abzgl. der Fadeout-Dauer bereits gespawnter Blitze!)
+        maxExpectedSpawnsPerSeconds: 0.5, // max. erwartungsgemäße Dauer zwischen dem Verschwinden eines Blitzes und dem Spawn eines neuen Blitzes (d.h. bei maximalem thunder spawnen durchschnittlich maxExpectedSpawnsPerSeconds Blitze pro Sekunde (abzgl. der Fadeout-Dauer bereits gespawnter Blitze!)
         flashDelay: 1,    // Blitzlichtdauer (Sekunden)
         flashStartIntensity: 10 // Start-Blitzlichintensität
     },
@@ -110,18 +110,20 @@ function onWindForceChanged(){
     updateWind(guiData.wind_angle, guiData.wind_force);
 }
 
+// erzeuge neuen Blitz
 function spawnLightning(){
     var x = randomOfAbs(conf.model.groundSize/2);   // spawne Blitz irgendwo im Modellbereich
     var z = randomOfAbs(conf.model.groundSize/2);
     var lightningStart = new THREE.Vector3(x,conf.positionY,z); // Blitz startet auf Wolkenhöhe und endet auf dem Boden, je mit gleicher x-,z-Koordinate
     var lightningDir = new THREE.Vector3(x,0,z).sub(lightningStart);
     var lightningModel = createLightning(lightningStart, lightningDir, conf.lightning.numKinks);
-    extendLightningPaths(lightningModel);
+    extendLightningPaths(lightningModel);   // jeden Blitzzweig-Pfad um seinen Elternzweig-Pfad zur Ästhetik
     var lightningData = renderLightning(lightningModel, conf.lightning.lineWidth, conf.lightning.alphaMap);
     lightningData.meshes.forEach((mesh) => {scene.add(mesh);});
     return lightningData;
 }
 
+// entferne Modelldaten des akt. Blitz
 function removeLightning(lightningData){
     lightningData.meshes.forEach(function(mesh){
         scene.remove(mesh);
