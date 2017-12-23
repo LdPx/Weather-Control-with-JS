@@ -60,6 +60,18 @@ conf = {
     }
 };
 
+var guiData = {
+    raininess: 0,
+    snowiness: 0,
+    cloudiness: 0,
+    thunder: 0,
+    fog_density: conf.fog.minDensity,
+    wind_angle: conf.cloud.startAngle,
+    wind_force: conf.cloud.minForce,
+    load_weather_data: requestWeatherData,
+};
+
+
 // globale Uhr (nötig für Animationen)
 var clock = new THREE.Clock();
 
@@ -151,18 +163,6 @@ scene.add(cloudDirViz);
 
 
 var lightningData = null;
-
-var guiData = {
-    raininess: 0,
-    snowiness: 0,
-    cloudiness: 0,
-    thunder: 0,
-    fog_density: conf.fog.minDensity,
-    wind_angle: conf.cloud.startAngle,
-    wind_force: conf.cloud.minForce,
-    load_weather_data: requestWeatherData,
-};
-
 
 // GUI
 var gui = new dat.GUI();
