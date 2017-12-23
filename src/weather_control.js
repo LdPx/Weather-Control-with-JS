@@ -71,8 +71,117 @@ var guiData = {
     load_weather_data: requestWeatherData,
 };
 
+function onRaininessChanged(){
+    var newCloudColor = conf.cloud.minRaininessColor.clone().lerp(conf.cloud.maxRaininessColor, guiData.raininess);
+    cloudParticleGroup.emitters[0].color.value = newCloudColor;
+    scene.background = conf.rain.minRaininessSkyColor.clone().lerp(conf.rain.maxRaininessSkyColor, guiData.raininess);
+    rainParticleGroup.emitters[0].activeMultiplier = guiData.raininess;
+}
 
-// globale Uhr (nötig für Animationen)
+function onSnowinessChanged(){
+    snowParticleGroup.emitters[0].activeMultiplier = guiData.snowiness;
+}
+
+function onCloudinessChanged(){
+    cloudParticleGroup.emitters[0].activeMultiplier = guiData.cloudiness;
+}
+
+function onFogDensityChanged(){  
+    scene.fog.density = guiData.fog_density;
+}
+
+function updateWind(angle, windForce){
+    var x = windForce*Math.cos(angle);
+    var z = windForce*Math.sin(angle);
+    cloudParticleGroup.emitters[0].velocity.value.set(-x, 0, -z).multiplyScalar(2.0/conf.cloud.maxAge);
+    cloudParticleGroup.emitters[0].position.value.set(x, conf.positionY, z);
+    updateCloudDirViz();
+}
+
+function onWindAngleChanged(){
+    updateWind(guiData.wind_angle, guiData.wind_force);
+}
+
+function onWindForceChanged(){
+    updateWind(guiData.wind_angle, guiData.wind_force);
+}
+
+function spawnLightning(){
+    var x = randomOfAbs(conf.model.groundSize/2);
+    var z = randomOfAbs(conf.model.groundSize/2);
+    var lightningStart = new THREE.Vector3(x,conf.positionY,z);
+    var lightningDir = new THREE.Vector3(x,0,z).sub(lightningStart);
+    var lightningModel = createLightning(lightningStart, lightningDir, conf.lightning.numKinks);
+    extendLightningPaths(lightningModel);
+    var lightningData = renderLightning(lightningModel, conf.lightning.lineWidth, conf.lightning.alphaMap);
+    lightningData.meshes.forEach((mesh) => {scene.add(mesh);});
+    return lightningData;
+}
+
+function removeLightning(lightningData){
+    lightningData.meshes.forEach(function(mesh){
+        scene.remove(mesh);
+        mesh.geometry.dispose();
+    });
+    lightningData.materials.forEach((material) => { material.dispose(); });
+}
+
+function lightningFadeOut(dt){
+    if(lightningData === null){
+        if(Math.random() < dt*conf.lightning.maxExpectedSpawnsPerSeconds*guiData.thunder){
+            lightningData = {
+                data: spawnLightning(),
+                timeElapsed: 0
+            }; 
+            lightningFlash.intensity = conf.lightning.flashStartIntensity;
+        }
+    }
+    else {
+        var opacityDiff = dt/conf.lightning.fadeOutDelay;
+        lightningData.timeElapsed += dt;
+        lightningData.data.materials.forEach(mat => { mat.uniforms.opacity.value -= opacityDiff; }); 
+        if(lightningData.timeElapsed < conf.lightning.flashDelay){
+            var flashIntensityDiff = conf.lightning.flashStartIntensity*dt/conf.lightning.flashDelay;
+            lightningFlash.intensity -= flashIntensityDiff;
+        }
+        if(lightningData.timeElapsed >= conf.lightning.fadeOutDelay){
+            removeLightning(lightningData.data);
+            lightningData = null;
+        }
+    }
+}
+
+function requestWeatherData(){
+    var url = conf.url;
+    $.getJSON(url)
+    .done(function(json){
+        var weather = owpjsonToWeather(json);
+        console.log('loaded weather', weather);
+		guiData.cloudiness = weather.cloudPercentFactor;
+		for (var i in gui.__controllers) {
+			gui.__controllers[i].updateDisplay();
+		}
+    })
+    .fail(function(jqXHR, textStatus, errorThrown){
+        alert("weather api call failed\n" + JSON.stringify({url: url, jqXHR: jqXHR, textStatus: textStatus, errorThrown: errorThrown}));
+    });
+}
+
+function newCloudDirViz(){
+    var vel = cloudParticleGroup.emitters[0].velocity.value;
+    var pos = cloudParticleGroup.emitters[0].position.value;
+    var cloudDirViz = new THREE.ArrowHelper(vel.clone().normalize(), pos, vel.length());
+    cloudDirViz.position.set(pos.x,pos.y,pos.z);
+    return cloudDirViz;
+}
+function updateCloudDirViz(){
+    var vel = cloudParticleGroup.emitters[0].velocity.value;
+    var pos = cloudParticleGroup.emitters[0].position.value;
+    cloudDirViz.position.set(pos.x,pos.y,pos.z);
+    cloudDirViz.setDirection(vel.clone().normalize());
+    cloudDirViz.setLength(vel.length());
+}
+
 var clock = new THREE.Clock();
 
 var scene = new THREE.Scene();
@@ -144,21 +253,6 @@ scene.add(cloudParticleGroup.mesh);
 
 // zur Anzeige der Wolkenrichtung
 var cloudDirViz = newCloudDirViz();
-function newCloudDirViz(){
-    var vel = cloudParticleGroup.emitters[0].velocity.value;
-    var pos = cloudParticleGroup.emitters[0].position.value;
-    var cloudDirViz = new THREE.ArrowHelper(vel.clone().normalize(), pos, vel.length());
-    cloudDirViz.position.set(pos.x,pos.y,pos.z);
-    return cloudDirViz;
-}
-function updateCloudDirViz(){
-    var vel = cloudParticleGroup.emitters[0].velocity.value;
-    var pos = cloudParticleGroup.emitters[0].position.value;
-    cloudDirViz.position.set(pos.x,pos.y,pos.z);
-    cloudDirViz.setDirection(vel.clone().normalize());
-    cloudDirViz.setLength(vel.length());
-}
-
 scene.add(cloudDirViz);
 
 
@@ -166,16 +260,18 @@ var lightningData = null;
 
 // GUI
 var gui = new dat.GUI();
-gui.add(guiData, "raininess", 0, 1, 0.01).onChange(guiChanged);
+gui.add(guiData, "raininess", 0, 1, 0.01).onChange(onRaininessChanged);
 gui.add(guiData, "snowiness", 0, 1, 0.01).onChange(onSnowinessChanged);
-gui.add(guiData, "cloudiness", 0, 1, 0.01).onChange(guiChanged);
+gui.add(guiData, "cloudiness", 0, 1, 0.01).onChange(onCloudinessChanged);
 gui.add(guiData, "thunder", 0, 1, 0.01);
-gui.add(guiData, "fog_density", conf.fog.minDensity, conf.fog.maxDensity, 0.0001).onChange(guiChanged);
+gui.add(guiData, "fog_density", conf.fog.minDensity, conf.fog.maxDensity, 0.0001).onChange(onFogDensityChanged);
 gui.add(guiData, "wind_angle", 0, 2*Math.PI, 0.01).onChange(onWindAngleChanged);
 gui.add(guiData, "wind_force", conf.cloud.minForce, conf.cloud.maxForce, 0.1).onChange(onWindForceChanged);
 gui.add(guiData, "load_weather_data");
-guiChanged();
-onSnowinessChanged(guiData.snowiness);
+onRaininessChanged();
+onSnowinessChanged();
+onCloudinessChanged();
+onFogDensityChanged();
 onWindAngleChanged();
 onWindForceChanged();
 
@@ -187,98 +283,6 @@ window.addEventListener('resize', function(){
 
 animate();
 
-// TODO in mehrere Callbacks aufsplitten (Performance) ?
-function guiChanged(){  
-    var newCloudColor = conf.cloud.minRaininessColor.clone().lerp(conf.cloud.maxRaininessColor, guiData.raininess);
-    cloudParticleGroup.emitters[0].color.value = newCloudColor;
-    cloudParticleGroup.emitters[0].activeMultiplier = guiData.cloudiness;
-    scene.background = conf.rain.minRaininessSkyColor.clone().lerp(conf.rain.maxRaininessSkyColor, guiData.raininess);
-    rainParticleGroup.emitters[0].activeMultiplier = guiData.raininess;
-    scene.fog.density = guiData.fog_density;
-}
-
-
-function updateWind(angle, windForce){
-    var x = windForce*Math.cos(angle);
-    var z = windForce*Math.sin(angle);
-    cloudParticleGroup.emitters[0].velocity.value.set(-x, 0, -z).multiplyScalar(2.0/conf.cloud.maxAge);
-    cloudParticleGroup.emitters[0].position.value.set(x, conf.positionY, z);
-    updateCloudDirViz();
-}
-
-
-function onWindAngleChanged(){
-    updateWind(guiData.wind_angle, guiData.wind_force);
-}
-
-function onWindForceChanged(){
-    updateWind(guiData.wind_angle, guiData.wind_force);
-}
-
-function onSnowinessChanged(snowiness){
-    snowParticleGroup.emitters[0].activeMultiplier = snowiness;
-}
-
-function spawnLightning(){
-    var x = randomOfAbs(conf.model.groundSize/2);
-    var z = randomOfAbs(conf.model.groundSize/2);
-    var lightningStart = new THREE.Vector3(x,conf.positionY,z);
-    var lightningDir = new THREE.Vector3(x,0,z).sub(lightningStart);
-    var lightningModel = createLightning(lightningStart, lightningDir, conf.lightning.numKinks);
-    extendLightningPaths(lightningModel);
-    var lightningData = renderLightning(lightningModel, conf.lightning.lineWidth, conf.lightning.alphaMap);
-    lightningData.meshes.forEach((mesh) => {scene.add(mesh);});
-    return lightningData;
-}
-
-function removeLightning(lightningData){
-    lightningData.meshes.forEach(function(mesh){
-        scene.remove(mesh);
-        mesh.geometry.dispose();
-    });
-    lightningData.materials.forEach((material) => { material.dispose(); });
-}
-
-function lightningFadeOut(dt){
-    if(lightningData === null){
-        if(Math.random() < dt*conf.lightning.maxExpectedSpawnsPerSeconds*guiData.thunder){
-            lightningData = {
-                data: spawnLightning(),
-                timeElapsed: 0
-            }; 
-            lightningFlash.intensity = conf.lightning.flashStartIntensity;
-        }
-    }
-    else {
-        var opacityDiff = dt/conf.lightning.fadeOutDelay;
-        lightningData.timeElapsed += dt;
-        lightningData.data.materials.forEach(mat => { mat.uniforms.opacity.value -= opacityDiff; }); 
-        if(lightningData.timeElapsed < conf.lightning.flashDelay){
-            var flashIntensityDiff = conf.lightning.flashStartIntensity*dt/conf.lightning.flashDelay;
-            lightningFlash.intensity -= flashIntensityDiff;
-        }
-        if(lightningData.timeElapsed >= conf.lightning.fadeOutDelay){
-            removeLightning(lightningData.data);
-            lightningData = null;
-        }
-    }
-}
-
-function requestWeatherData(){
-    var url = conf.url;
-    $.getJSON(url)
-    .done(function(json){
-        var weather = owpjsonToWeather(json);
-        console.log('loaded weather', weather);
-		guiData.cloudiness = weather.cloudPercentFactor;
-		for (var i in gui.__controllers) {
-			gui.__controllers[i].updateDisplay();
-		}
-    })
-    .fail(function(jqXHR, textStatus, errorThrown){
-        alert("weather api call failed\n" + JSON.stringify({url: url, jqXHR: jqXHR, textStatus: textStatus, errorThrown: errorThrown}));
-    });
-}
 
 function animate() {
     var dt = clock.getDelta();
