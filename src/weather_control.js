@@ -1,5 +1,4 @@
 
-// TODO thunder
 conf = {
     url: 'http://api.openweathermap.org/data/2.5/weather?units=metric&lat=51.2&lon=6.47&APPID=43a26c85c29d39f47dc194dda192eb3a',
     cameraPosition: new THREE.Vector3(100,150,20),
@@ -56,7 +55,7 @@ conf = {
     model: {
         groundSize: 200,
         houseSize: 10,
-        positionSpreadXZ: 100, 
+        housePositionSpreadXZ: 100, 
         numHouses: 50
     }
 };
@@ -78,26 +77,13 @@ renderer.shadowMap.enabled = true;
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
-// Boden
-// TODO "Stadtmodell"-Erzeugung nach house.js schieben, nur Meshes zurückgeben
-var geometry = new THREE.PlaneGeometry(conf.model.groundSize,conf.model.groundSize);
-//var material = new THREE.MeshStandardMaterial({color: 0x10e52c, side: THREE.DoubleSide});
-var material = new THREE.MeshStandardMaterial({ambient: 0x050505, color: 0x10e52c, specular: 0x555555, shininess: 30, side: THREE.DoubleSide});
-var plane = new THREE.Mesh(geometry, material);
-plane.rotation.x = Math.PI/2;
-plane.receiveShadow = true;
-scene.add(plane);
-
-var bodyMaterial = new THREE.MeshPhongMaterial({ambient: 0x050505, color: 0x724b33, specular: 0x555555, shininess: 30});
-var roofMaterial = new THREE.MeshPhongMaterial({ambient: 0x050505, color: 0xc62411, specular: 0x555555, shininess: 30});
-for(var i = 0; i < conf.model.numHouses; i++){
-    var x = randomOfAbs(conf.model.positionSpreadXZ/2);
-    var z = randomOfAbs(conf.model.positionSpreadXZ/2);
-    var pos = new THREE.Vector3(x, conf.model.houseSize/2, z);
-    var house = createHouse(pos, conf.model.houseSize, bodyMaterial, roofMaterial);
-    scene.add(house.body);
-    scene.add(house.roof);
-}
+// Modell: Boden, Häuser (bestehend aus Körper, Dach)
+var cityMeshes = createCity(conf.model.groundSize, conf.model.numHouses, conf.model.housePositionSpreadXZ, conf.model.houseSize);
+scene.add(cityMeshes.planeMesh);
+cityMeshes.houseMeshes.forEach(houseMesh => {
+    scene.add(houseMesh.body);
+    scene.add(houseMesh.roof);
+});
       
 // Licht: Farbe, Intensität
 var dirLight = new THREE.DirectionalLight(0xffffff, 1);

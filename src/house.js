@@ -1,5 +1,30 @@
 
 
+function createCity(groundSize, numHouses, housePositionSpreadXZ, houseSize){
+    var geometry = new THREE.PlaneGeometry(groundSize, groundSize);
+    //var material = new THREE.MeshStandardMaterial({color: 0x10e52c, side: THREE.DoubleSide});
+    var material = new THREE.MeshStandardMaterial({ambient: 0x050505, color: 0x10e52c, specular: 0x555555, shininess: 30, side: THREE.DoubleSide});
+    var plane = new THREE.Mesh(geometry, material);
+    plane.rotation.x = Math.PI/2;
+    plane.receiveShadow = true;
+
+    var bodyMaterial = new THREE.MeshPhongMaterial({ambient: 0x050505, color: 0x724b33, specular: 0x555555, shininess: 30});
+    var roofMaterial = new THREE.MeshPhongMaterial({ambient: 0x050505, color: 0xc62411, specular: 0x555555, shininess: 30});
+    var houseMeshes = [];
+    for(var i = 0; i < numHouses; i++){
+        var x = randomOfAbs(housePositionSpreadXZ/2);
+        var z = randomOfAbs(housePositionSpreadXZ/2);
+        var pos = new THREE.Vector3(x, houseSize/2, z);
+        var house = createHouse(pos, houseSize, bodyMaterial, roofMaterial);
+        houseMeshes.push(house);
+    }
+    return {
+        planeMesh: plane,
+        houseMeshes: houseMeshes
+    };
+}
+
+
 function createHouseBody(size, material){
     var houseGeometry = new THREE.BoxGeometry(size, size, size);
     return new THREE.Mesh(houseGeometry, material);
