@@ -49,7 +49,7 @@ function createZigZagPath(start, dir, numKinks, kinkRange){
 }
 
 // kopiert vor den eigentlichen Pfad jedes Kindeszweiges den Pfad seines direkten Elternzweiges
-// ermöglicht schönere Visualisierung
+// sieht besser aus, das sonst jeder Blitzzweig nicht opak mit Eltern- und Kindeszweigen verbunden ist
 function extendLightningPaths(branch, parentPath){
     parentPath = parentPath || [];
     branch.childs.forEach(function(child, i){

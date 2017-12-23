@@ -1,48 +1,48 @@
 
+// Konfigurationsobjekt, enthält die meisten Stellschrauben der Wetterdarstellung
 conf = {
-    url: 'http://api.openweathermap.org/data/2.5/weather?units=metric&lat=51.2&lon=6.47&APPID=43a26c85c29d39f47dc194dda192eb3a',
+    url: 'http://api.openweathermap.org/data/2.5/weather?units=metric&lat=51.2&lon=6.47&APPID=43a26c85c29d39f47dc194dda192eb3a',    // URL zum Abruf d. Wetterdaten
     cameraPosition: new THREE.Vector3(100,150,20),
     //cameraPosition: new THREE.Vector3(0,600,0),
     //cameraPosition: new THREE.Vector3(0,0,300),
     positionY: 150, // Spawnhöhe Blitze, Wolken, Regen, Schnee,
-    positionSpreadY: 50,    // Spawnhöhenvarianz Regen, Schnee
+    positionSpreadY: 50,    // Spawnhöhenstreuung Regen, Schnee
     cloud: {
         maxNumClouds: 250,
         texture: new THREE.TextureLoader().load('./textures/cloud.png'),
-        minRaininessColor: new THREE.Color(0xffffff),
-        maxRaininessColor: new THREE.Color(0x7f7f7f),
-        startAngle: Math.PI/2,    // aus [0,2*PI]
-        minForce: 10,
-        maxForce: 200,
-        positionSpread: new THREE.Vector3(200,10,200),
+        minRaininessColor: new THREE.Color(0xffffff),   // Wolkenfarbe bei max. raininess
+        maxRaininessColor: new THREE.Color(0x7f7f7f),   // Wolkenfarbe bei min. raininess
+        startAngle: Math.PI/2,    // aus [0,2*PI]   // Startrichtung des Windes
+        minForce: 10,   // min. Windstärke
+        maxForce: 200,  // max. Windstärke
+        positionSpread: new THREE.Vector3(200,10,200),  // bestimmt Bereich um zentralen Spawnpunkt, in dem Wolken zufällig gespawnt werden (Streuung in Y-Richtung klein, in X-,Z-Richtung groß)
         maxAge: 2,   // Lebenszeit jedes Wolkenpartikels; beeinflußt auch Geschwindigkeit (lange Lebenszeit -> niedrige Geschwindigkeit)
-        size: 75,
-        sizeSpread: 50
+        size: 75,   // Wolkengröße
+        sizeSpread: 50  // Streuung der Wolkengröße
     },
     lightning: {
-        numKinks: 3,
-        lineWidth: 0.3,
-        fadeOutDelay: 1,  // sec
-        alphaMap: new THREE.TextureLoader().load('./textures/lightning.png'),
-        // bei maximalem thunder spawnen durchschnittlich maxExpectedSpawnsPerSeconds Blitze pro Sekunde (abzgl. der Fadeout-Dauer bereits gespawnter Blitze!)
-        maxExpectedSpawnsPerSeconds: 0.25,          
-        flashDelay: 1,    // sec
-        flashStartIntensity: 10
+        numKinks: 3,    // Anzahl Knicke des Blitz-Hauptzweiges
+        lineWidth: 0.3, // Breite des Hauptzweiges
+        fadeOutDelay: 1,  // Zeit, bis Blitz verschwunden (Sekunden)
+        alphaMap: new THREE.TextureLoader().load('./textures/lightning.png'),   // Alphamap für Blitz, damit Ränder transparent
+        maxExpectedSpawnsPerSeconds: 0.25, // max. erwartungsgemäße Dauer zwischen dem Verschwinden eines Blitzes und dem Spawn eines neuen Blitzes (d.h. bei maximalem thunder spawnen durchschnittlich maxExpectedSpawnsPerSeconds Blitze pro Sekunde (abzgl. der Fadeout-Dauer bereits gespawnter Blitze!)
+        flashDelay: 1,    // Blitzlichtdauer (Sekunden)
+        flashStartIntensity: 10 // Start-Blitzlichintensität
     },
     rain: {
         maxNumRaindrops: 5000, 
         texture: new THREE.TextureLoader().load('./textures/raindrop2.png'),
         minRaininessSkyColor: new THREE.Color(0x2271f9),
         maxRaininessSkyColor: new THREE.Color(0x8b8989),
-        velocityY: -100,
-        velocitySpread: new THREE.Vector3(10,7.5,10),
+        velocityY: -100,    // Fallgeschwindigkeit der Tropfen
+        velocitySpread: new THREE.Vector3(10,7.5,10),   // Fallstreuung der Tropfen
         size: 2,
         color: new THREE.Color(0x034aec)
     },
     snow: {
         maxNumSnowflakes: 5000,
-        velocityY: -50,
-        velocitySpread: new THREE.Vector3(75,25,75),
+        velocityY: -50, // Fallgeschwindigkeit der Schneeflocken
+        velocitySpread: new THREE.Vector3(75,25,75),    // Fallstreuung der Schneeflocken
         texture: new THREE.TextureLoader().load('./textures/snowflake.png'),
         size: 2,
         color: new THREE.Color(0xffffff)
@@ -53,9 +53,9 @@ conf = {
         maxDensity: 0.01
     },
     model: {
-        groundSize: 200,
+        groundSize: 200,    // Grundfläche ist groundSize x groundSize groß, die Mitte befindet sich im Ursprung
         houseSize: 10,
-        housePositionSpreadXZ: 100, 
+        housePositionSpreadXZ: 100, // bestimmt Bereich, in dem Häuser zufällig gespawnt werden 
         numHouses: 50
     }
 };
@@ -72,10 +72,11 @@ var guiData = {
 };
 
 function onRaininessChanged(){
+    // Interpolation der Wolkenfarbe zwischen minRaininessColor und maxRaininessColor um Faktor raininess
     var newCloudColor = conf.cloud.minRaininessColor.clone().lerp(conf.cloud.maxRaininessColor, guiData.raininess);
     cloudParticleGroup.emitters[0].color.value = newCloudColor;
     scene.background = conf.rain.minRaininessSkyColor.clone().lerp(conf.rain.maxRaininessSkyColor, guiData.raininess);
-    rainParticleGroup.emitters[0].activeMultiplier = guiData.raininess;
+    rainParticleGroup.emitters[0].activeMultiplier = guiData.raininess; // emittiere den Anteil raininess der max. vorhandenen Wolken
 }
 
 function onSnowinessChanged(){
@@ -90,6 +91,9 @@ function onFogDensityChanged(){
     scene.fog.density = guiData.fog_density;
 }
 
+// passt Spawnpunkt der Wolken und Flugrichtung der Wolken an Windgeschwindigkeit, -winkel und maxAge an
+// je höher die Windgeschwindigkeit, desto weiter weg vom Ursprung spawnen Wolken
+// je höher maxAge, desto langsamer fliegen die Wolken (damit sie etwa am anderen Ende des Modells verschwinden)
 function updateWind(angle, windForce){
     var x = windForce*Math.cos(angle);
     var z = windForce*Math.sin(angle);
@@ -107,9 +111,9 @@ function onWindForceChanged(){
 }
 
 function spawnLightning(){
-    var x = randomOfAbs(conf.model.groundSize/2);
+    var x = randomOfAbs(conf.model.groundSize/2);   // spawne Blitz irgendwo im Modellbereich
     var z = randomOfAbs(conf.model.groundSize/2);
-    var lightningStart = new THREE.Vector3(x,conf.positionY,z);
+    var lightningStart = new THREE.Vector3(x,conf.positionY,z); // Blitz startet auf Wolkenhöhe und endet auf dem Boden, je mit gleicher x-,z-Koordinate
     var lightningDir = new THREE.Vector3(x,0,z).sub(lightningStart);
     var lightningModel = createLightning(lightningStart, lightningDir, conf.lightning.numKinks);
     extendLightningPaths(lightningModel);
