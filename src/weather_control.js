@@ -2,6 +2,9 @@
 // TODO thunder
 conf = {
     url: 'http://api.openweathermap.org/data/2.5/weather?units=metric&lat=51.2&lon=6.47&APPID=43a26c85c29d39f47dc194dda192eb3a',
+    cameraPosition: new THREE.Vector3(100,150,20),
+    //cameraPosition: new THREE.Vector3(0,600,0),
+    //cameraPosition: new THREE.Vector3(0,0,300),
     positionY: 150, // Spawnhöhe Blitze, Wolken, Regen, Schnee,
     positionSpreadY: 50,    // Spawnhöhenvarianz Regen, Schnee
     cloud: {
@@ -66,9 +69,7 @@ scene.background = conf.rain.minRaininessSkyColor;
 scene.fog = new THREE.FogExp2(conf.fog.color, conf.fog.minDensity);
 
 var camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 1, 1000);
-camera.position.set(100, 150, 20);
-//camera.position.set(0, 600, 0);
-//camera.position.set(0,0,300);
+camera.position.set(conf.cameraPosition.x,conf.cameraPosition.y,conf.cameraPosition.z);
 console.log('set camera to', camera.position);
 camera.lookAt(scene.position);
 
