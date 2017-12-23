@@ -29,7 +29,7 @@ conf = {
     },
     rain: {
         maxNumRaindrops: 5000, 
-        texture: new THREE.TextureLoader().load('./textures/raindrop.png'),
+        texture: new THREE.TextureLoader().load('./textures/raindrop2.png'),
         minRaininessSkyColor: new THREE.Color(0x2271f9),
         maxRaininessSkyColor: new THREE.Color(0x8b8989),
         velocityY: -100,
