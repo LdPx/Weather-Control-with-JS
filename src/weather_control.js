@@ -60,6 +60,9 @@ conf = {
     }
 };
 
+requestWeatherData();
+setInterval(function(){ requestWeatherData(); }, 60000);	// interval parameter?
+
 var guiData = {
     raininess: 0,
     snowiness: 0,
@@ -168,7 +171,15 @@ function requestWeatherData(){
     .done(function(json){
         var weather = owpjsonToWeather(json);   // konvertiere Daten vom OWP-JSON-Darstellung in hier benötigte Darstellung
         console.log('loaded weather', weather);
-		guiData.cloudiness = weather.cloudPercentFactor;
+        
+        guiData.raininess = weather.rain3h;
+        guiData.snowiness = weather.snow3h;
+        guiData.cloudiness = weather.cloudPercentFactor;
+        guiData.thunder = weather.thunder;
+        guiData.fog_density = weather.fog;
+        guiData.wind_angle = weather.windDirectionRad;
+        guiData.wind_force = weather.windSpeed;	// Better value?
+		
 		for (var i in gui.__controllers) {
 			gui.__controllers[i].updateDisplay();
 		}
