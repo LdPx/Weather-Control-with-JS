@@ -172,13 +172,27 @@ function requestWeatherData(){
         var weather = owpjsonToWeather(json);   // konvertiere Daten vom OWP-JSON-Darstellung in hier benötigte Darstellung
         console.log('loaded weather', weather);
         
-        guiData.raininess = weather.rain3h;
-        guiData.snowiness = weather.snow3h;
-        guiData.cloudiness = weather.cloudPercentFactor;
-        guiData.thunder = weather.thunder;
-        guiData.fog_density = weather.fog;
-        guiData.wind_angle = weather.windDirectionRad;
-        guiData.wind_force = weather.windSpeed;	// Better value?
+		guiData.raininess = weather.rain3h;
+		onRaininessChanged();
+		
+		guiData.snowiness = weather.snow3h;
+		onSnowinessChanged();
+		
+		guiData.cloudiness = weather.cloudPercentFactor;
+		onCloudinessChanged();
+		
+		guiData.thunder = weather.thunder;
+		
+		guiData.fog_density = weather.fog;
+		onFogDensityChanged();
+		
+		guiData.wind_angle = weather.windDirectionRad;
+		onWindAngleChanged();
+		
+		guiData.wind_force = weather.windSpeed;	// Better value?
+		onWindForceChanged();
+		
+		
 		
 		for (var i in gui.__controllers) {
 			gui.__controllers[i].updateDisplay();
