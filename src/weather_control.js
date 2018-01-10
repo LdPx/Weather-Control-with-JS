@@ -31,12 +31,12 @@ conf = {
     },
     rain: {
         maxNumRaindrops: 5000, 
-        texture: new THREE.TextureLoader().load('./textures/raindrop2.png'),
+        texture: new THREE.TextureLoader().load('./textures/circle.png'),
         minRaininessSkyColor: new THREE.Color(0x2271f9),    // Himmelsfarbe bei min. raininess
         maxRaininessSkyColor: new THREE.Color(0x8b8989),    // Himmelsfarbe bei max. raininess
         velocityY: -100,    // Fallgeschwindigkeit der Tropfen
         velocitySpread: new THREE.Vector3(10,7.5,10),   // Fallstreuung der Tropfen
-        size: 2,
+        size: 0.75,
         color: new THREE.Color(0x034aec)
     },
     snow: {
