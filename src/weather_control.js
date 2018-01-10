@@ -72,6 +72,14 @@ var guiData = {
     wind_angle: conf.cloud.startAngle,
     wind_force: conf.cloud.minForce,
     load_weather_data: requestWeatherData,
+	turbidity: 10,
+	rayleigh: 2,
+	mieCoefficient: 0.005,
+	mieDirectionalG: 0.8,
+	luminance: 1,
+	inclination: 0.49, // elevation / inclination
+	azimuth: 0.25, // Facing front,
+	sun: ! true
 };
 
 function onRaininessChanged(){
@@ -92,6 +100,36 @@ function onCloudinessChanged(){
 
 function onFogDensityChanged(){  
     scene.fog.density = guiData.fog_density;
+}
+
+function onTurbidityChanged(){  
+	return;
+}
+
+function onRayleighChanged(){  
+	return;
+}
+function onMieCoefficeintChanged(){  
+	return;
+}
+
+function onMieDierectionalGChanged(){  
+	return;
+}
+
+function onLuminanceChanged(){  
+	return;
+}
+
+function onInclinationChanged(){  
+	return;
+}
+
+function onAzimuthChanged(){  
+	return;
+}
+function onSunChanged(){  
+	return;
 }
 
 // passt Spawnpunkt der Wolken und Flugrichtung der Wolken an Windgeschwindigkeit, -winkel und maxAge an
@@ -315,13 +353,30 @@ gui.add(guiData, "thunder", 0, 1, 0.01);
 gui.add(guiData, "fog_density", conf.fog.minDensity, conf.fog.maxDensity, 0.0001).onChange(onFogDensityChanged);
 gui.add(guiData, "wind_angle", 0, 2*Math.PI, 0.01).onChange(onWindAngleChanged);
 gui.add(guiData, "wind_force", conf.cloud.minForce, conf.cloud.maxForce, 0.1).onChange(onWindForceChanged);
+gui.add( guiData, "turbidity", 1.0, 20.0, 0.1 ).onChange( onTurbidityChanged );
+gui.add( guiData, "rayleigh", 0.0, 4, 0.001 ).onChange( onRayleighChanged );
+gui.add( guiData, "mieCoefficient", 0.0, 0.1, 0.001 ).onChange( onMieCoefficeintChanged );
+gui.add( guiData, "mieDirectionalG", 0.0, 1, 0.001 ).onChange( onMieDierectionalGChanged );
+gui.add( guiData, "luminance", 0.0, 2 ).onChange( onLuminanceChanged );
+gui.add( guiData, "inclination", 0, 1, 0.0001 ).onChange( onInclinationChanged );
+gui.add( guiData, "azimuth", 0, 1, 0.0001 ).onChange( onAzimuthChanged );
+gui.add( guiData, "sun" ).onChange( onSunChanged );
 gui.add(guiData, "load_weather_data");
+
 onRaininessChanged();
 onSnowinessChanged();
 onCloudinessChanged();
 onFogDensityChanged();
 onWindAngleChanged();
 onWindForceChanged();
+onTurbidityChanged();
+onRayleighChanged();
+onMieCoefficeintChanged();
+onMieDierectionalGChanged();
+onLuminanceChanged();
+onInclinationChanged();
+onAzimuthChanged();
+onSunChanged();
 
 window.addEventListener('resize', function(){
     camera.aspect = window.innerWidth/window.innerHeight;
