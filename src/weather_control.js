@@ -301,7 +301,9 @@ scene.add(cloudDirViz);
 var lightningData = null;   
 
 // control-Objekt zur Kamerabewegung
-var controls = createControls(camera, renderer);
+// das Objekt ist konfigurierbar (siehe dazu die Beispiele der ThreeJS-Website und den Quellcode von TrackballControls
+// auf https://github.com/mrdoob/three.js/blob/master/examples/js/controls/TrackballControls.js )
+var controls = new THREE.TrackballControls(camera, renderer.domElement);
 
 
 // GUI
