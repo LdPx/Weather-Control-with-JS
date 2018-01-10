@@ -1,6 +1,6 @@
 
-function createControls(camera){
-    var controls = new THREE.TrackballControls(camera);
+function createControls(camera, renderer){
+    var controls = new THREE.TrackballControls(camera, renderer.domElement);
     controls.rotateSpeed = 1.0;
     controls.zoomSpeed = 10.2;
     controls.panSpeed = 0.8;

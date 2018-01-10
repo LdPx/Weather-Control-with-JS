@@ -297,7 +297,12 @@ scene.add(cloudParticleGroup.mesh);
 var cloudDirViz = newCloudDirViz();
 scene.add(cloudDirViz);
 
-var lightningData = null;   // Daten des aktuellen Blitzes (Modelldaten, Materials, Lebenszeit)
+// Daten des aktuellen Blitzes (Modelldaten, Materials, Lebenszeit)
+var lightningData = null;   
+
+// control-Objekt zur Kamerabewegung
+var controls = createControls(camera, renderer);
+
 
 // GUI
 var gui = new dat.GUI();
@@ -320,6 +325,7 @@ window.addEventListener('resize', function(){
     camera.aspect = window.innerWidth/window.innerHeight;
     camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight);
+    controls.handleResize();
 }, false);
 
 animate();
@@ -328,6 +334,7 @@ animate();
 function animate() {
     var dt = clock.getDelta();
     requestAnimationFrame(animate); // animiere nächsten Frame
+    controls.update();
     render(dt);
 }
 
