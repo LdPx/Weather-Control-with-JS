@@ -102,34 +102,28 @@ function onFogDensityChanged(){
     scene.fog.density = guiData.fog_density;
 }
 
-function onTurbidityChanged(){  
-	return;
-}
+function onSunChanged() {
 
-function onRayleighChanged(){  
-	return;
-}
-function onMieCoefficeintChanged(){  
-	return;
-}
+	var uniforms = sky.material.uniforms;
+	uniforms.turbidity.value = guiData.turbidity;
+	uniforms.rayleigh.value = guiData.rayleigh;
+	uniforms.luminance.value = guiData.luminance;
+	uniforms.mieCoefficient.value = guiData.mieCoefficient;
+	uniforms.mieDirectionalG.value = guiData.mieDirectionalG;
 
-function onMieDierectionalGChanged(){  
-	return;
-}
+	var theta = Math.PI * ( guiData.inclination - 0.5 );
+	var phi = 2 * Math.PI * ( guiData.azimuth - 0.5 );
 
-function onLuminanceChanged(){  
-	return;
-}
+	sunSphere.position.x = distance * Math.cos( phi );
+	sunSphere.position.y = distance * Math.sin( phi ) * Math.sin( theta );
+	sunSphere.position.z = distance * Math.sin( phi ) * Math.cos( theta );
 
-function onInclinationChanged(){  
-	return;
-}
+	sunSphere.visible = guiData.sun;
 
-function onAzimuthChanged(){  
-	return;
-}
-function onSunChanged(){  
-	return;
+	uniforms.sunPosition.value.copy( sunSphere.position );
+
+	renderer.render( scene, camera );
+
 }
 
 // passt Spawnpunkt der Wolken und Flugrichtung der Wolken an Windgeschwindigkeit, -winkel und maxAge an
@@ -257,6 +251,30 @@ function updateCloudDirViz(){
     cloudDirViz.setDirection(vel.clone().normalize());
     cloudDirViz.setLength(vel.length());
 }
+function initSky() {
+
+	// Add Sky
+	sky = new THREE.Sky();
+	sky.scale.setScalar( 450000 );
+	scene.add( sky );
+
+	// Add Sun Helper
+	sunSphere = new THREE.Mesh(
+		new THREE.SphereBufferGeometry( 20000, 16, 8 ),
+		new THREE.MeshBasicMaterial( { color: 0xffffff } )
+	);
+	sunSphere.position.y = - 700000;
+	sunSphere.visible = false;
+	scene.add( sunSphere );
+
+	var distance = 400000;
+	
+	onSunChanged();
+}
+
+
+var sky, sunSphere;
+var distance = 400000; //sun
 
 // Uhr (z.B. nötig für delta time-Berechnung)
 var clock = new THREE.Clock();
@@ -282,6 +300,8 @@ cityMeshes.houseMeshes.forEach(houseMesh => {
     scene.add(houseMesh.body);
     scene.add(houseMesh.roof);
 });
+
+initSky();
       
 // Licht: Farbe, Intensität
 var dirLight = new THREE.DirectionalLight(0xffffff, 1);
@@ -353,13 +373,13 @@ gui.add(guiData, "thunder", 0, 1, 0.01);
 gui.add(guiData, "fog_density", conf.fog.minDensity, conf.fog.maxDensity, 0.0001).onChange(onFogDensityChanged);
 gui.add(guiData, "wind_angle", 0, 2*Math.PI, 0.01).onChange(onWindAngleChanged);
 gui.add(guiData, "wind_force", conf.cloud.minForce, conf.cloud.maxForce, 0.1).onChange(onWindForceChanged);
-gui.add( guiData, "turbidity", 1.0, 20.0, 0.1 ).onChange( onTurbidityChanged );
-gui.add( guiData, "rayleigh", 0.0, 4, 0.001 ).onChange( onRayleighChanged );
-gui.add( guiData, "mieCoefficient", 0.0, 0.1, 0.001 ).onChange( onMieCoefficeintChanged );
-gui.add( guiData, "mieDirectionalG", 0.0, 1, 0.001 ).onChange( onMieDierectionalGChanged );
-gui.add( guiData, "luminance", 0.0, 2 ).onChange( onLuminanceChanged );
-gui.add( guiData, "inclination", 0, 1, 0.0001 ).onChange( onInclinationChanged );
-gui.add( guiData, "azimuth", 0, 1, 0.0001 ).onChange( onAzimuthChanged );
+gui.add( guiData, "turbidity", 1.0, 20.0, 0.1 ).onChange( onSunChanged );
+gui.add( guiData, "rayleigh", 0.0, 4, 0.001 ).onChange( onSunChanged );
+gui.add( guiData, "mieCoefficient", 0.0, 0.1, 0.001 ).onChange( onSunChanged );
+gui.add( guiData, "mieDirectionalG", 0.0, 1, 0.001 ).onChange( onSunChanged );
+gui.add( guiData, "luminance", 0.0, 2 ).onChange( onSunChanged );
+gui.add( guiData, "inclination", 0, 1, 0.0001 ).onChange( onSunChanged );
+gui.add( guiData, "azimuth", 0, 1, 0.0001 ).onChange( onSunChanged );
 gui.add( guiData, "sun" ).onChange( onSunChanged );
 gui.add(guiData, "load_weather_data");
 
@@ -369,13 +389,6 @@ onCloudinessChanged();
 onFogDensityChanged();
 onWindAngleChanged();
 onWindForceChanged();
-onTurbidityChanged();
-onRayleighChanged();
-onMieCoefficeintChanged();
-onMieDierectionalGChanged();
-onLuminanceChanged();
-onInclinationChanged();
-onAzimuthChanged();
 onSunChanged();
 
 window.addEventListener('resize', function(){
