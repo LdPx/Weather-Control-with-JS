@@ -117,6 +117,11 @@ function onSunChanged() {
 	sunSphere.position.x = distance * Math.cos( phi );
 	sunSphere.position.y = distance * Math.sin( phi ) * Math.sin( theta );
 	sunSphere.position.z = distance * Math.sin( phi ) * Math.cos( theta );
+	
+	dirLight.position.x = distance * Math.cos( phi );
+	dirLight.position.y = distance * Math.sin( phi ) * Math.sin( theta );
+	dirLight.position.z = distance * Math.sin( phi ) * Math.cos( theta );
+
 
 	sunSphere.visible = guiData.sun;
 
@@ -269,7 +274,7 @@ function initSky() {
 
 
 var sky, sunSphere;
-var distance = 400000; //sun
+var distance = 1000; //sun
 
 // Uhr (z.B. nötig für delta time-Berechnung)
 var clock = new THREE.Clock();
@@ -296,7 +301,7 @@ cityMeshes.houseMeshes.forEach(houseMesh => {
     scene.add(houseMesh.roof);
 });
 
-initSky();
+
       
 // Licht: Farbe, Intensität
 var dirLight = new THREE.DirectionalLight(0xffffff, 1);
@@ -314,6 +319,7 @@ dirLight.shadow.camera.top	= 100;
 dirLight.shadow.camera.bottom = -100;
 scene.add(dirLight);
 
+initSky();
 
 // visualisiere direktionale Lichtquelle
 scene.add(new THREE.DirectionalLightHelper(dirLight, 5));
