@@ -86,7 +86,7 @@ function onRaininessChanged(){
     // Interpolation der Wolkenfarbe zwischen minRaininessColor und maxRaininessColor um Faktor raininess
     var newCloudColor = conf.cloud.minRaininessColor.clone().lerp(conf.cloud.maxRaininessColor, guiData.raininess);
     cloudParticleGroup.emitters[0].color.value = newCloudColor;
-    scene.background = conf.rain.minRaininessSkyColor.clone().lerp(conf.rain.maxRaininessSkyColor, guiData.raininess);
+    //scene.background = conf.rain.minRaininessSkyColor.clone().lerp(conf.rain.//maxRaininessSkyColor, guiData.raininess);
     rainParticleGroup.emitters[0].activeMultiplier = guiData.raininess; // emittiere den Anteil raininess der max. vorhandenen Wolken
 }
 
@@ -121,9 +121,6 @@ function onSunChanged() {
 	sunSphere.visible = guiData.sun;
 
 	uniforms.sunPosition.value.copy( sunSphere.position );
-
-	renderer.render( scene, camera );
-
 }
 
 // passt Spawnpunkt der Wolken und Flugrichtung der Wolken an Windgeschwindigkeit, -winkel und maxAge an
@@ -267,8 +264,6 @@ function initSky() {
 	sunSphere.visible = false;
 	scene.add( sunSphere );
 
-	var distance = 400000;
-	
 	onSunChanged();
 }
 
@@ -280,10 +275,10 @@ var distance = 400000; //sun
 var clock = new THREE.Clock();
 
 var scene = new THREE.Scene();
-scene.background = conf.rain.minRaininessSkyColor;  // Himmelsfarbe
+//scene.background = conf.rain.minRaininessSkyColor;  // Himmelsfarbe
 scene.fog = new THREE.FogExp2(conf.fog.color, conf.fog.minDensity); // Nebel
 
-var camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 1, 1000);
+var camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 1, 2000000);
 camera.position.set(conf.cameraPosition.x,conf.cameraPosition.y,conf.cameraPosition.z);
 console.log('set camera to', camera.position);
 camera.lookAt(scene.position);
