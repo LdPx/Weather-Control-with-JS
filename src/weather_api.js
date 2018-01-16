@@ -34,7 +34,7 @@ function owpjsonToWeather(json){
 	
 	weather.rain3h = 0;
     if(json.hasOwnProperty('rain')){	// 1mm equals 1L/m²
-        weather.rain3h = json.rain["3h"] / 78;	// using the record precipitation of 312mm in 24h from 12.08.02
+        weather.rain3h = json.rain["3h"] / 39;	// using 1/8 of the record precipitation of 312mm in 24h from 12.08.02
 		if(weather.rain3h > 1){
 			weather.rain3h = 1;
 		}
@@ -42,17 +42,17 @@ function owpjsonToWeather(json){
 	
 	weather.snow3h = 0;
     if(json.hasOwnProperty('snow')){
-        weather.snow3h = json.snow["3h"] / 37;	// quarter of the record (Zugspitze)
+        weather.snow3h = json.snow["3h"] / 18;	// 1/8 of the record (Zugspitze)
 		if(weather.snow3h > 1){
 			weather.snow3h = 1;
 		}
 	}
 	
 	weather.thunder = 0;
-	if(weather.wId > 199 && weather.wId < 299){	// thunderstorm
-		weather.thunder = 0.3;
+	if((weather.wId > 199) && (weather.wId < 299)){	// thunderstorm
+		weather.thunder = 0.5;
 		if(weather.wId == 210){	// light thunderstorm
-			weather.thunder = 0.9;
+			weather.thunder = 0.3;
 		} else if(weather.wId == 212){	// heavy thunderstorm
 			weather.thunder = 0.9;
 		}
