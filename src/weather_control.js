@@ -15,12 +15,12 @@ conf = {
         minRaininessColor: new THREE.Color(0xffffff),   // Wolkenfarbe bei max. raininess
         maxRaininessColor: new THREE.Color(0x7f7f7f),   // Wolkenfarbe bei min. raininess
         startAngle: Math.PI/2,    // aus [0,2*PI]   // Startrichtung des Windes
-        minForce: 10,   // min. Windstärke
+        minForce: 1,   // min. Windstärke
         maxForce: 200,  // max. Windstärke
         positionSpread: new THREE.Vector3(200,10,200),  // bestimmt Bereich um zentralen Spawnpunkt, in dem Wolken zufällig gespawnt werden (Streuung in Y-Richtung klein, in X-,Z-Richtung groß)
-        maxAge: 2,   // Lebenszeit jedes Wolkenpartikels; beeinflußt auch Geschwindigkeit (lange Lebenszeit -> niedrige Geschwindigkeit)
+        maxAge: 10,   // Lebenszeit jedes Wolkenpartikels; beeinflußt auch Geschwindigkeit (lange Lebenszeit -> niedrige Geschwindigkeit)
         size: 75,   // Wolkengröße
-        sizeSpread: 50  // Streuung der Wolkengröße
+        sizeSpread: 500  // Streuung der Wolkengröße
     },
     lightning: {
         numKinks: 3,    // Anzahl Knicke des Blitz-Hauptzweiges
@@ -98,6 +98,9 @@ function onSnowinessChanged(){
 
 function onCloudinessChanged(){
     cloudParticleGroup.emitters[0].activeMultiplier = guiData.cloudiness;
+	
+	dirLight.intensity = 1 - guiData.cloudiness;
+
 }
 
 function onFogDensityChanged(){  
@@ -117,10 +120,10 @@ function onSunChanged() {
 	var start = new Date(now.getFullYear(), 0, 0);
 	var diff = now - start;
 	var oneDay = 1000 * 60 * 60 * 24;
-	var day = Math.floor(diff / oneDay); //day of the year
-	var hours = now.getHours();
-	//var day = 180;
-	//var hours = 6;
+	//var day = Math.floor(diff / oneDay); //day of the year
+	//var hours = now.getHours() - 1;
+	var day = 100;
+	var hours = 16;
 	var minutes = now.getMinutes();
 	/*
 	
@@ -327,7 +330,7 @@ cityMeshes.houseMeshes.forEach(houseMesh => {
 
       
 // Licht: Farbe, Intensität
-var dirLight = new THREE.DirectionalLight(0xffffff, 1);
+var dirLight = new THREE.DirectionalLight(0xffffff, 0.4);
 dirLight.position.set(20, 100, 100);
 dirLight.castShadow = true;            // default false
 
