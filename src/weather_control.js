@@ -2,7 +2,9 @@
 // Konfigurationsobjekt, enthält die meisten Stellschrauben der Wetterdarstellung
 conf = {
     url: 'http://api.openweathermap.org/data/2.5/weather?units=metric&lat=51.2&lon=6.47&APPID=43a26c85c29d39f47dc194dda192eb3a',    // URL zum Abruf d. Wetterdaten
-    cameraPosition: new THREE.Vector3(100,150,20),
+    lat: 51.2,
+	lon: 6.47,
+	cameraPosition: new THREE.Vector3(100,150,20),
     //cameraPosition: new THREE.Vector3(0,600,0),
     //cameraPosition: new THREE.Vector3(0,0,300),
     positionY: 150, // Spawnhöhe Blitze, Wolken, Regen, Schnee,
@@ -111,7 +113,27 @@ function onSunChanged() {
 	uniforms.mieCoefficient.value = guiData.mieCoefficient;
 	uniforms.mieDirectionalG.value = guiData.mieDirectionalG;
 
-	var theta = Math.PI * ( guiData.inclination - 0.5 );
+	var now = new Date();
+	var start = new Date(now.getFullYear(), 0, 0);
+	var diff = now - start;
+	var oneDay = 1000 * 60 * 60 * 24;
+	var day = Math.floor(diff / oneDay); //day of the year
+	var hours = now.getHours();
+	//var day = 180;
+	//var hours = 6;
+	var minutes = now.getMinutes();
+	/*
+	
+	Höhenwinkel und azimut müssen auf -Werte gechekct werden.
+	
+	*/
+	var height = calcHeight(conf.lat, conf.lon, day, hours, minutes );
+	
+	guiData.inclination = ((height + 90) / 180) ;
+
+	guiData.azimuth = ((calcAzimuth(conf.lat, conf.lon, day, hours, minutes, height) / 360) +0.5) ;
+	
+	var theta = Math.PI  * ( guiData.inclination - 0.5 );
 	var phi = 2 * Math.PI * ( guiData.azimuth - 0.5 );
 
 	sunSphere.position.x = distance * Math.cos( phi );
@@ -126,6 +148,7 @@ function onSunChanged() {
 	sunSphere.visible = guiData.sun;
 
 	uniforms.sunPosition.value.copy( sunSphere.position );
+	//Schatten anpassen.
 }
 
 // passt Spawnpunkt der Wolken und Flugrichtung der Wolken an Windgeschwindigkeit, -winkel und maxAge an
@@ -274,7 +297,7 @@ function initSky() {
 
 
 var sky, sunSphere;
-var distance = 1000; //sun
+var distance = 900; //sun
 
 // Uhr (z.B. nötig für delta time-Berechnung)
 var clock = new THREE.Clock();
