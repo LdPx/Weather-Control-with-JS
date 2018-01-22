@@ -2,6 +2,7 @@
 // Konfigurationsobjekt, enthält die meisten Stellschrauben der Wetterdarstellung
 conf = {
     url: 'http://api.openweathermap.org/data/2.5/weather?units=metric&lat=51.2&lon=6.47&APPID=43a26c85c29d39f47dc194dda192eb3a',    // URL zum Abruf d. Wetterdaten
+    requestInterval: 60000,  // Wiederholungsdauer der Wetterabfrage, msec
 	cameraPosition: new THREE.Vector3(100,150,20),
     //cameraPosition: new THREE.Vector3(0,600,0),
     //cameraPosition: new THREE.Vector3(0,0,300),
@@ -72,7 +73,7 @@ conf = {
 };
 
 requestWeatherData();
-setInterval(function(){ requestWeatherData(); }, 60000);	// interval parameter?
+setInterval(function(){ requestWeatherData(); }, conf.requestInterval);	// interval parameter?
 
 var guiData = {
     raininess: 0,
