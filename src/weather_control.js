@@ -82,6 +82,7 @@ var guiData = {
     fog_density: conf.fog.minDensity,
     wind_angle: conf.cloud.startAngle,
     wind_force: conf.cloud.minForce,
+    hours: 12,
     load_weather_data: requestWeatherData,
     /*
 	turbidity: 10,
@@ -136,7 +137,8 @@ function onSunChanged() {
 	//var day = Math.floor(diff / oneDay); //day of the year
 	//var hours = now.getHours() - 1;
 	var day = 100;
-	var hours = 16;
+	//var hours = 16;
+    var hours = guiData.hours;
 	var minutes = now.getMinutes();
 	/*
 	
@@ -416,6 +418,7 @@ gui.add(guiData, "thunder", 0, 1, 0.01);
 gui.add(guiData, "fog_density", conf.fog.minDensity, conf.fog.maxDensity, 0.0001).onChange(onFogDensityChanged);
 gui.add(guiData, "wind_angle", 0, 2*Math.PI, 0.01).onChange(onWindAngleChanged);
 gui.add(guiData, "wind_force", conf.cloud.minForce, conf.cloud.maxForce, 0.1).onChange(onWindForceChanged);
+gui.add(guiData, "hours", 0, 23, 1).onChange(onSunChanged);
 /*
 gui.add( guiData, "turbidity", 1.0, 20.0, 0.1 ).onChange( onSunChanged );
 gui.add( guiData, "rayleigh", 0.0, 4, 0.001 ).onChange( onSunChanged );
