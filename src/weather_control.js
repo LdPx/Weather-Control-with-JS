@@ -10,6 +10,13 @@ conf = {
     sun: {
         lat: 51.2,
         lon: 6.47,
+        turbidity: 10,
+        rayleigh: 2,
+        mieCoefficient: 0.005,
+        mieDirectionalG: 0.8,
+        luminance: 1,
+        inclination: 0.49, // elevation / inclination
+        azimuth: 0.25, // Facing front,
     },
     cloud: {
         maxNumClouds: 250,
@@ -76,6 +83,7 @@ var guiData = {
     wind_angle: conf.cloud.startAngle,
     wind_force: conf.cloud.minForce,
     load_weather_data: requestWeatherData,
+    /*
 	turbidity: 10,
 	rayleigh: 2,
 	mieCoefficient: 0.005,
@@ -84,6 +92,7 @@ var guiData = {
 	inclination: 0.49, // elevation / inclination
 	azimuth: 0.25, // Facing front,
 	sun: ! true
+    */
 };
 
 function onRaininessChanged(){
@@ -111,12 +120,14 @@ function onFogDensityChanged(){
 
 function onSunChanged() {
 
+    /*
 	var uniforms = sky.material.uniforms;
 	uniforms.turbidity.value = guiData.turbidity;
 	uniforms.rayleigh.value = guiData.rayleigh;
 	uniforms.luminance.value = guiData.luminance;
 	uniforms.mieCoefficient.value = guiData.mieCoefficient;
 	uniforms.mieDirectionalG.value = guiData.mieDirectionalG;
+    */
 
 	var now = new Date();
 	var start = new Date(now.getFullYear(), 0, 0);
@@ -149,10 +160,7 @@ function onSunChanged() {
 	dirLight.position.y = distance * Math.sin( phi ) * Math.sin( theta );
 	dirLight.position.z = distance * Math.sin( phi ) * Math.cos( theta );
 
-
-	sunSphere.visible = guiData.sun;
-
-	uniforms.sunPosition.value.copy( sunSphere.position );
+	sky.material.uniforms.sunPosition.value.copy( sunSphere.position );
 	//Schatten anpassen.
 }
 
@@ -286,6 +294,12 @@ function initSky() {
 	// Add Sky
 	sky = new THREE.Sky();
 	sky.scale.setScalar( 450000 );
+	var uniforms = sky.material.uniforms;
+	uniforms.turbidity.value = conf.sun.turbidity;
+	uniforms.rayleigh.value = conf.sun.rayleigh;
+	uniforms.luminance.value = conf.sun.luminance;
+	uniforms.mieCoefficient.value = conf.sun.mieCoefficient;
+	uniforms.mieDirectionalG.value = conf.sun.mieDirectionalG;
 	scene.add( sky );
 
 	// Add Sun Helper
@@ -293,8 +307,8 @@ function initSky() {
 		new THREE.SphereBufferGeometry( 20000, 16, 8 ),
 		new THREE.MeshBasicMaterial( { color: 0xffffff } )
 	);
-	sunSphere.position.y = - 700000;
-	sunSphere.visible = false;
+	sunSphere.position.y = -700000;
+	sunSphere.visible = true;
 	scene.add( sunSphere );
 
 	onSunChanged();
@@ -402,6 +416,7 @@ gui.add(guiData, "thunder", 0, 1, 0.01);
 gui.add(guiData, "fog_density", conf.fog.minDensity, conf.fog.maxDensity, 0.0001).onChange(onFogDensityChanged);
 gui.add(guiData, "wind_angle", 0, 2*Math.PI, 0.01).onChange(onWindAngleChanged);
 gui.add(guiData, "wind_force", conf.cloud.minForce, conf.cloud.maxForce, 0.1).onChange(onWindForceChanged);
+/*
 gui.add( guiData, "turbidity", 1.0, 20.0, 0.1 ).onChange( onSunChanged );
 gui.add( guiData, "rayleigh", 0.0, 4, 0.001 ).onChange( onSunChanged );
 gui.add( guiData, "mieCoefficient", 0.0, 0.1, 0.001 ).onChange( onSunChanged );
@@ -410,6 +425,7 @@ gui.add( guiData, "luminance", 0.0, 2 ).onChange( onSunChanged );
 gui.add( guiData, "inclination", 0, 1, 0.0001 ).onChange( onSunChanged );
 gui.add( guiData, "azimuth", 0, 1, 0.0001 ).onChange( onSunChanged );
 gui.add( guiData, "sun" ).onChange( onSunChanged );
+*/
 gui.add(guiData, "load_weather_data");
 
 onRaininessChanged();
