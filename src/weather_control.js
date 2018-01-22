@@ -2,13 +2,15 @@
 // Konfigurationsobjekt, enthält die meisten Stellschrauben der Wetterdarstellung
 conf = {
     url: 'http://api.openweathermap.org/data/2.5/weather?units=metric&lat=51.2&lon=6.47&APPID=43a26c85c29d39f47dc194dda192eb3a',    // URL zum Abruf d. Wetterdaten
-    lat: 51.2,
-	lon: 6.47,
 	cameraPosition: new THREE.Vector3(100,150,20),
     //cameraPosition: new THREE.Vector3(0,600,0),
     //cameraPosition: new THREE.Vector3(0,0,300),
     positionY: 150, // Spawnhöhe Blitze, Wolken, Regen, Schnee,
     positionSpreadY: 50,    // Spawnhöhenstreuung Regen, Schnee
+    sun: {
+        lat: 51.2,
+        lon: 6.47,
+    },
     cloud: {
         maxNumClouds: 250,
         texture: new THREE.TextureLoader().load('./textures/cloud.png'),
@@ -130,11 +132,11 @@ function onSunChanged() {
 	Höhenwinkel und azimut müssen auf -Werte gechekct werden.
 	
 	*/
-	var height = calcHeight(conf.lat, conf.lon, day, hours, minutes );
+	var height = calcHeight(conf.sun.lat, conf.sun.lon, day, hours, minutes );
 	
 	guiData.inclination = ((height + 90) / 180) ;
 
-	guiData.azimuth = ((calcAzimuth(conf.lat, conf.lon, day, hours, minutes, height) / 360) +0.5) ;
+	guiData.azimuth = ((calcAzimuth(conf.sun.lat, conf.sun.lon, day, hours, minutes, height) / 360) +0.5) ;
 	
 	var theta = Math.PI  * ( guiData.inclination - 0.5 );
 	var phi = 2 * Math.PI * ( guiData.azimuth - 0.5 );

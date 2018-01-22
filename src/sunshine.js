@@ -29,7 +29,7 @@ function calcHeight(lat, lon, day, hour, minute){
 	return Math.asin(x)/K;
 }
 
-
+/*
 for (var i = 0; i < 24; i++){
 	var height = calcHeight(51.2, 6.47, 180, i, 0 );
 	console.log("height ",  i, ":" , height /180);
@@ -37,5 +37,5 @@ for (var i = 0; i < 24; i++){
 	console.log("azimuth ",  i, ":" , calcAzimuth(51.2, 6.47, 180, i, 0, height ));
 	console.log("azimuth ",  i, ":" , calcAzimuth(51.2, 6.47, 180, i, 0, height )/180);
 }
-
+*/
 	
