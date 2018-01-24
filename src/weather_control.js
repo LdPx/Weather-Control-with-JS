@@ -79,6 +79,8 @@ var guiData = {
 	luminance: 1,
 	inclination: 0.49, // elevation / inclination
 	azimuth: 0.25, // Facing front,
+	hour: 0,
+	day: 0,
 	sun: ! true
 };
 
@@ -127,8 +129,8 @@ function onSunChanged() {
 	var oneDay = 1000 * 60 * 60 * 24;
 	//var day = Math.floor(diff / oneDay); //day of the year
 	//var hours = now.getHours() - 1;
-	var day = 100;
-	var hours = 16;
+	var day = guiData.day;
+	var hours = guiData.hour;
 	var minutes = now.getMinutes();
 	/*
 	
@@ -139,7 +141,12 @@ function onSunChanged() {
 	
 	guiData.inclination = ((height + 90) / 180) ;
 
-	guiData.azimuth = ((calcAzimuth(conf.lat, conf.lon, day, hours, minutes, height) / 360) +0.5) ;
+	if(hours < 12){
+		guiData.azimuth = ((calcAzimuth(conf.lat, conf.lon, day, hours, minutes, height) / 720) + 0.5 ) ;
+	} else {
+		guiData.azimuth = (((0 - calcAzimuth(conf.lat, conf.lon, day, hours, minutes, height) ) / 720)) ;
+	}
+	
 	
 	var theta = Math.PI  * ( guiData.inclination - 0.5 );
 	var phi = 2 * Math.PI * ( guiData.azimuth - 0.5 );
@@ -414,6 +421,8 @@ gui.add( guiData, "luminance", 0.0, 2 ).onChange( onSunChanged );
 gui.add( guiData, "inclination", 0, 1, 0.0001 ).onChange( onSunChanged );
 gui.add( guiData, "azimuth", 0, 1, 0.0001 ).onChange( onSunChanged );
 gui.add( guiData, "sun" ).onChange( onSunChanged );
+gui.add( guiData, "day", 0, 365, 0.01 ).onChange( onSunChanged );
+gui.add( guiData, "hour", 0, 23.99, 0.01 ).onChange( onSunChanged );
 gui.add(guiData, "load_weather_data");
 
 onRaininessChanged();
