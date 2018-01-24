@@ -82,7 +82,6 @@ function createCloudEngine(maxNumClouds, texture, positionY, positionSpread, max
             value: new THREE.Vector3(0,positionY,0),
             spread: positionSpread,
             randomise: true,
-            distribution: SPE.distributions.SPHERE  // kreisförmige zuf. Spawnbereich
         },
         velocity: {
             value: new THREE.Vector3(), // wird nachträglich gesetzt

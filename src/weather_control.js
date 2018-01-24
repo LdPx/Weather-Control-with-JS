@@ -17,7 +17,7 @@ conf = {
         startAngle: Math.PI/2,    // aus [0,2*PI]   // Startrichtung des Windes
         minForce: 1,   // min. Windstärke
         maxForce: 200,  // max. Windstärke
-        positionSpread: new THREE.Vector3(200,10,200),  // bestimmt Bereich um zentralen Spawnpunkt, in dem Wolken zufällig gespawnt werden (Streuung in Y-Richtung klein, in X-,Z-Richtung groß)
+        positionSpreadY: 10,  // bestimmt Streuung der Spawnhöhe der Wolken
         maxAge: 10,   // Lebenszeit jedes Wolkenpartikels; beeinflußt auch Geschwindigkeit (lange Lebenszeit -> niedrige Geschwindigkeit)
         size: 75,   // Wolkengröße
         sizeSpread: 500  // Streuung der Wolkengröße
@@ -380,7 +380,8 @@ console.log('created snow engine:', 'group', snowParticleGroup, 'emitter', snowP
 scene.add(snowParticleGroup.mesh);
 
 // Wolken-Partikelengine
-var cloudParticleGroup = createCloudEngine(conf.cloud.maxNumClouds, conf.cloud.texture, conf.positionY, conf.cloud.positionSpread, conf.cloud.maxAge, conf.cloud.size, conf.cloud.sizeSpread);
+var cloudPositionSpread = new THREE.Vector3(conf.model.groundSize,conf.cloud.positionSpreadY,conf.model.groundSize);
+var cloudParticleGroup = createCloudEngine(conf.cloud.maxNumClouds, conf.cloud.texture, conf.positionY, cloudPositionSpread, conf.cloud.maxAge, conf.cloud.size, conf.cloud.sizeSpread);
 console.log('created cloud engine:', 'group', cloudParticleGroup, 'emitter', cloudParticleGroup.emitters[0]);
 scene.add(cloudParticleGroup.mesh);
 
