@@ -84,10 +84,16 @@ var guiData = {
 	sun: ! true
 };
 
-function onRaininessChanged(){
+function updateCloudsColour(){
+	var cloudColor = (guiData.raininess + guiData.cloudiness) / 2;
+	
     // Interpolation der Wolkenfarbe zwischen minRaininessColor und maxRaininessColor um Faktor raininess
-    var newCloudColor = conf.cloud.minRaininessColor.clone().lerp(conf.cloud.maxRaininessColor, guiData.raininess);
+    var newCloudColor = conf.cloud.minRaininessColor.clone().lerp(conf.cloud.maxRaininessColor, cloudColor);
     cloudParticleGroup.emitters[0].color.value = newCloudColor;
+}
+
+function onRaininessChanged(){
+	updateCloudsColour();
     //scene.background = conf.rain.minRaininessSkyColor.clone().lerp(conf.rain.//maxRaininessSkyColor, guiData.raininess);
     rainParticleGroup.emitters[0].activeMultiplier = guiData.raininess; // emittiere den Anteil raininess der max. vorhandenen Wolken
 }
@@ -97,6 +103,7 @@ function onSnowinessChanged(){
 }
 
 function onCloudinessChanged(){
+	updateCloudsColour();
     cloudParticleGroup.emitters[0].activeMultiplier = guiData.cloudiness;
 	
 	dirLight.intensity = 1 - guiData.cloudiness;
@@ -445,17 +452,4 @@ function render(dt){
     lightningFadeOut(dt);
     renderer.render(scene,camera);
 }
-
-
-/*
-// funktioniert (leider) nur so, nicht mit direkter Änderung im Emitter
-function setMaxAge(emitter, maxAge){
-    for ( var index = 0; index < emitter.particleCount; index++ ) {            
-        var array = emitter.attributes.params.typedArray.array;
-        var i = emitter.attributes.params.typedArray.indexOffset + ( index * emitter.attributes.params.typedArray.componentSize );
-        array[i+2] = maxAge;
-    }  
-}
-*/
-
 
