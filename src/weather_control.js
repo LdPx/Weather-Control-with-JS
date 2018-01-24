@@ -5,8 +5,6 @@ conf = {
     lat: 51.2,
 	lon: 6.47,
 	cameraPosition: new THREE.Vector3(100,150,20),
-    //cameraPosition: new THREE.Vector3(0,600,0),
-    //cameraPosition: new THREE.Vector3(0,0,300),
     positionY: 150, // Spawnhöhe Blitze, Wolken, Regen, Schnee,
     positionSpreadY: 50,    // Spawnhöhenstreuung Regen, Schnee
     cloud: {
@@ -55,7 +53,7 @@ conf = {
         maxDensity: 0.01
     },
     model: {
-        groundSize: 200,    // Grundfläche ist groundSize x groundSize groß, die Mitte befindet sich im Ursprung
+        groundSize: 200,    // Größe der Grundfläche (groundSize x groundSize); Spawnbereich Wolken, Regen, Schnee, Blitze
         houseSize: 10,
         housePositionSpreadXZ: 100, // bestimmt Bereich, in dem Häuser zufällig gespawnt werden 
         numHouses: 50
