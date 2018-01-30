@@ -81,7 +81,7 @@ var guiData = {
 	azimuth: 0.25, // Facing front,
 	hour: 0,
 	day: 0,
-	sun: ! true
+	sun: true
 };
 
 function updateCloudsColour(){
@@ -123,20 +123,9 @@ function onSunChanged() {
 	uniforms.mieCoefficient.value = guiData.mieCoefficient;
 	uniforms.mieDirectionalG.value = guiData.mieDirectionalG;
 
-	var now = new Date();
-	var start = new Date(now.getFullYear(), 0, 0);
-	var diff = now - start;
-	var oneDay = 1000 * 60 * 60 * 24;
-	//var day = Math.floor(diff / oneDay); //day of the year
-	//var hours = now.getHours() - 1;
 	var day = guiData.day;
 	var hours = guiData.hour;
 	var minutes = now.getMinutes();
-	/*
-	
-	Höhenwinkel und azimut müssen auf -Werte gechekct werden.
-	
-	*/
 	var height = calcHeight(conf.lat, conf.lon, day, hours, minutes );
 	
 	guiData.inclination = ((height + 90) / 180) ;
@@ -264,6 +253,14 @@ function requestWeatherData(){
 		guiData.wind_force = weather.windSpeed;	// Better value?
 		onWindForceChanged();
 		
+
+		var start = new Date(now.getFullYear(), 0, 0);
+		var diff = now - start;
+		var oneDay = 1000 * 60 * 60 * 24;
+		guiData.day = Math.floor(diff / oneDay);
+		guiData.hour = now.getHours();
+		onSunChanged();
+		
 		
 		
 		for (var i in gui.__controllers) {
@@ -357,6 +354,7 @@ dirLight.shadow.camera.top	= 100;
 dirLight.shadow.camera.bottom = -100;
 scene.add(dirLight);
 
+var now = new Date();
 initSky();
 
 // visualisiere direktionale Lichtquelle
@@ -413,14 +411,6 @@ gui.add(guiData, "thunder", 0, 1, 0.01);
 gui.add(guiData, "fog_density", conf.fog.minDensity, conf.fog.maxDensity, 0.0001).onChange(onFogDensityChanged);
 gui.add(guiData, "wind_angle", 0, 2*Math.PI, 0.01).onChange(onWindAngleChanged);
 gui.add(guiData, "wind_force", conf.cloud.minForce, conf.cloud.maxForce, 0.1).onChange(onWindForceChanged);
-gui.add( guiData, "turbidity", 1.0, 20.0, 0.1 ).onChange( onSunChanged );
-gui.add( guiData, "rayleigh", 0.0, 4, 0.001 ).onChange( onSunChanged );
-gui.add( guiData, "mieCoefficient", 0.0, 0.1, 0.001 ).onChange( onSunChanged );
-gui.add( guiData, "mieDirectionalG", 0.0, 1, 0.001 ).onChange( onSunChanged );
-gui.add( guiData, "luminance", 0.0, 2 ).onChange( onSunChanged );
-gui.add( guiData, "inclination", 0, 1, 0.0001 ).onChange( onSunChanged );
-gui.add( guiData, "azimuth", 0, 1, 0.0001 ).onChange( onSunChanged );
-gui.add( guiData, "sun" ).onChange( onSunChanged );
 gui.add( guiData, "day", 0, 365, 0.01 ).onChange( onSunChanged );
 gui.add( guiData, "hour", 0, 23.99, 0.01 ).onChange( onSunChanged );
 gui.add(guiData, "load_weather_data");

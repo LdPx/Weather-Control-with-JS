@@ -6,7 +6,7 @@ function calcDeclination(day){
 }
 
 function timeEquation(day){
-	return 60 * (-0.171 * Math.sin(0.0337  * day + 0.465) - 0.1299 * Math.sin(0.01787 * day - 0.168));  //Magic numbaer w'scheinlich Ellipse der Erdbahn.
+	return 60 * (-0.171 * Math.sin(0.0337  * day + 0.465) - 0.1299 * Math.sin(0.01787 * day - 0.168));  //Magic number: Ellipse der Erdbahn.
 }
 
 function hourAngle(day, hour, minute, lon){
@@ -29,7 +29,7 @@ function calcHeight(lat, lon, day, hour, minute){
 	return Math.asin(x)/K;
 }
 
-
+/*
 for (var i = 0; i < 24; i++){
 	var height = calcHeight(51.2, 6.47, 180, i, 0 );
 	//console.log("height ",  i, ":" , height /180);
@@ -37,5 +37,4 @@ for (var i = 0; i < 24; i++){
 	console.log("azimuth ",  i, ":" , calcAzimuth(51.2, 6.47, 180, i, 0, height ));
 	//console.log("azimuth ",  i, ":" , calcAzimuth(51.2, 6.47, 180, i, 0, height )/180);
 }
-
-	
+*/
